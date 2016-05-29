@@ -1,6 +1,7 @@
 package com.example.peter.racemanager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, TaskFragment.TaskCallbacks {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.myfirstapp.MESSAGE";
 
@@ -46,19 +47,26 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create instance of event manager fragment
+        // Create taskfragment for handling all the things
+        TaskFragment taskFragment = new TaskFragment();
+
+        // Create instance of eventsfragment
         EventsFragment eventsFragment = new EventsFragment();
         Intent intent = getIntent();
         intent.putExtra(EXTRA_MESSAGE, strJson);
         eventsFragment.setArguments(getIntent().getExtras());
 
         // Add the fragment to the "fragment_container" LinearLayout
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, eventsFragment).commit();
+        getSupportFragmentManager().beginTransaction()
+                .add(taskFragment, "TASK_FRAGMENT")
+                .add(R.id.fragment_container, eventsFragment)
+                .commit();
     }
 
     public void onEventSelected(Race race) {
         RaceFragment raceFragment = RaceFragment.newInstance(race);
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.fragment_container, raceFragment)
                 .addToBackStack(null)
                 .commit();
@@ -69,6 +77,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.race_info_button:
                 RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                         .replace(R.id.fragment_container, raceInfoFragment)
                         .addToBackStack(null)
                         .commit();
@@ -76,6 +85,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.race_schedule_button:
                 RaceScheduleFragment raceScheduleFragment = RaceScheduleFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                         .replace(R.id.fragment_container, raceScheduleFragment)
                         .addToBackStack(null)
                         .commit();
@@ -83,6 +93,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.race_racers_button:
                 RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                         .replace(R.id.fragment_container, raceInfoFragment)
                         .addToBackStack(null)
                         .commit();
@@ -94,20 +105,26 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*public void onRaceInfoButton(View v) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof RaceFragment) {
-            RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(fragment.getRace());
-        }
-    }
-
-    public void onRaceScheduleButton(View v) {
+    // TaskFragment callbacks
+    public void onPreExecute() {
 
     }
 
-    public void onRaceRacersButton(View v) {
+    public void onProgressUpdate(int percent) {
 
-    }*/
+    }
+
+    public void onCancelled() {
+
+    }
+
+    public void onPostExecute() {
+
+    }
+
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 
 
 }
