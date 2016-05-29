@@ -1,5 +1,7 @@
 package com.example.peter.racemanager;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,9 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -23,6 +23,7 @@ public class EventsFragment extends Fragment {
 
     String jsonStr = "";
     private EventAdapter eventAdapter;
+    OnEventSelectedListener mListener;
 
     public EventsFragment() {
     }
@@ -35,10 +36,19 @@ public class EventsFragment extends Fragment {
         ListView listView = (ListView) view.findViewById(R.id.event_listview);
         eventAdapter = new EventAdapter(getActivity(), new ArrayList<Race>());
         listView.setAdapter(eventAdapter);
+
+        // On click, get the race from that position and open a racefragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
                 Toast.makeText(getActivity(), eventAdapter.getItem(i).getTitle(), Toast.LENGTH_SHORT).show();
+                Race race = (Race) adapterView.getItemAtPosition(i);
+                mListener.onEventSelected(race);/*
+                RaceFragment raceFragment = RaceFragment.newInstance(race);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, raceFragment)
+                        .addToBackStack(null)
+                        .commit();*/
             }
         });
 
@@ -54,21 +64,11 @@ public class EventsFragment extends Fragment {
             jsonStr = args.getString(MainActivity.EXTRA_MESSAGE);
         }
 
-        JSONObject json = new JSONObject();
-        String name = "";
-
-        try {
-            json = new JSONObject(jsonStr);
-            name = json.getJSONArray("Employee").getJSONObject(1).getString("name");
-        } catch (Exception x) {
-            Log.d("HEYMAN ", x.toString());
-        }
-
         // FIGURE OUT STUFF TO BUILD THE ARRAYLIST<RACE> YO
         // ACTUALLY PROBABLY BUILD THE ARRAYLIST<RACE> IN THE MAIN ACTIVITY AND PASS IT IN VIA INTENT. YO.
         ArrayList<Race> races = new ArrayList<Race>();
 
-        String race1Name = "Race 1 name";
+        String race1Name = "Race 1 name is really insanely long and like I don't know what kind of idiot would make a name like this for a race";
         String race1Date = "May 28, 2016";
         String race1Time = "9:00 AM";
         String race1URL = "https://www.multigp.com/some/url/for/race1";
@@ -85,17 +85,28 @@ public class EventsFragment extends Fragment {
 
         eventAdapter.add(race1);
         eventAdapter.add(race2);
+        eventAdapter.add(race2);
+        //eventAdapter.add(race2);
+        //eventAdapter.add(race1);
+        //eventAdapter.add(race2);
+        eventAdapter.add(race2);
+        eventAdapter.add(race2);
+        eventAdapter.add(race2);
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        /*TextView textView = new TextView(getActivity());
-        textView.setText(name);
+        try {
+            mListener = (OnEventSelectedListener) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
-        TextView textView2 = new TextView(getActivity());
-        textView2.setTextSize(40);
-        textView2.setText("AT LEAST THIS IS HERE");
-
-        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.event_layout);
-        layout.addView(textView);
-        layout.addView(textView2);*/
+    public interface OnEventSelectedListener {
+        public void onEventSelected(Race race);
     }
 }

@@ -1,22 +1,30 @@
 package com.example.peter.racemanager;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 5/27/2016.
  * Race will take data passed from database for initialization.
  */
-public class Race {
+public class Race implements Parcelable {
     private String title;
     private String siteURL;
     private String date;
     private String time;
     private String blockquote;
     private String description;
+
+    private Date dateAndTime;
 
     public Race(){}
 
@@ -27,6 +35,7 @@ public class Race {
         this.time = time;
         this.blockquote = blockquote;
         this.description = description;
+        this.setDateAndTime(date, time);
     }
 
     // Tentative constructor for Race objects being built directly from some JSON received from Firebase
@@ -40,6 +49,7 @@ public class Race {
             race.time = jsonObject.getString("time");
             race.blockquote = jsonObject.getString("blockquote");
             race.description = jsonObject.getString("description");
+            race.setDateAndTime(race.date, race.time);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -93,6 +103,10 @@ public class Race {
         return description;
     }
 
+    public Date getDateAndTime() {
+        return dateAndTime;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -112,4 +126,58 @@ public class Race {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public void setDateAndTime(String date, String time) {
+        String dateAndTimeString = date + " / " + time;
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy / hh:mm a");
+        try {
+            this.dateAndTime = sdf.parse(dateAndTimeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setDateAndTime(Date dateAndTime) {
+        this.dateAndTime = dateAndTime;
+    }
+
+    protected Race(Parcel in) {
+        title = in.readString();
+        siteURL = in.readString();
+        date = in.readString();
+        time = in.readString();
+        blockquote = in.readString();
+        description = in.readString();
+        long tmpDateAndTime = in.readLong();
+        dateAndTime = tmpDateAndTime != -1 ? new Date(tmpDateAndTime) : null;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(siteURL);
+        dest.writeString(date);
+        dest.writeString(time);
+        dest.writeString(blockquote);
+        dest.writeString(description);
+        dest.writeLong(dateAndTime != null ? dateAndTime.getTime() : -1L);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Race> CREATOR = new Parcelable.Creator<Race>() {
+        @Override
+        public Race createFromParcel(Parcel in) {
+            return new Race(in);
+        }
+
+        @Override
+        public Race[] newArray(int size) {
+            return new Race[size];
+        }
+    };
 }

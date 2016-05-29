@@ -15,4 +15,10 @@
     </string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="race_info_button">Race Information</string>
+    <string name="race_schedule_button">Round/Heat Schedule</string>
+    <string name="race_racers_button">Participating Racers</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

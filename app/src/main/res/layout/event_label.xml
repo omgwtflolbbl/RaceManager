@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/event_label_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp">
 
     <TextView
         android:id="@+id/event_label_race_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:singleLine="true"
+        android:layout_alignParentTop="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
         android:text="Race Title" />
 
     <TextView
-        android:id="@+id/event_label_race_date"
+        android:id="@+id/event_label_race_datetime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/event_label_race_name"
         android:text="Race Date" />
-
-    <TextView
-        android:id="@+id/event_label_race_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time" />
 
 </RelativeLayout>
