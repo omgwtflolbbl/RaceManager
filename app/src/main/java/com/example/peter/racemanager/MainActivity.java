@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity
 
     public final static String EXTRA_MESSAGE = "com.example.peter.myfirstapp.MESSAGE";
 
+    private TaskFragment taskFragment;
+
     String strJson=""+
     "{"+
         "\"Employee\" :["+
@@ -47,8 +49,15 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create taskfragment for handling all the things
-        TaskFragment taskFragment = new TaskFragment();
+        // Check if we have a task fragment already. If not, create and add one
+        taskFragment = (TaskFragment) getSupportFragmentManager().findFragmentByTag("TASK_FRAGMENT");
+
+        if (taskFragment == null) {
+            taskFragment = new TaskFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(taskFragment, "TASK_FRAGMENT")
+                    .commit();
+        }
 
         // Create instance of eventsfragment
         EventsFragment eventsFragment = new EventsFragment();
@@ -56,9 +65,8 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(EXTRA_MESSAGE, strJson);
         eventsFragment.setArguments(getIntent().getExtras());
 
-        // Add the fragment to the "fragment_container" LinearLayout
+        // Add the event fragment to the "fragment_container" LinearLayout
         getSupportFragmentManager().beginTransaction()
-                .add(taskFragment, "TASK_FRAGMENT")
                 .add(R.id.fragment_container, eventsFragment)
                 .commit();
     }

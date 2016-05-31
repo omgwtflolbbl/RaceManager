@@ -18,6 +18,17 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class TaskFragment extends Fragment {
+    /**
+     * Interface for fragment to report back to activity
+     */
+    public interface TaskCallbacks {
+        void onFragmentInteraction(Uri uri);
+        void onPreExecute();
+        void onProgressUpdate(int percent);
+        void onCancelled();
+        void onPostExecute();
+    }
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -31,15 +42,6 @@ public class TaskFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TaskFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TaskFragment newInstance(String param1, String param2) {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
@@ -80,7 +82,7 @@ public class TaskFragment extends Fragment {
             mListener = (TaskCallbacks) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement TaskCallbacks");
         }
     }
 
@@ -90,21 +92,6 @@ public class TaskFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface TaskCallbacks {
-        void onFragmentInteraction(Uri uri);
-        void onPreExecute();
-        void onProgressUpdate(int percent);
-        void onCancelled();
-        void onPostExecute();
-    }
+
+
 }
