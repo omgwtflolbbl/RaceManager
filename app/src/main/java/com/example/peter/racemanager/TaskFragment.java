@@ -63,6 +63,7 @@ public class TaskFragment extends Fragment {
         if (getArguments() != null) {
             // set stuff up
         }
+        setRetainInstance(true);
         client = new OkHttpClient();
     }
 

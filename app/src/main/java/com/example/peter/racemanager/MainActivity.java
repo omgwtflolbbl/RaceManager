@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
     private TaskFragment taskFragment;
-    private OkHttpHandler okHttpHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity
         EventsFragment eventsFragment = null;
 
         if (savedInstanceState != null) {
-            taskFragment = (TaskFragment) getSupportFragmentManager().getFragment(savedInstanceState, "TASK_FRAGMENT");
             eventsFragment = (EventsFragment) getSupportFragmentManager().getFragment(savedInstanceState, "EVENTS_FRAGMENT");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

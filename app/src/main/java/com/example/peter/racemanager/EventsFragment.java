@@ -46,8 +46,6 @@ public class EventsFragment extends Fragment {
             Log.i("THE ONCREATEVIEW HAS", savedInstanceState.toString());
         }
 
-        Log.i("THE ARGUMENTS", getArguments().toString());
-
         View view = inflater.inflate(R.layout.fragment_events, container, false);
 
         ListView listView = (ListView) view.findViewById(R.id.event_listview);
@@ -80,48 +78,14 @@ public class EventsFragment extends Fragment {
         super.onStart();
 
         Bundle args = getArguments();
-        Log.i("LOGTAG5", "HELLO");
-
-        ArrayList<Race> racess = args.getParcelableArrayList("EVENT_LIST");
-        Log.i("LOGTAG5", "RDY");
         if (args.size()>0) {
-            String size = Integer.toString(args.size());
-            Log.i("LOGTAG10", size);
-            Log.i("LOGTAG6", "THIS IS HAPPENING");
+            eventAdapter.clear();
             ArrayList<Race> races = args.getParcelableArrayList("EVENT_LIST");
-            Log.i("LOGTAG6", "IT REALLY IS");
             eventAdapter.addAll(races);
         }
-
-
-        /*// FIGURE OUT STUFF TO BUILD THE ARRAYLIST<RACE> YO
-        // ACTUALLY PROBABLY BUILD THE ARRAYLIST<RACE> IN THE MAIN ACTIVITY AND PASS IT IN VIA INTENT. YO.
-        ArrayList<Race> races = new ArrayList<Race>();
-
-        String race1Name = "Race 1 name is really insanely long and like I don't know what kind of idiot would make a name like this for a race";
-        String race1Date = "May 28, 2016";
-        String race1Time = "9:00 AM";
-        String race1URL = "https://www.multigp.com/some/url/for/race1";
-        String race1Blockquote = "Some important crap in a blockquote";
-        String race1Description = "Some other important crap in the description";
-        Race race1 = new Race(race1Name, race1URL, race1Date, race1Time, race1Blockquote, race1Description);
-        String race2Name = "Race 2 name";
-        String race2Date = "May 29, 2016";
-        String race2Time = "10:00 AM";
-        String race2URL = "https://www.multigp.com/some/url/for/race2";
-        String race2Blockquote = "Some useless crap in a blockquote";
-        String race2Description = "Some other useless crap in the description";
-        Race race2 = new Race(race2Name, race2URL, race2Date, race2Time, race2Blockquote, race2Description);
-
-        eventAdapter.add(race1);
-        eventAdapter.add(race2);
-        eventAdapter.add(race2);
-        eventAdapter.add(race2);
-        eventAdapter.add(race1);
-        eventAdapter.add(race2);
-        eventAdapter.add(race2);
-        eventAdapter.add(race2);
-        eventAdapter.add(race2);*/
+        if (args.getString("REFRESHING") != null) {
+            startRefreshing();
+        }
     }
 
     @Override
@@ -144,6 +108,9 @@ public class EventsFragment extends Fragment {
         bundle.putString("STRING", "HELLO NURSE");
         outState.putBundle("EVENT_FRAGMENT", bundle);
         outState.putString("EVENTS_FRAGMENT", "HELLO WORLLLLLD");
+        if (getView().findViewById(R.id.loadingPanel).getVisibility() == View.VISIBLE) {
+            getArguments().putString("REFRESHING", "true");
+        }
     }
 
     @Override
@@ -188,5 +155,8 @@ public class EventsFragment extends Fragment {
         relativeLayout.setVisibility(View.GONE);
         ListView listView = (ListView) getView().findViewById(R.id.event_listview);
         listView.setVisibility(View.VISIBLE);
+        if (getArguments().getString("REFRESHING") != null) {
+            getArguments().remove("REFRESHING");
+        }
     }
 }
