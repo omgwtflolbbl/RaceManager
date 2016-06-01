@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -44,6 +45,13 @@ public class RaceInfoFragment extends Fragment {
         if (getArguments() != null) {
             race = getArguments().getParcelable(RACE_KEY);
         }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_refresh).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override

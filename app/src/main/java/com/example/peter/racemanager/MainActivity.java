@@ -1,12 +1,14 @@
 package com.example.peter.racemanager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +71,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                taskFragment.getEvents("http://e211b0ec.ngrok.io/users/PKLee/events");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String username = sharedPreferences.getString("username","PKLee");
+                Log.i("USERNAME", username);
+                String URL = String.format("http://e99796aa.ngrok.io/users/%s/events", username);
+                taskFragment.getEvents(URL);
+                EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
+                eventsFragment.startRefreshing();
                 return true;
             case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
@@ -144,6 +152,7 @@ public class MainActivity extends AppCompatActivity
                 EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
                 eventsFragment.clearEventAdapter();
                 eventsFragment.repopulateEventAdapter(races);
+                eventsFragment.finishRefreshing();
             }
         });
     }

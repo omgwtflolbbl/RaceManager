@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -173,5 +174,19 @@ public class EventsFragment extends Fragment {
     public void addToEventAdapter(Race race) {
         eventAdapter.add(race);
         eventAdapter.notifyDataSetChanged();
+    }
+
+    public void startRefreshing() {
+        ListView listView = (ListView) getView().findViewById(R.id.event_listview);
+        listView.setVisibility(View.GONE);
+        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.loadingPanel);
+        relativeLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void finishRefreshing() {
+        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.loadingPanel);
+        relativeLayout.setVisibility(View.GONE);
+        ListView listView = (ListView) getView().findViewById(R.id.event_listview);
+        listView.setVisibility(View.VISIBLE);
     }
 }

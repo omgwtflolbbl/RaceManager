@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,7 +45,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
         if (getArguments() != null) {
             race = getArguments().getParcelable(RACE_KEY);
         }
+        setHasOptionsMenu(true);
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_refresh).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
