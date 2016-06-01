@@ -19,6 +19,11 @@
     <string name="race_schedule_button">Round/Heat Schedule</string>
     <string name="race_racers_button">Participating Racers</string>
 
+    <!-- Preferences stuff -->
+    <string name="pref_name_key">username</string>
+    <string name="pref_name_label">Username</string>
+    <string name="pref_name_default">AnonymousSpectator</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -20,17 +20,33 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class EventsFragment extends Fragment {
+    private static final String RACES_KEY = "RACES_KEY";
 
-    String jsonStr = "";
     private EventAdapter eventAdapter;
     OnEventSelectedListener mListener;
 
     public EventsFragment() {
+        setArguments(new Bundle());
     }
+
+    /*public static EventsFragment newInstance(ArrayList<Race> races) {
+        EventsFragment fragment = new EventsFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(RACES_KEY, races);
+        fragment.setArguments(args);
+        return fragment;
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            Log.i("THE ONCREATEVIEW HAS", savedInstanceState.toString());
+        }
+
+        Log.i("THE ARGUMENTS", getArguments().toString());
+
         View view = inflater.inflate(R.layout.fragment_events, container, false);
 
         ListView listView = (ListView) view.findViewById(R.id.event_listview);
@@ -43,12 +59,7 @@ public class EventsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
                 Toast.makeText(getActivity(), eventAdapter.getItem(i).getTitle(), Toast.LENGTH_SHORT).show();
                 Race race = (Race) adapterView.getItemAtPosition(i);
-                mListener.onEventSelected(race);/*
-                RaceFragment raceFragment = RaceFragment.newInstance(race);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, raceFragment)
-                        .addToBackStack(null)
-                        .commit();*/
+                mListener.onEventSelected(race);
             }
         });
 
@@ -56,15 +67,33 @@ public class EventsFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.i("THE ACTIVITYCREATED HAS", savedInstanceState.getBundle("EVENT_FRAGMENT").toString());
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
         Bundle args = getArguments();
-        if (args != null) {
-            jsonStr = args.getString(MainActivity.EXTRA_MESSAGE);
+        Log.i("LOGTAG5", "HELLO");
+
+        ArrayList<Race> racess = args.getParcelableArrayList("EVENT_LIST");
+        Log.i("LOGTAG5", "RDY");
+        if (args.size()>0) {
+            String size = Integer.toString(args.size());
+            Log.i("LOGTAG10", size);
+            Log.i("LOGTAG6", "THIS IS HAPPENING");
+            ArrayList<Race> races = args.getParcelableArrayList("EVENT_LIST");
+            Log.i("LOGTAG6", "IT REALLY IS");
+            eventAdapter.addAll(races);
         }
 
-        // FIGURE OUT STUFF TO BUILD THE ARRAYLIST<RACE> YO
+
+        /*// FIGURE OUT STUFF TO BUILD THE ARRAYLIST<RACE> YO
         // ACTUALLY PROBABLY BUILD THE ARRAYLIST<RACE> IN THE MAIN ACTIVITY AND PASS IT IN VIA INTENT. YO.
         ArrayList<Race> races = new ArrayList<Race>();
 
@@ -86,12 +115,12 @@ public class EventsFragment extends Fragment {
         eventAdapter.add(race1);
         eventAdapter.add(race2);
         eventAdapter.add(race2);
-        //eventAdapter.add(race2);
-        //eventAdapter.add(race1);
-        //eventAdapter.add(race2);
+        eventAdapter.add(race2);
+        eventAdapter.add(race1);
         eventAdapter.add(race2);
         eventAdapter.add(race2);
         eventAdapter.add(race2);
+        eventAdapter.add(race2);*/
     }
 
     @Override
@@ -106,7 +135,43 @@ public class EventsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("STRING", "HELLO NURSE");
+        outState.putBundle("EVENT_FRAGMENT", bundle);
+        outState.putString("EVENTS_FRAGMENT", "HELLO WORLLLLLD");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ArrayList<Race> races = new ArrayList<Race>();
+        for (int i = 0; i < eventAdapter.getCount(); i++) {
+            races.add(eventAdapter.getItem(i));
+        }
+        getArguments().putParcelableArrayList("EVENT_LIST", races);
+    }
+
     public interface OnEventSelectedListener {
         public void onEventSelected(Race race);
+    }
+
+    public void clearEventAdapter() {
+        eventAdapter.clear();
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    public void repopulateEventAdapter(ArrayList<Race> races) {
+        eventAdapter.addAll(races);
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    public void addToEventAdapter(Race race) {
+        eventAdapter.add(race);
+        eventAdapter.notifyDataSetChanged();
     }
 }

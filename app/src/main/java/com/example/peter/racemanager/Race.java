@@ -23,6 +23,7 @@ public class Race implements Parcelable {
     private String time;
     private String blockquote;
     private String description;
+    private String raceId = "";
 
     private Date dateAndTime;
 
@@ -38,6 +39,16 @@ public class Race implements Parcelable {
         this.setDateAndTime(date, time);
     }
 
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, String raceId) {
+        this.title = title;
+        this.siteURL = siteURL;
+        this.date = date;
+        this.time = time;
+        this.blockquote = blockquote;
+        this.description = description;
+        this.setDateAndTime(date, time);
+        this.raceId = raceId;
+    }
     // Tentative constructor for Race objects being built directly from some JSON received from Firebase
     // Will obviously need to be reworked, either here or on the flask server that actually sends it
     public static Race fromJson(JSONObject jsonObject) {
@@ -107,6 +118,10 @@ public class Race implements Parcelable {
         return dateAndTime;
     }
 
+    public String getRaceId() {
+        return raceId;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -117,6 +132,10 @@ public class Race implements Parcelable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void setBlockquote(String blockquote) {
@@ -141,6 +160,10 @@ public class Race implements Parcelable {
         this.dateAndTime = dateAndTime;
     }
 
+    public void setRaceId(String raceId) {
+        this.raceId = raceId;
+    }
+
     protected Race(Parcel in) {
         title = in.readString();
         siteURL = in.readString();
@@ -148,6 +171,7 @@ public class Race implements Parcelable {
         time = in.readString();
         blockquote = in.readString();
         description = in.readString();
+        raceId = in.readString();
         long tmpDateAndTime = in.readLong();
         dateAndTime = tmpDateAndTime != -1 ? new Date(tmpDateAndTime) : null;
     }
@@ -165,6 +189,7 @@ public class Race implements Parcelable {
         dest.writeString(time);
         dest.writeString(blockquote);
         dest.writeString(description);
+        dest.writeString(raceId);
         dest.writeLong(dateAndTime != null ? dateAndTime.getTime() : -1L);
     }
 

@@ -63,6 +63,7 @@ public class EventAdapter extends ArrayAdapter<Race> {
     public void notifyDataSetChanged() {
         this.setNotifyOnChange(false);
         this.sort(new RaceDateComparator());
-        this.setNotifyOnChange(true);
+        //this.setNotifyOnChange(true);
+        super.notifyDataSetChanged();
     }
 }

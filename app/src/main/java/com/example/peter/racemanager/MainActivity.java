@@ -8,49 +8,37 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, TaskFragment.TaskCallbacks {
 
-    public final static String EXTRA_MESSAGE = "com.example.peter.myfirstapp.MESSAGE";
+    public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
     private TaskFragment taskFragment;
-
-    String strJson=""+
-    "{"+
-        "\"Employee\" :["+
-            "{"+
-            "\"id\":\"01\","+
-            "\"name\":\"Gopal Varma\","+
-            "\"salary\":\"500000\""+
-        "},"+
-        "{"+
-            "\"id\":\"02\","+
-            "\"name\":\"Sairamkrishna\","+
-            "\"salary\":\"500000\""+
-        "},"+
-        "{"+
-            "\"id\":\"03\","+
-            "\"name\":\"Sathish kallakuri\","+
-            "\"salary\":\"600000\""+
-        "}"+
-        "]"+
-    "}";
+    private OkHttpHandler okHttpHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.i("LOGTAG69", "I AM HERE");
+
+        EventsFragment eventsFragment = null;
 
         if (savedInstanceState != null) {
-            return;
+            taskFragment = (TaskFragment) getSupportFragmentManager().getFragment(savedInstanceState, "TASK_FRAGMENT");
+            eventsFragment = (EventsFragment) getSupportFragmentManager().getFragment(savedInstanceState, "EVENTS_FRAGMENT");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // Check if we have a task fragment already. If not, create and add one
-        taskFragment = (TaskFragment) getSupportFragmentManager().findFragmentByTag("TASK_FRAGMENT");
 
         if (taskFragment == null) {
             taskFragment = new TaskFragment();
@@ -59,17 +47,53 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        // Create instance of eventsfragment
-        EventsFragment eventsFragment = new EventsFragment();
-        Intent intent = getIntent();
-        intent.putExtra(EXTRA_MESSAGE, strJson);
-        eventsFragment.setArguments(getIntent().getExtras());
+        if (eventsFragment == null) {
+            eventsFragment = new EventsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, eventsFragment, "EVENTS_FRAGMENT")
+                    .commit();
+        }
 
         // Add the event fragment to the "fragment_container" LinearLayout
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, eventsFragment)
-                .commit();
+
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                taskFragment.getEvents("http://e211b0ec.ngrok.io/users/PKLee/events");
+                return true;
+            case R.id.action_settings:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new SettingsFragment())
+                        .addToBackStack(null)
+                        .commit();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, "EVENTS_FRAGMENT", getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT"));
+    }
+
+    /*@Override
+    public void onStart() {
+        super.onStart();
+        EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
+        eventsFragment.clearEventAdapter();
+    }*/
 
     public void onEventSelected(Race race) {
         RaceFragment raceFragment = RaceFragment.newInstance(race);
@@ -114,24 +138,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     // TaskFragment callbacks
-    public void onPreExecute() {
-
-    }
-
-    public void onProgressUpdate(int percent) {
-
-    }
-
-    public void onCancelled() {
-
-    }
-
-    public void onPostExecute() {
-
-    }
-
-    public void onFragmentInteraction(Uri uri) {
-
+    public void OnRacesLoaded(final ArrayList<Race> races) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
+                eventsFragment.clearEventAdapter();
+                eventsFragment.repopulateEventAdapter(races);
+            }
+        });
     }
 
 
