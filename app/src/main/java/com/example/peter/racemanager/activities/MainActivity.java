@@ -15,6 +15,7 @@ import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceInfoFragment;
+import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.Race;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity
                         .replace(R.id.fragment_container, raceInfoFragment)
                         .addToBackStack(null)
                         .commit();
-                break;/*
+                break;
             case R.id.race_schedule_button:
                 RaceScheduleFragment raceScheduleFragment = RaceScheduleFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity
                         .replace(R.id.fragment_container, raceScheduleFragment)
                         .addToBackStack(null)
                         .commit();
-                break;
+                break;/*
             case R.id.race_racers_button:
                 RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()

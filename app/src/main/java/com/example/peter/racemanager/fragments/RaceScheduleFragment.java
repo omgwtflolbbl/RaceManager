@@ -5,10 +5,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.adapters.RoundAdapter;
+import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Round;
+
+import java.util.ArrayList;
 
 
 /**
@@ -20,14 +27,10 @@ import com.example.peter.racemanager.R;
  * create an instance of this fragment.
  */
 public class RaceScheduleFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String RACE_KEY = "RACE_KEY";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RoundAdapter roundAdapter;
+    private Race race;
 
     private OnFragmentInteractionListener mListener;
 
@@ -35,20 +38,10 @@ public class RaceScheduleFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RaceScheduleFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RaceScheduleFragment newInstance(String param1, String param2) {
+    public static RaceScheduleFragment newInstance(Race race) {
         RaceScheduleFragment fragment = new RaceScheduleFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(RACE_KEY, race);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,19 +50,35 @@ public class RaceScheduleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            race = getArguments().getParcelable(RACE_KEY);
         }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_refresh).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedule, container, false);
+        View view = inflater.inflate(R.layout.fragment_schedule, container, false);
+
+        ListView listView = (ListView) view.findViewById(R.id.schedule_listview);
+        roundAdapter = new RoundAdapter(getActivity(), new ArrayList<Round>());
+        listView.setAdapter(roundAdapter);
+
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
