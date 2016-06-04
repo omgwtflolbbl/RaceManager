@@ -26,7 +26,7 @@ public class Round {
         return round;
     }
 
-    public List<Round>  fromJsonToRoundList(JSONArray json) {
+    public List<Round> fromJsonToRoundList(JSONArray json) {
         List<Round> rounds = new ArrayList<Round>();
         try {
             for (int i = 0, size = json.length(); i < size; i++) {

@@ -77,6 +77,8 @@ public class RaceScheduleFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        roundAdapter.addAll(race.getRounds());
     }
 
     public void onButtonPressed(Uri uri) {

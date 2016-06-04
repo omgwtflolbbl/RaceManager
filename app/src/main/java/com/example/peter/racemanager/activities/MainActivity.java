@@ -1,6 +1,7 @@
 package com.example.peter.racemanager.activities;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -23,7 +24,7 @@ import com.example.peter.racemanager.models.Race;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, TaskFragment.TaskCallbacks {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String username = sharedPreferences.getString("username","PKLee");
                 Log.i("USERNAME", username);
-                String URL = String.format("http://e99796aa.ngrok.io/users/%s/events", username);
+                String URL = String.format("http://645e5647.ngrok.io/users/%s/events", username);
                 taskFragment.getEvents(URL);
                 EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
                 eventsFragment.startRefreshing();
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
+    // RaceFragment callbacks
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
             case R.id.race_info_button:
@@ -143,6 +145,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onRaceInfo(Race race) {
+
+    }
+
+    public void onFragmentInteraction(Uri uri) {
 
     }
 

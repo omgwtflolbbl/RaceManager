@@ -24,12 +24,13 @@ public class Race implements Parcelable {
     private String blockquote;
     private String description;
     private String raceId = "";
+    private ArrayList<Round> rounds;
 
     private Date dateAndTime;
 
     public Race(){}
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -37,9 +38,10 @@ public class Race implements Parcelable {
         this.blockquote = blockquote;
         this.description = description;
         this.setDateAndTime(date, time);
+        this.rounds = rounds;
     }
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, String raceId) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String raceId) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -47,6 +49,7 @@ public class Race implements Parcelable {
         this.blockquote = blockquote;
         this.description = description;
         this.setDateAndTime(date, time);
+        this.rounds = rounds;
         this.raceId = raceId;
     }
     // Tentative constructor for Race objects being built directly from some JSON received from Firebase
@@ -118,6 +121,10 @@ public class Race implements Parcelable {
         return dateAndTime;
     }
 
+    public ArrayList<Round> getRounds() {
+        return rounds;
+    }
+
     public String getRaceId() {
         return raceId;
     }
@@ -158,6 +165,10 @@ public class Race implements Parcelable {
 
     public void setDateAndTime(Date dateAndTime) {
         this.dateAndTime = dateAndTime;
+    }
+
+    public void setRounds(ArrayList<Round> rounds) {
+        this.rounds = rounds;
     }
 
     public void setRaceId(String raceId) {

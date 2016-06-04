@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Round;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -145,7 +147,9 @@ public class TaskFragment extends Fragment {
                         String description = raceJson.getString("description");
                         String siteURL = raceJson.getString("eventURL");
                         Log.i("HOLD UP", raceJson.getJSONArray("raceStructure").toString());
-                        Map raceStructure = new HashMap();
+                        List<Round> rounds = new Round().fromJsonToRoundList(raceJson.getJSONArray("raceStructure"));
+
+                        /*Map raceStructure = new HashMap();
                         JSONArray raceStructJson = raceJson.getJSONArray("raceStructure");
                         JSONObject round;
                         JSONObject heat;
@@ -155,8 +159,10 @@ public class TaskFragment extends Fragment {
                             while (heats.hasNext()) {
 
                             }
-                        }
-                        Race race = new Race(title, siteURL, date, time, blockquote, description);
+                        }*/
+
+
+                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds);
                         races.add(race);
                     }
                 } catch (JSONException e) {

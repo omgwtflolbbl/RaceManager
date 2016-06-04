@@ -37,7 +37,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
         Round round = getItem(position);
         // Check if the existing view is being used, otherwise inflate the view
         if (view == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.event_label, parent, false);
+            view = LayoutInflater.from(getContext()).inflate(R.layout.round_card, parent, false);
         }
 
         // Get GridLayout in which everything on the card will be laid out
@@ -47,7 +47,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
         // Create TextView for the header (which is just the round number)
         TextView roundNumber = new TextView(getContext());
         roundNumber.setTag(Integer.toString(position + 1));
-        roundNumber.setText(String.format("ROUND %d / %d", position + 1, round.length()));
+        roundNumber.setText(String.format("ROUND %d / %d", position + 1, rounds.size()));
         roundNumber.setTextSize(26);
         roundNumber.setGravity(Gravity.CENTER);
         roundNumber.setBackgroundColor(Color.BLUE);
@@ -78,7 +78,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
             GridLayout.LayoutParams heatNumberParams = new GridLayout.LayoutParams();
             heatNumberParams.rowSpec = GridLayout.spec(currentRow, rowSpan);
             heatNumberParams.columnSpec = GridLayout.spec(0);
-            heatNumberParams.setGravity(Gravity.FILL);
+            heatNumberParams.setGravity(Gravity.FILL_VERTICAL);
             heatNumber.setLayoutParams(heatNumberParams);
             gridLayout.addView(heatNumber);
 
@@ -95,7 +95,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
                 slotText.setBackgroundResource(i % 2 == 0 ? R.drawable.border_blue : R.drawable.border_cyan);
                 GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();
                 slotTextParams.rowSpec = GridLayout.spec((j / 2) * 2 + currentRow, 2);
-                slotTextParams.columnSpec = GridLayout.spec(j % 2 + 1);
+                slotTextParams.columnSpec = GridLayout.spec(j % 2 + 1, (float) 1);
                 slotTextParams.setGravity(Gravity.FILL);
                 slotText.setLayoutParams(slotTextParams);
                 gridLayout.addView(slotText);
