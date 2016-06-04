@@ -14,15 +14,13 @@
         android:layout_alignParentTop="true"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:text="Race Title" />
+        android:scrollHorizontally="true" />
 
     <TextView
         android:id="@+id/event_label_race_datetime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/event_label_race_name"
-        android:text="Race Date" />
+        android:layout_below="@+id/event_label_race_name" />
 
 </RelativeLayout>

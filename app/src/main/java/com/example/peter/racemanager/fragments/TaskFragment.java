@@ -1,7 +1,6 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,12 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.models.Race;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -139,6 +144,18 @@ public class TaskFragment extends Fragment {
                         String blockquote = raceJson.getString("blockquote");
                         String description = raceJson.getString("description");
                         String siteURL = raceJson.getString("eventURL");
+                        Log.i("HOLD UP", raceJson.getJSONArray("raceStructure").toString());
+                        Map raceStructure = new HashMap();
+                        JSONArray raceStructJson = raceJson.getJSONArray("raceStructure");
+                        JSONObject round;
+                        JSONObject heat;
+                        for (int i = 0, numRounds = raceStructJson.length(); i < numRounds; i++) {
+                            round = raceStructJson.getJSONObject(i);
+                            Iterator<String> heats = round.keys();
+                            while (heats.hasNext()) {
+
+                            }
+                        }
                         Race race = new Race(title, siteURL, date, time, blockquote, description);
                         races.add(race);
                     }

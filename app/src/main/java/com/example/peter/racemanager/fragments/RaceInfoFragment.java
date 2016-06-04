@@ -1,15 +1,16 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.models.Race;
 
 
 /**
@@ -87,6 +88,14 @@ public class RaceInfoFragment extends Fragment {
         this.updateTime(race.getTime());
         this.updateBlockquote(race.getBlockquote());
         this.updateDescription(race.getDescription());
+        if (race.getBlockquote().equals("")) {
+            getView().findViewById(R.id.race_info_blockquote).setVisibility(View.GONE);
+            getView().findViewById(R.id.race_info_divider_BD).setVisibility(View.GONE);
+        }
+        if (race.getDescription().equals("")) {
+            getView().findViewById(R.id.race_info_description).setVisibility(View.GONE);
+            getView().findViewById(R.id.race_info_divider_BD).setVisibility(View.GONE);
+        }
     }
 
     @Override

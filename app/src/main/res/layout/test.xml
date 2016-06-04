@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:grid="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/choice_grid"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:padding="4dp"
+
+    android:alignmentMode="alignBounds"
+    android:rowOrderPreserved="true"
+    android:useDefaultMargins="true">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="center"
+        android:background="#FF33B5E5"
+        android:text="Tile1" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="center"
+        android:background="@color/red"
+        android:text="Tile2" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="center"
+        android:background="@color/green"
+        android:text="Tile3" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        grid:layout_columnWeight="1"
+        grid:layout_gravity="fill_horizontal"
+        android:gravity="center"
+        android:background="@color/yellow"
+        android:text="Tile4" />
+
+</GridLayout>

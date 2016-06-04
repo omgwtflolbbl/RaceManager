@@ -1,6 +1,5 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,7 +12,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.adapters.EventAdapter;
+import com.example.peter.racemanager.models.Race;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class EventsFragment extends Fragment {
 
     private EventAdapter eventAdapter;
     OnEventSelectedListener mListener;
+    private boolean refreshing;
 
     public EventsFragment() {
         setArguments(new Bundle());
@@ -44,6 +46,10 @@ public class EventsFragment extends Fragment {
 
         if (savedInstanceState != null) {
             Log.i("THE ONCREATEVIEW HAS", savedInstanceState.toString());
+            refreshing = savedInstanceState.getBoolean("REFRESHING");
+        }
+        else {
+            refreshing = false;
         }
 
         View view = inflater.inflate(R.layout.fragment_events, container, false);
@@ -69,7 +75,7 @@ public class EventsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.i("THE ACTIVITYCREATED HAS", savedInstanceState.getBundle("EVENT_FRAGMENT").toString());
+            Log.i("THE ACTIVITYCREATED HAS", savedInstanceState.toString());
         }
     }
 
@@ -83,7 +89,7 @@ public class EventsFragment extends Fragment {
             ArrayList<Race> races = args.getParcelableArrayList("EVENT_LIST");
             eventAdapter.addAll(races);
         }
-        if (args.getString("REFRESHING") != null) {
+        if (refreshing) {
             startRefreshing();
         }
     }
@@ -108,9 +114,7 @@ public class EventsFragment extends Fragment {
         bundle.putString("STRING", "HELLO NURSE");
         outState.putBundle("EVENT_FRAGMENT", bundle);
         outState.putString("EVENTS_FRAGMENT", "HELLO WORLLLLLD");
-        if (getView().findViewById(R.id.loadingPanel).getVisibility() == View.VISIBLE) {
-            getArguments().putString("REFRESHING", "true");
-        }
+        outState.putBoolean("REFRESHING", refreshing);
     }
 
     @Override
@@ -144,6 +148,7 @@ public class EventsFragment extends Fragment {
     }
 
     public void startRefreshing() {
+        refreshing = true;
         ListView listView = (ListView) getView().findViewById(R.id.event_listview);
         listView.setVisibility(View.GONE);
         RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.loadingPanel);
@@ -151,12 +156,10 @@ public class EventsFragment extends Fragment {
     }
 
     public void finishRefreshing() {
+        refreshing = false;
         RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.loadingPanel);
         relativeLayout.setVisibility(View.GONE);
         ListView listView = (ListView) getView().findViewById(R.id.event_listview);
         listView.setVisibility(View.VISIBLE);
-        if (getArguments().getString("REFRESHING") != null) {
-            getArguments().remove("REFRESHING");
-        }
     }
 }

@@ -82,9 +82,8 @@ public class OkHttpHandler {
 
     public static void main(String [ ] args)
     {
-        System.out.print("Hello World");
-        //OkHttpHandler handler = new OkHttpHandler();
-        //handler.getEvents("http://localhost:5000/users/PKLee/events");
+        int i = 6%5+1;
+        System.out.println(Integer.toString(i));
     }
 }
 

@@ -1,5 +1,7 @@
 package com.example.peter.racemanager;
 
+import com.example.peter.racemanager.models.Race;
+
 import java.util.Comparator;
 
 /**

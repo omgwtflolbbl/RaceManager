@@ -1,12 +1,7 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +10,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
+import com.example.peter.racemanager.fragments.EventsFragment;
+import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.fragments.RaceFragment;
+import com.example.peter.racemanager.fragments.RaceInfoFragment;
+import com.example.peter.racemanager.fragments.SettingsFragment;
+import com.example.peter.racemanager.fragments.TaskFragment;
+import com.example.peter.racemanager.models.Race;
 
 import java.util.ArrayList;
 

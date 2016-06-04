@@ -1,14 +1,17 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.RaceDateComparator;
+import com.example.peter.racemanager.models.Race;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ public class EventAdapter extends ArrayAdapter<Race> {
         }
         // Get views that need to be populated
         RelativeLayout labelLayout = (RelativeLayout) view.findViewById(R.id.event_label_layout);
+        //CardView labelLayout = (CardView) view.findViewById(R.id.event_label_layout);
         TextView raceName = (TextView) view.findViewById(R.id.event_label_race_name);
         TextView raceDateTime = (TextView) view.findViewById(R.id.event_label_race_datetime);
 

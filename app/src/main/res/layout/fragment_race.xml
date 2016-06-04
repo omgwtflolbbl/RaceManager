@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.peter.racemanager.RaceFragment">
+    tools:context=".fragments.RaceFragment">
 
     <Button
         android:id="@+id/race_info_button"

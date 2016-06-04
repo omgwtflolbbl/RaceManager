@@ -1,4 +1,4 @@
-package com.example.peter.racemanager;
+package com.example.peter.racemanager.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
