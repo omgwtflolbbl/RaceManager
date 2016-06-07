@@ -5,5 +5,8 @@
 
     <solid android:color="@color/cyaninner" />
     <stroke android:width="1dip" android:color="@color/cyan"/>
+    <corners
+        android:topRightRadius="7dp">
+    </corners>
 
 </shape>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -11,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.ScheduleViewPager;
 import com.example.peter.racemanager.adapters.RoundAdapter;
+import com.example.peter.racemanager.adapters.RoundAdapter2;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Round;
 
@@ -30,6 +33,7 @@ public class RaceScheduleFragment extends Fragment {
     private static final String RACE_KEY = "RACE_KEY";
 
     private RoundAdapter roundAdapter;
+    private RoundAdapter2 roundAdapter2;
     private Race race;
 
     private OnFragmentInteractionListener mListener;
@@ -67,9 +71,10 @@ public class RaceScheduleFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
-        ListView listView = (ListView) view.findViewById(R.id.schedule_listview);
-        roundAdapter = new RoundAdapter(getActivity(), new ArrayList<Round>());
-        listView.setAdapter(roundAdapter);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.schedule_viewpager);
+        roundAdapter2 = new RoundAdapter2(getChildFragmentManager(), race.getRounds());
+        viewPager.setAdapter(roundAdapter2);
+        viewPager.setPageMargin(12);
 
         return view;
     }
@@ -77,8 +82,10 @@ public class RaceScheduleFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        ViewPager viewPager = (ViewPager) getView().findViewById(R.id.schedule_viewpager);
+        viewPager.getLayoutParams().height = ViewPager.LayoutParams.WRAP_CONTENT;
 
-        roundAdapter.addAll(race.getRounds());
+        //roundAdapter.addAll(race.getRounds());
     }
 
     public void onButtonPressed(Uri uri) {

@@ -175,18 +175,6 @@ public class Race implements Parcelable {
         this.raceId = raceId;
     }
 
-    protected Race(Parcel in) {
-        title = in.readString();
-        siteURL = in.readString();
-        date = in.readString();
-        time = in.readString();
-        blockquote = in.readString();
-        description = in.readString();
-        raceId = in.readString();
-        long tmpDateAndTime = in.readLong();
-        dateAndTime = tmpDateAndTime != -1 ? new Date(tmpDateAndTime) : null;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -194,21 +182,35 @@ public class Race implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(siteURL);
-        dest.writeString(date);
-        dest.writeString(time);
-        dest.writeString(blockquote);
-        dest.writeString(description);
-        dest.writeString(raceId);
-        dest.writeLong(dateAndTime != null ? dateAndTime.getTime() : -1L);
+        dest.writeString(this.title);
+        dest.writeString(this.siteURL);
+        dest.writeString(this.date);
+        dest.writeString(this.time);
+        dest.writeString(this.blockquote);
+        dest.writeString(this.description);
+        dest.writeString(this.raceId);
+        dest.writeList(this.rounds);
+        dest.writeLong(this.dateAndTime != null ? this.dateAndTime.getTime() : -1);
     }
 
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Race> CREATOR = new Parcelable.Creator<Race>() {
+    protected Race(Parcel in) {
+        this.title = in.readString();
+        this.siteURL = in.readString();
+        this.date = in.readString();
+        this.time = in.readString();
+        this.blockquote = in.readString();
+        this.description = in.readString();
+        this.raceId = in.readString();
+        this.rounds = new ArrayList<Round>();
+        in.readList(this.rounds, Round.class.getClassLoader());
+        long tmpDateAndTime = in.readLong();
+        this.dateAndTime = tmpDateAndTime == -1 ? null : new Date(tmpDateAndTime);
+    }
+
+    public static final Creator<Race> CREATOR = new Creator<Race>() {
         @Override
-        public Race createFromParcel(Parcel in) {
-            return new Race(in);
+        public Race createFromParcel(Parcel source) {
+            return new Race(source);
         }
 
         @Override

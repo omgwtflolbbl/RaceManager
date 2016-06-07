@@ -1,4 +1,17 @@
-<LinearLayout
+<android.support.v4.view.ViewPager
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/schedule_viewpager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="18dp"
+    android:paddingRight="18dp"
+    android:clipToPadding="false">
+
+</android.support.v4.view.ViewPager>
+
+
+<!--<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/schedule_layout"
@@ -14,4 +27,6 @@
         android:layout_height="wrap_content"
         android:scrollbars="none"/>
 
-</LinearLayout>
+
+
+</LinearLayout>-->

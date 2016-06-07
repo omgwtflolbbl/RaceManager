@@ -1,5 +1,6 @@
 package com.example.peter.racemanager.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,15 +17,17 @@ import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceInfoFragment;
+import com.example.peter.racemanager.fragments.RaceScheduleCardFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.services.StatusService;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String username = sharedPreferences.getString("username","PKLee");
                 Log.i("USERNAME", username);
-                String URL = String.format("http://645e5647.ngrok.io/users/%s/events", username);
+                String URL = String.format("http://71338ac4.ngrok.io/users/%s/events", username);
                 taskFragment.getEvents(URL);
                 EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
                 eventsFragment.startRefreshing();
@@ -112,6 +115,9 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.fragment_container, raceFragment)
                 .addToBackStack(null)
                 .commit();
+        String URL = String.format("http://71338ac4.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        Log.i("SERVICE URL", URL);
+        taskFragment.getEventIDFromURL(URL);
     }
 
     // RaceFragment callbacks
@@ -162,6 +168,12 @@ public class MainActivity extends AppCompatActivity
                 eventsFragment.finishRefreshing();
             }
         });
+    }
+
+    public void StartStatusService(String eventId) {
+        Intent intent = new Intent(this, StatusService.class);
+        intent.putExtra("EVENT_ID", eventId);
+        this.startService(intent);
     }
 
 

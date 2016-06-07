@@ -54,7 +54,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
         GridLayout.LayoutParams roundNumberParams = new GridLayout.LayoutParams();
         roundNumberParams.rowSpec = GridLayout.spec(0);
         roundNumberParams.columnSpec = GridLayout.spec(0, 3);
-        roundNumberParams.setGravity(Gravity.FILL);
+        roundNumberParams.setGravity(Gravity.FILL_VERTICAL);
         roundNumber.setLayoutParams(roundNumberParams);
         gridLayout.addView(roundNumber);
 
@@ -90,7 +90,7 @@ public class RoundAdapter extends ArrayAdapter<Round> {
                 String slot = slots.next();
                 TextView slotText = new TextView(getContext());
                 slotText.setTag(String.format("%d %d %d", position + 1, i + 1, j + 1));
-                slotText.setText(String.format("%s\n%s", heat.getUsername(slot), heat.getFrequency(slot)));
+                slotText.setText(String.format("%s\n%s", heat.getSlot(slot).getUsername(), heat.getSlot(slot).getFrequency()));
                 slotText.setGravity(Gravity.CENTER_VERTICAL);
                 slotText.setBackgroundResource(i % 2 == 0 ? R.drawable.border_blue : R.drawable.border_cyan);
                 GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();

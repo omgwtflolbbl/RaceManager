@@ -1,5 +1,8 @@
 package com.example.peter.racemanager.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,18 +16,16 @@ import java.util.Set;
 /**
  * Created by Peter on 6/1/2016.
  */
-public class Heat {
-    private Map<String, Map<String, String>> heatMap;
+public class Heat implements Parcelable {
+    private Map<String, Slot> heatMap;
 
     public Heat(JSONObject json) {
-        heatMap = new LinkedHashMap<String, Map<String, String>>();
+        heatMap = new LinkedHashMap<String, Slot>();
         try {
             Iterator<String> keys = json.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                Map<String, String> slot = new HashMap<String, String>();
-                slot.put("username", json.getJSONObject(key).getString("username"));
-                slot.put("frequency", json.getJSONObject(key).getString("frequency"));
+                Slot slot = new Slot(json.getJSONObject(key).getString("username"), json.getJSONObject(key).getString("frequency"));
                 heatMap.put(key, slot);
             }
         } catch (JSONException e) {
@@ -40,63 +41,87 @@ public class Heat {
         return heatMap.size();
     }
 
-    public String getUsername(String slot) {
-        return heatMap.get(slot).get("username");
-    }
-
-    public String getFrequency(String slot) {
-        return heatMap.get(slot).get("frequency");
-    }
-
-    public Map<String, String> getSlot(String slot) {
-        return heatMap.get(slot);
+    public Slot getSlot(String slotKey) {
+        return heatMap.get(slotKey);
     }
 
     public String findRacerInHeat(String username) {
         Iterator<String> slots = getKeys().iterator();
         while (slots.hasNext()) {
-            String slot = slots.next();
-            if (heatMap.get(slot).get("username").equals(username)) {
-                return slot;
+            String slotKey = slots.next();
+            if (getSlot(slotKey).getUsername().equals(username)) {
+                return slotKey;
             }
         }
         return null;
     }
 
-    public void removeRacerFromSlot(String slot) {
-        heatMap.get(slot).put("username", "EMPTY");
+    public void removeRacerFromSlot(String slotKey) {
+        getSlot(slotKey).setUsername("EMPTY");
     }
 
     public void removeRacerFromHeat(String username) {
-        String slot = findRacerInHeat(username);
-        if (slot != null) {
-            removeRacerFromSlot(slot);
+        String slotKey = findRacerInHeat(username);
+        if (slotKey != null) {
+            removeRacerFromSlot(slotKey);
         }
     }
 
-    public void changeRacer(String slot, String username) {
-        heatMap.get(slot).put("username", username);
+    public void changeRacer(String slotKey, String username) {
+        getSlot(slotKey).setUsername(username);
     }
 
-    public void changeFrequency(String slot, String frequency) {
-        heatMap.get(slot).put("frequency", frequency);
+    public void changeFrequency(String slotKey, String frequency) {
+        getSlot(slotKey).setFrequency(frequency);
     }
 
-    public void addSlot(String slot, String frequency) {
-        Map<String, String> newSlot = new HashMap<String, String>();
-        newSlot.put("frequency", frequency);
-        newSlot.put("username", "EMPTY");
-        heatMap.put(slot, newSlot);
+    public void addSlot(String slotKey) {
+        Slot slot = new Slot();
+        heatMap.put(slotKey, slot);
     }
 
-    public void addSlot(String slot, String frequency, String username) {
-        Map<String, String> newSlot = new HashMap<String, String>();
-        newSlot.put("frequency", frequency);
-        newSlot.put("username", username);
-        heatMap.put(slot, newSlot);
+    public void addSlot(String slotKey, String frequency, String username) {
+        Slot slot = new Slot(username, frequency);
+        heatMap.put(slotKey, slot);
     }
 
-    public void removeSlot(String slot) {
-        heatMap.remove(slot);
+    public void removeSlot(String slotKey) {
+        heatMap.remove(slotKey);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.heatMap.size());
+        for (Map.Entry<String, Slot> entry : this.heatMap.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeParcelable(entry.getValue(), flags);
+        }
+    }
+
+    protected Heat(Parcel in) {
+        int heatMapSize = in.readInt();
+        this.heatMap = new HashMap<String, Slot>(heatMapSize);
+        for (int i = 0; i < heatMapSize; i++) {
+            String key = in.readString();
+            Slot value = in.readParcelable(Slot.class.getClassLoader());
+            this.heatMap.put(key, value);
+        }
+    }
+
+    public static final Creator<Heat> CREATOR = new Creator<Heat>() {
+        @Override
+        public Heat createFromParcel(Parcel source) {
+            return new Heat(source);
+        }
+
+        @Override
+        public Heat[] newArray(int size) {
+            return new Heat[size];
+        }
+    };
 }

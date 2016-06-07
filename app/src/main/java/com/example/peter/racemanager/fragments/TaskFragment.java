@@ -45,6 +45,7 @@ public class TaskFragment extends Fragment {
      */
     public interface TaskCallbacks {
         void OnRacesLoaded(ArrayList<Race> races);
+        void StartStatusService(String eventId);
     }
 
     private OkHttpClient client;
@@ -149,27 +150,43 @@ public class TaskFragment extends Fragment {
                         Log.i("HOLD UP", raceJson.getJSONArray("raceStructure").toString());
                         List<Round> rounds = new Round().fromJsonToRoundList(raceJson.getJSONArray("raceStructure"));
 
-                        /*Map raceStructure = new HashMap();
-                        JSONArray raceStructJson = raceJson.getJSONArray("raceStructure");
-                        JSONObject round;
-                        JSONObject heat;
-                        for (int i = 0, numRounds = raceStructJson.length(); i < numRounds; i++) {
-                            round = raceStructJson.getJSONObject(i);
-                            Iterator<String> heats = round.keys();
-                            while (heats.hasNext()) {
-
-                            }
-                        }*/
-
-
                         Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds);
                         races.add(race);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //Log.i("I GOT TO THE END", result);
                 mListener.OnRacesLoaded(races);
+            }
+        });
+    }
+
+    public void getEventIDFromURL(String URL) {
+        Request request = new Request.Builder()
+                .url(URL)
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+
+                String result = null;
+                //System.out.println(response.body().string());
+                try {
+                    JSONObject json = new JSONObject(response.body().string());
+                    result = json.getString("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mListener.StartStatusService(result);
             }
         });
     }
