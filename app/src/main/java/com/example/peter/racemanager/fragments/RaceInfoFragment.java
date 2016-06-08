@@ -51,7 +51,7 @@ public class RaceInfoFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_refresh).setVisible(false);
+        //menu.findItem(R.id.action_refresh).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -61,7 +62,7 @@ public class RaceScheduleFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_refresh).setVisible(false);
+        //menu.findItem(R.id.action_refresh).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -72,7 +73,7 @@ public class RaceScheduleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.schedule_viewpager);
-        roundAdapter2 = new RoundAdapter2(getChildFragmentManager(), race.getRounds());
+        roundAdapter2 = new RoundAdapter2(getChildFragmentManager(), race.getRounds(), race.getStatus());
         viewPager.setAdapter(roundAdapter2);
         viewPager.setPageMargin(12);
 
@@ -124,5 +125,19 @@ public class RaceScheduleFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public Race getRace() {
+        return race;
+    }
+
+    public void updateRoundAdapter(final Race race) {
+        this.race = race;
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                roundAdapter2.update(race.getRounds(), race.getStatus());
+            }
+        });
+        Log.i("HEY DUDE", "DID ANYTHING HAPPEN?!?");
     }
 }

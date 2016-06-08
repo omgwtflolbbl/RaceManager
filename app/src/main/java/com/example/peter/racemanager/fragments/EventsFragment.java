@@ -84,7 +84,7 @@ public class EventsFragment extends Fragment {
         super.onStart();
 
         Bundle args = getArguments();
-        if (args.size()>0) {
+        if (args.size() > 0) {
             eventAdapter.clear();
             ArrayList<Race> races = args.getParcelableArrayList("EVENT_LIST");
             eventAdapter.addAll(races);

@@ -1,11 +1,14 @@
 package com.example.peter.racemanager.services;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,10 +35,10 @@ public class StatusService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("SERVICE INTENT HAS", intent.getStringExtra("EVENT_ID"));
         String eventId = intent.getStringExtra("EVENT_ID");
+        String username = intent.getStringExtra("USERNAME");
         Toast.makeText(getApplicationContext(), eventId, Toast.LENGTH_SHORT).show();
-        ServiceRunnable runnable = new ServiceRunnable(eventId);
+        ServiceRunnable runnable = new ServiceRunnable(eventId, username);
         Thread thread = new Thread(runnable);
         thread.start();
 
@@ -58,9 +61,11 @@ public class StatusService extends Service {
     private class ServiceRunnable implements Runnable {
         private DatabaseReference mDatabase;
         private String eventId;
+        private String username;
 
-        public ServiceRunnable(String eventId) {
+        public ServiceRunnable(String eventId, String username) {
             this.eventId = eventId;
+            this.username = username;
             mDatabase = FirebaseDatabase.getInstance().getReference(String.format("events/%s/status", eventId));
         }
 
@@ -68,15 +73,10 @@ public class StatusService extends Service {
             mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.i("SNAPSHOT", dataSnapshot.toString());
                     String status = (String) dataSnapshot.child("status").getValue();
                     String racing = (String) dataSnapshot.child("racing").getValue();
                     String spotter = (String) dataSnapshot.child("spotting").getValue();
                     String onDeck = (String) dataSnapshot.child("ondeck").getValue();
-                    String value = (String) dataSnapshot.child("spotting").getValue();
-                    Log.i("SERVICE UPDATE", value == null ? "It's null":value);
-
-
 
                     dosomething(status, racing, spotter, onDeck);
                 }
@@ -89,7 +89,10 @@ public class StatusService extends Service {
         }
 
         public void dosomething(String status, String racing, String spotter, String onDeck) {
-            Log.i("SOMETHING", "WAS DONE");
+            Log.i("SERVICE USERNAME", username);
+            racing = racing.replace(username, String.format("<b>%s</b>", username));
+            spotter = spotter.replace(username, String.format("<b>%s</b>", username));
+            onDeck = onDeck.replace(username, String.format("<b>%s</b>", username));
             String notificationText = String.format("<b>Status</b>: %s<br><b>Racing</b>: %s<br><b>Spotting</b>: %s<br><b>On Deck</b>: %s", status, racing, spotter, onDeck);
             Notification notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("RACE MANAGER UPDATE")

@@ -2,12 +2,15 @@ package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.models.Race;
@@ -22,11 +25,13 @@ import com.example.peter.racemanager.models.Race;
  * create an instance of this fragment.
  */
 public class RaceFragment extends Fragment implements View.OnClickListener {
+
     private final static String RACE_KEY = "race_key";
+    private final static String RUNNING_KEY = "running_key";
 
     private Race race;
-
     private OnRaceListener mListener;
+    private Handler handler = new Handler();
 
     public RaceFragment() {
         // Required empty public constructor
@@ -51,7 +56,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_refresh).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -61,6 +65,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_race, container, false);
+        Button countdownButton = (Button) view.findViewById(R.id.race_countdown_button);
+        countdownButton.setOnClickListener(this);
         Button raceInfoButton = (Button) view.findViewById(R.id.race_info_button);
         raceInfoButton.setOnClickListener(this);
         Button raceScheduleButton = (Button) view.findViewById(R.id.race_schedule_button);
@@ -71,13 +77,45 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        Bundle args = getArguments();
+        if (args.size() > 0) {
+            race = args.getParcelable(RACE_KEY);
+        }
+        if (race.getStatus().split(" ")[0].equals("R")) {
+            Log.i("TARGET TIME IS", Long.toString(race.getTargetTime()));
+            Log.i("CURRENT TIME IS", Long.toString(System.currentTimeMillis()));
+            startTimer(race.getTargetTime());
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(RACE_KEY, race);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        getArguments().putParcelable(RACE_KEY, race);
+    }
+
+    @Override
     public void onClick(View view) {
         onButtonPressed(view, race);
     }
 
     public void onButtonPressed(View view, Race race) {
-        if (mListener != null) {
+        if (mListener != null && view.getId() != R.id.race_countdown_button) {
             mListener.onRaceButton(view, race);
+        }
+        else {
+            onTimerButton();
         }
     }
 
@@ -98,17 +136,63 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnRaceListener {
         void onRaceButton(View view, Race race);
+    }
+
+    public Race getRace() {
+        return race;
+    }
+
+    public void setRace(Race race) {
+        this.race = race;
+    }
+
+    private void onTimerButton() {
+        TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
+        handler.post(new countdownRunnable(textView, System.currentTimeMillis() + 120*1000));
+    }
+
+    public void startTimer(long targetTime) {
+        TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
+        handler.post(new countdownRunnable(textView, targetTime));
+    }
+
+    private class countdownRunnable implements Runnable {
+
+        final private TextView textView;
+        final private long targetTime;
+        private long currentTime;
+
+        public countdownRunnable(TextView textView, long targetTime) {
+            this.textView = textView;
+            this.targetTime = targetTime;
+        }
+
+        public void run() {
+            currentTime = targetTime - System.currentTimeMillis();
+            final String text = String.format("%02d:%02d:%03d", (currentTime / 60000) % 60, (currentTime / 1000) % 60, currentTime % 1000);
+            if (currentTime > 0) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (textView != null) {
+                                textView.setText(text);
+                            }
+                        }
+                    });
+                    handler.postDelayed(this, 33);
+                }
+            }
+            else {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText("00:00:000");
+                    }
+                });
+            }
+        }
     }
 }

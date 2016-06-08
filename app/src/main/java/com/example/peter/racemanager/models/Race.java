@@ -25,12 +25,14 @@ public class Race implements Parcelable {
     private String description;
     private String raceId = "";
     private ArrayList<Round> rounds;
+    private String status;
+    private Long targetTime;
 
     private Date dateAndTime;
 
     public Race(){}
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String status, Long targetTime) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -39,9 +41,11 @@ public class Race implements Parcelable {
         this.description = description;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
+        this.status = status;
+        this.targetTime = targetTime;
     }
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String raceId) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String status, Long targetTime, String raceId) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -51,6 +55,8 @@ public class Race implements Parcelable {
         this.setDateAndTime(date, time);
         this.rounds = rounds;
         this.raceId = raceId;
+        this.status = status;
+        this.targetTime = targetTime;
     }
     // Tentative constructor for Race objects being built directly from some JSON received from Firebase
     // Will obviously need to be reworked, either here or on the flask server that actually sends it
@@ -125,6 +131,14 @@ public class Race implements Parcelable {
         return rounds;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public Long getTargetTime() {
+        return targetTime;
+    }
+
     public String getRaceId() {
         return raceId;
     }
@@ -171,6 +185,14 @@ public class Race implements Parcelable {
         this.rounds = rounds;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setTargetTime(Long targetTime) {
+        this.targetTime = targetTime;
+    }
+
     public void setRaceId(String raceId) {
         this.raceId = raceId;
     }
@@ -189,7 +211,9 @@ public class Race implements Parcelable {
         dest.writeString(this.blockquote);
         dest.writeString(this.description);
         dest.writeString(this.raceId);
-        dest.writeList(this.rounds);
+        dest.writeTypedList(this.rounds);
+        dest.writeString(this.status);
+        dest.writeValue(this.targetTime);
         dest.writeLong(this.dateAndTime != null ? this.dateAndTime.getTime() : -1);
     }
 
@@ -201,8 +225,9 @@ public class Race implements Parcelable {
         this.blockquote = in.readString();
         this.description = in.readString();
         this.raceId = in.readString();
-        this.rounds = new ArrayList<Round>();
-        in.readList(this.rounds, Round.class.getClassLoader());
+        this.rounds = in.createTypedArrayList(Round.CREATOR);
+        this.status = in.readString();
+        this.targetTime = (Long) in.readValue(Long.class.getClassLoader());
         long tmpDateAndTime = in.readLong();
         this.dateAndTime = tmpDateAndTime == -1 ? null : new Date(tmpDateAndTime);
     }

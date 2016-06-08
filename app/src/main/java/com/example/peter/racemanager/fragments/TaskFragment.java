@@ -46,6 +46,8 @@ public class TaskFragment extends Fragment {
     public interface TaskCallbacks {
         void OnRacesLoaded(ArrayList<Race> races);
         void StartStatusService(String eventId);
+        void UpdateRaceSchedule(Race race);
+        void UpdateRace(Race race);
     }
 
     private OkHttpClient client;
@@ -149,8 +151,10 @@ public class TaskFragment extends Fragment {
                         String siteURL = raceJson.getString("eventURL");
                         Log.i("HOLD UP", raceJson.getJSONArray("raceStructure").toString());
                         List<Round> rounds = new Round().fromJsonToRoundList(raceJson.getJSONArray("raceStructure"));
+                        String status = raceJson.getJSONObject("status").getString("status");
+                        Long targetTime = raceJson.getJSONObject("status").getLong("time");
 
-                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds);
+                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, status, targetTime);
                         races.add(race);
                     }
                 } catch (JSONException e) {
@@ -161,7 +165,19 @@ public class TaskFragment extends Fragment {
         });
     }
 
-    public void getEventIDFromURL(String URL) {
+    public void startServiceProcess(String URL) {
+        getEventIDFromURL(URL, "SERVICE");
+    }
+
+    public void getUpdatedRaceSchedule(String URL) {
+        getEventIDFromURL(URL, "RACE_SCHEDULE");
+    }
+
+    public void getUpdatedRace(String URL) {
+        getEventIDFromURL(URL, "RACE");
+    }
+
+    public void getEventIDFromURL(String URL, final String method) {
         Request request = new Request.Builder()
                 .url(URL)
                 .build();
@@ -186,9 +202,74 @@ public class TaskFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mListener.StartStatusService(result);
+                sendEventID(result, method);
             }
         });
+    }
+
+    public void sendEventID(String eventId, String method) {
+        switch (method) {
+            case "SERVICE": mListener.StartStatusService(eventId);
+                break;
+            case "RACE_SCHEDULE": String URL = String.format("http://dbcf20b1.ngrok.io/events/%s", eventId);
+                getUpdatedRaceData(URL, "RACE_SCHEDULE");
+                break;
+            case "RACE": String URL2 = String.format("http://dbcf20b1.ngrok.io/events/%s", eventId);
+                getUpdatedRaceData(URL2, "RACE");
+                break;
+            default: Log.i("WHAT THE HECK MAN", "YOU CRAZY");
+                break;
+        }
+    }
+
+    public void getUpdatedRaceData(String URL, final String method) {
+        Request request = new Request.Builder()
+                .url(URL)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Race race = new Race();
+
+                try {
+                    JSONObject json = new JSONObject(response.body().string());
+                    String title = json.getString("title");
+                    String date = json.getString("date");
+                    String time = json.getString("time");
+                    String blockquote = json.getString("blockquote");
+                    String description = json.getString("description");
+                    String siteURL = json.getString("eventURL");
+                    List<Round> rounds = new Round().fromJsonToRoundList(json.getJSONArray("raceStructure"));
+                    String status = json.getJSONObject("status").getString("status");
+                    Long targetTime = json.getJSONObject("status").getLong("time");
+
+                    race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, status, targetTime);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                sendRace(race, method);
+            }
+        });
+    }
+
+    public void sendRace(Race race, String method){
+        switch (method) {
+            case "RACE_SCHEDULE": mListener.UpdateRaceSchedule(race);
+                break;
+            case "RACE": mListener.UpdateRace(race);
+            default:
+                break;
+        }
     }
 
 }

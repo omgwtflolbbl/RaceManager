@@ -6,6 +6,20 @@
     android:orientation="vertical"
     tools:context=".fragments.RaceFragment">
 
+    <TextView
+        android:id="@+id/race_timer_ticker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="48dp"
+        android:text="MM:SS:MSS" />
+
+    <Button
+        android:id="@+id/race_countdown_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Countdown 2M"/>
+
     <Button
         android:id="@+id/race_info_button"
         android:layout_width="match_parent"
