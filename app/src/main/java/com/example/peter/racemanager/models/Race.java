@@ -99,6 +99,41 @@ public class Race implements Parcelable {
         return races;
     }
 
+    public int[] getNext(int[] current) {
+        // First check if the "current" is even valid and return invalid if not
+        if (current[0] == -1 || current[1] == -1) {
+            return new int[] {-1, -1};
+        }
+
+        int cRound = current[0];
+        int cHeat = current[1];
+        int[] next = new int[2];
+
+        // Check if current round has another heat
+        int cRoundSize = rounds.get(cRound).length();
+        if (cHeat + 1 < cRoundSize) {
+            // Success, so get the next heat index
+            next[0] = cRound;
+            next[1] = cHeat + 1;
+        }
+        // There are no more heats left in the current round
+        // Check if the race has another round
+        else if (cRound + 1 < rounds.size()) {
+            // Success, but check to make sure there is actually a heat in this round
+            if (rounds.get(cRound + 1).length() > 0) {
+                // Success, so get the first heat in the next round
+                next[0] = cRound + 1;
+                next[1] = 0;
+            }
+        }
+        // There are no more valid heats or rounds left
+        else {
+            next[0] = -1;
+            next[1] = -1;
+        }
+        return next;
+    }
+
     public String getTitle() {
         return title;
     }

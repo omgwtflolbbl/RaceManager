@@ -26,18 +26,20 @@ import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TaskFragment.TaskCallbacks} interface
- * to handle interaction events.
- * Use the {@link TaskFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This task fragment is meant to be attached the the main activity and retained across all
+ * configuration changes. This task fragment should be used for any kind of network calls that
+ * are not directly needed to be handled via the long running service class StatusService. This
+ * means calls to the server and to Firebase in order to get things like lists of races, event data,
+ * user info, etc.
  */
 public class TaskFragment extends Fragment {
     /**
@@ -54,6 +56,8 @@ public class TaskFragment extends Fragment {
     private TaskCallbacks mListener;
 
     private static final String CLIENT_KEY = "client_key";
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
     public TaskFragment() {
         // Required empty public constructor
@@ -110,8 +114,6 @@ public class TaskFragment extends Fragment {
     }
 
     public void getEvents(String URL) {
-        Log.i("LOGTAG", "WOOHOO");
-        Log.i("LOGTAG", URL);
         Request request = new Request.Builder()
                 .url(URL)
                 .build();
@@ -149,10 +151,9 @@ public class TaskFragment extends Fragment {
                         String blockquote = raceJson.getString("blockquote");
                         String description = raceJson.getString("description");
                         String siteURL = raceJson.getString("eventURL");
-                        Log.i("HOLD UP", raceJson.getJSONArray("raceStructure").toString());
                         List<Round> rounds = new Round().fromJsonToRoundList(raceJson.getJSONArray("raceStructure"));
                         String status = raceJson.getJSONObject("status").getString("status");
-                        Long targetTime = raceJson.getJSONObject("status").getLong("time");
+                        Long targetTime = Long.parseLong(raceJson.getJSONObject("status").getString("time"));
 
                         Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, status, targetTime);
                         races.add(race);
@@ -195,7 +196,6 @@ public class TaskFragment extends Fragment {
 
 
                 String result = null;
-                //System.out.println(response.body().string());
                 try {
                     JSONObject json = new JSONObject(response.body().string());
                     result = json.getString("id");
@@ -211,10 +211,10 @@ public class TaskFragment extends Fragment {
         switch (method) {
             case "SERVICE": mListener.StartStatusService(eventId);
                 break;
-            case "RACE_SCHEDULE": String URL = String.format("http://dbcf20b1.ngrok.io/events/%s", eventId);
+            case "RACE_SCHEDULE": String URL = String.format("http://effbb36d.ngrok.io/events/%s", eventId);
                 getUpdatedRaceData(URL, "RACE_SCHEDULE");
                 break;
-            case "RACE": String URL2 = String.format("http://dbcf20b1.ngrok.io/events/%s", eventId);
+            case "RACE": String URL2 = String.format("http://effbb36d.ngrok.io/events/%s", eventId);
                 getUpdatedRaceData(URL2, "RACE");
                 break;
             default: Log.i("WHAT THE HECK MAN", "YOU CRAZY");
@@ -250,7 +250,7 @@ public class TaskFragment extends Fragment {
                     String siteURL = json.getString("eventURL");
                     List<Round> rounds = new Round().fromJsonToRoundList(json.getJSONArray("raceStructure"));
                     String status = json.getJSONObject("status").getString("status");
-                    Long targetTime = json.getJSONObject("status").getLong("time");
+                    Long targetTime = Long.parseLong(json.getJSONObject("status").getString("time"));
 
                     race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, status, targetTime);
 
@@ -270,6 +270,33 @@ public class TaskFragment extends Fragment {
             default:
                 break;
         }
+    }
+
+    public void updateDatabaseRaceStatus(String URL, String status, String racers, String spotters, String onDeck, Long targetTimer) throws IOException {
+        RequestBody body = new FormBody.Builder()
+                .add("status", status)
+                .add("racing", racers)
+                .add("spotting", spotters)
+                .add("ondeck", onDeck)
+                .add("time", Long.toString(targetTimer))
+                .build();
+        //RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            }
+        });
     }
 
 }

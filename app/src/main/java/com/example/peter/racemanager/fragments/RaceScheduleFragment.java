@@ -32,10 +32,11 @@ import java.util.ArrayList;
  */
 public class RaceScheduleFragment extends Fragment {
     private static final String RACE_KEY = "RACE_KEY";
+    private static final String ROTATED_KEY = "ROTATED_KEY";
 
-    private RoundAdapter roundAdapter;
     private RoundAdapter2 roundAdapter2;
     private Race race;
+    private Boolean rotated = false;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,6 +57,9 @@ public class RaceScheduleFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             race = getArguments().getParcelable(RACE_KEY);
+        }
+        if (savedInstanceState != null) {
+            rotated = savedInstanceState.getBoolean(ROTATED_KEY);
         }
         setHasOptionsMenu(true);
     }
@@ -86,12 +90,27 @@ public class RaceScheduleFragment extends Fragment {
         ViewPager viewPager = (ViewPager) getView().findViewById(R.id.schedule_viewpager);
         viewPager.getLayoutParams().height = ViewPager.LayoutParams.WRAP_CONTENT;
 
-        //roundAdapter.addAll(race.getRounds());
+        if (!rotated) {
+            mListener.refreshRaceScheduleFragment(race);
+        }
+        else {
+            rotated = false;
+        }
     }
 
-    public void onButtonPressed(Uri uri) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (getActivity().isChangingConfigurations()) {
+            rotated = true;
+        }
+
+        outState.putBoolean(ROTATED_KEY, rotated);
+    }
+
+    public void onButtonPressed(Race race) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.refreshRaceScheduleFragment(race);
         }
     }
 
@@ -112,19 +131,9 @@ public class RaceScheduleFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void refreshRaceScheduleFragment(Race race);
     }
 
     public Race getRace() {
@@ -138,6 +147,5 @@ public class RaceScheduleFragment extends Fragment {
                 roundAdapter2.update(race.getRounds(), race.getStatus());
             }
         });
-        Log.i("HEY DUDE", "DID ANYTHING HAPPEN?!?");
     }
 }

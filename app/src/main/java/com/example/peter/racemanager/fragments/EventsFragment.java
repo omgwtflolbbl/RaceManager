@@ -22,11 +22,13 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class EventsFragment extends Fragment {
-    private static final String RACES_KEY = "RACES_KEY";
+    private static final String REFRESHING_KEY = "REFRESHING_KEY";
+    private static final String ROTATED_KEY = "ROTATED_KEY";
 
     private EventAdapter eventAdapter;
     OnEventSelectedListener mListener;
     private boolean refreshing;
+    private boolean rotated = false;
 
     public EventsFragment() {
         setArguments(new Bundle());
@@ -45,8 +47,8 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
-            Log.i("THE ONCREATEVIEW HAS", savedInstanceState.toString());
-            refreshing = savedInstanceState.getBoolean("REFRESHING");
+            refreshing = savedInstanceState.getBoolean(REFRESHING_KEY);
+            rotated = savedInstanceState.getBoolean(ROTATED_KEY);
         }
         else {
             refreshing = false;
@@ -72,14 +74,6 @@ public class EventsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            Log.i("THE ACTIVITYCREATED HAS", savedInstanceState.toString());
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
 
@@ -91,6 +85,12 @@ public class EventsFragment extends Fragment {
         }
         if (refreshing) {
             startRefreshing();
+        }
+        if (!rotated) {
+            mListener.refreshEventsFragment(this);
+        }
+        else {
+            rotated = false;
         }
     }
 
@@ -110,11 +110,14 @@ public class EventsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        if (getActivity().isChangingConfigurations()) {
+            rotated = true;
+        }
+
         Bundle bundle = new Bundle();
-        bundle.putString("STRING", "HELLO NURSE");
         outState.putBundle("EVENT_FRAGMENT", bundle);
-        outState.putString("EVENTS_FRAGMENT", "HELLO WORLLLLLD");
-        outState.putBoolean("REFRESHING", refreshing);
+        outState.putBoolean(REFRESHING_KEY, refreshing);
+        outState.putBoolean(ROTATED_KEY, rotated);
     }
 
     @Override
@@ -129,7 +132,8 @@ public class EventsFragment extends Fragment {
     }
 
     public interface OnEventSelectedListener {
-        public void onEventSelected(Race race);
+        void onEventSelected(Race race);
+        void refreshEventsFragment(EventsFragment fragment);
     }
 
     public void clearEventAdapter() {

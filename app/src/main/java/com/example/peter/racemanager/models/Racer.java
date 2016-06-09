@@ -14,7 +14,7 @@ public class Racer {
     private String frequency;
 
     public Racer() {
-        this.username = "EMPTY";
+        this.username = "EMPTY SLOT";
         this.firstName = "-";
         this.lastName = "-";
         this.racerUrl = "-";

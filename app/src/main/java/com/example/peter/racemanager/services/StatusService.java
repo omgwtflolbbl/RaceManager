@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
@@ -31,10 +32,12 @@ public class StatusService extends Service {
     @Override
     public void onCreate() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Log.i("SERVICEINFORMATION", "SERVICE IS BEING CREATED");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
         String eventId = intent.getStringExtra("EVENT_ID");
         String username = intent.getStringExtra("USERNAME");
         Toast.makeText(getApplicationContext(), eventId, Toast.LENGTH_SHORT).show();
@@ -55,6 +58,7 @@ public class StatusService extends Service {
     @Override
     public void onDestroy() {
         Toast.makeText(getApplicationContext(), "SERVICE IS ENDING", Toast.LENGTH_SHORT).show();
+        Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
         super.onDestroy();
     }
 
@@ -62,6 +66,7 @@ public class StatusService extends Service {
         private DatabaseReference mDatabase;
         private String eventId;
         private String username;
+        private ValueEventListener listener;
 
         public ServiceRunnable(String eventId, String username) {
             this.eventId = eventId;
@@ -70,7 +75,7 @@ public class StatusService extends Service {
         }
 
         public void run() {
-            mDatabase.addValueEventListener(new ValueEventListener() {
+            listener = mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String status = (String) dataSnapshot.child("status").getValue();
@@ -78,7 +83,8 @@ public class StatusService extends Service {
                     String spotter = (String) dataSnapshot.child("spotting").getValue();
                     String onDeck = (String) dataSnapshot.child("ondeck").getValue();
 
-                    dosomething(status, racing, spotter, onDeck);
+                    sendNotification(status, racing, spotter, onDeck);
+                    startAutomaticUpdate();
                 }
 
                 @Override
@@ -88,8 +94,7 @@ public class StatusService extends Service {
             });
         }
 
-        public void dosomething(String status, String racing, String spotter, String onDeck) {
-            Log.i("SERVICE USERNAME", username);
+        public void sendNotification(String status, String racing, String spotter, String onDeck) {
             racing = racing.replace(username, String.format("<b>%s</b>", username));
             spotter = spotter.replace(username, String.format("<b>%s</b>", username));
             onDeck = onDeck.replace(username, String.format("<b>%s</b>", username));
@@ -104,6 +109,12 @@ public class StatusService extends Service {
                     .build();
 
             notificationManager.notify(NOTIFICATION_ID, notification);
-        }
+
+    }
+
+    public void startAutomaticUpdate() {
+        Log.i("SERVICEINFORMATION", "BROADCASTING");
+        Intent intent = new Intent("RaceManager-Update-Info");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

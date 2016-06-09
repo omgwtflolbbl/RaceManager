@@ -11,12 +11,12 @@ public class Slot implements Parcelable {
     private String frequency;
 
     public Slot() {
-        username = "EMPTY";
+        username = "EMPTY SLOT";
         frequency = "UNDEFINED";
     }
 
     public Slot(String frequency) {
-        username = "EMPTY";
+        username = "EMPTY SLOT";
         this.frequency = frequency;
     }
 

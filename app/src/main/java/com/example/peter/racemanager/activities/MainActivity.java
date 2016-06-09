@@ -1,13 +1,18 @@
 package com.example.peter.racemanager.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +30,7 @@ import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.services.StatusService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -33,12 +39,42 @@ public class MainActivity extends AppCompatActivity
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
     private TaskFragment taskFragment;
+    private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("STATUS RECEIVER", "RECEIVED MESSAGE");
+            startUpdating();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TODO: FIGURE OUT WHAT THIS ACTUALLY DOES?!?
+        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                // fix our issues for static variables
+                //isActive = false;
+
+                // fix our issues for sharedpreferences
+                SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
+                SharedPreferences.Editor ed = sp.edit();
+                ed.putBoolean("active", false);
+                ed.commit();
+
+                // Handle everthing else
+                defaultHandler.uncaughtException(thread, throwable);
+            }
+        });
+
+        // Set up broadcaster receiver so that we know when to we are getting important status updates
+        LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));
+
         setContentView(R.layout.activity_main);
-        Log.i("LOGTAG69", "I AM HERE");
 
         EventsFragment eventsFragment = null;
 
@@ -81,31 +117,30 @@ public class MainActivity extends AppCompatActivity
                 Fragment fragment = getActiveFragment();
 
                 if (fragment instanceof EventsFragment) {
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                     String username = sharedPreferences.getString("username","PKLee");
                     Log.i("USERNAME", username);
-                    String URL = String.format("http://dbcf20b1.ngrok.io/users/%s/events", username);
+                    String URL = String.format("http://effbb36d.ngrok.io/users/%s/events", username);
                     taskFragment.getEvents(URL);
                     EventsFragment eventsFragment = (EventsFragment) fragment;
-                    eventsFragment.startRefreshing();
+                    eventsFragment.startRefreshing();*/
+                    refreshEventsFragment((EventsFragment) fragment);
                 }
                 else if (fragment instanceof RaceScheduleFragment) {
-                    Log.i("FRAGMENTNAME", fragment.getClass().toString());
+                    /*Log.i("FRAGMENTNAME", fragment.getClass().toString());
                     RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) fragment;
                     Race race = raceScheduleFragment.getRace();
-                    String URL = String.format("http://dbcf20b1.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
-                    taskFragment.getUpdatedRaceSchedule(URL);/*
-                    getSupportFragmentManager().beginTransaction()
-                            .detach(raceScheduleFragment)
-                            .attach(raceScheduleFragment)
-                            .commit();*/
+                    String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+                    taskFragment.getUpdatedRaceSchedule(URL);*/
+                    refreshRaceScheduleFragment(((RaceScheduleFragment) fragment).getRace());
                 }
                 else if (fragment instanceof RaceFragment) {
-                    Log.i("FRAGMENTNAME", fragment.getClass().toString());
+                    /*Log.i("FRAGMENTNAME", fragment.getClass().toString());
                     RaceFragment raceFragment = (RaceFragment) fragment;
                     Race race = raceFragment.getRace();
-                    String URL = String.format("http://dbcf20b1.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
-                    taskFragment.getUpdatedRace(URL);
+                    String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+                    taskFragment.getUpdatedRace(URL);*/
+                    refreshRaceFragment(((RaceFragment) fragment).getRace());
                 }
                 else {
                     Log.i("FRAGMENTNAME", fragment.getClass().toString());
@@ -124,18 +159,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        // Store our shared preference
+        SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("active", true);
+        ed.commit();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Store our shared preference
+        SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("active", false);
+        ed.commit();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(statusReceiver);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         getSupportFragmentManager().putFragment(outState, "EVENTS_FRAGMENT", getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT"));
     }
-
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
-        eventsFragment.clearEventAdapter();
-    }*/
 
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -143,6 +200,43 @@ public class MainActivity extends AppCompatActivity
         }
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
         return getSupportFragmentManager().findFragmentByTag(tag);
+    }
+
+    // ALL REFRESH STUFF
+    public void startUpdating() {
+        Fragment fragment = getActiveFragment();
+
+        if (fragment instanceof EventsFragment) {
+            refreshEventsFragment((EventsFragment) fragment);
+        }
+        else if (fragment instanceof RaceScheduleFragment) {
+            refreshRaceScheduleFragment(((RaceScheduleFragment) fragment).getRace());
+        }
+        else if (fragment instanceof RaceFragment) {
+            refreshRaceFragment(((RaceFragment) fragment).getRace());
+        }
+        else {
+            Log.i("FRAGMENTNAME", fragment.getClass().toString());
+        }
+    }
+
+    public void refreshEventsFragment(EventsFragment fragment) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = sharedPreferences.getString("username","PKLee");
+        Log.i("USERNAME", username);
+        String URL = String.format("http://effbb36d.ngrok.io/users/%s/events", username);
+        taskFragment.getEvents(URL);
+        fragment.startRefreshing();
+    }
+
+    public void refreshRaceFragment(Race race) {
+        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        taskFragment.getUpdatedRace(URL);
+    }
+
+    public void refreshRaceScheduleFragment(Race race) {
+        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        taskFragment.getUpdatedRaceSchedule(URL);
     }
 
     // EventsFragment callbacks
@@ -155,7 +249,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
 
 
-        String URL = String.format("http://dbcf20b1.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
         taskFragment.startServiceProcess(URL);
 
         Log.i("TARGETTIMER", Long.toString(System.currentTimeMillis() + 180*1000));
@@ -191,6 +285,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTimer) {
+        String URL = String.format("http://effbb36d.ngrok.io/update/race/status/%s", race.getSiteURL().split(".com/")[1]);
+        try {
+            Log.i("TRY TO START", "PRCOESS WITH TASKFRAGMENT");
+            taskFragment.updateDatabaseRaceStatus(URL, status, racers, spotters, onDeck, targetTimer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // RaceInfoFragment callbacks
     public void onRaceInfo(Race race) {
 
     }
@@ -221,15 +327,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void UpdateRaceSchedule(Race race) {
-        RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) getActiveFragment();
-        raceScheduleFragment.updateRoundAdapter(race);
-        Log.i("HEY MAN", "THE THING SHOULD BE UPDATED BY NOW");
+        if (getActiveFragment() instanceof RaceScheduleFragment) {
+            RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) getActiveFragment();
+            raceScheduleFragment.updateRoundAdapter(race);
+        }
     }
 
     public void UpdateRace(Race race) {
-        RaceFragment raceFragment = (RaceFragment) getActiveFragment();
-        raceFragment.setRace(race);
-        raceFragment.startTimer(race.getTargetTime());
+        if (getActiveFragment() instanceof  RaceFragment) {
+            RaceFragment raceFragment = (RaceFragment) getActiveFragment();
+            raceFragment.setRace(race);
+            raceFragment.checkRaceStatus();
+        }
+
     }
 
 

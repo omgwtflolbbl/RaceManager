@@ -57,7 +57,7 @@ public class Heat implements Parcelable {
     }
 
     public void removeRacerFromSlot(String slotKey) {
-        getSlot(slotKey).setUsername("EMPTY");
+        getSlot(slotKey).setUsername("EMPTY SLOT");
     }
 
     public void removeRacerFromHeat(String username) {
@@ -87,6 +87,21 @@ public class Heat implements Parcelable {
 
     public void removeSlot(String slotKey) {
         heatMap.remove(slotKey);
+    }
+
+    public String getAllRacers() {
+        Iterator<String> slots = getKeys().iterator();
+        String racers = "";
+        while (slots.hasNext()) {
+            String slotKey = slots.next();
+            if (!getSlot(slotKey).getUsername().equals("EMPTY SLOT")) {
+                racers = racers + ", " + getSlot(slotKey).getUsername();
+            }
+        }
+        if (!racers.equals("")) {
+            racers = racers.substring(2);
+        }
+        return racers;
     }
 
     @Override

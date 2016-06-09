@@ -21,6 +21,7 @@ import java.util.Date;
  * Created by Peter on 5/27/2016.
  */
 public class EventAdapter extends ArrayAdapter<Race> {
+
     public EventAdapter(Context context, ArrayList<Race> races) {
         super(context, 0, races);
     }
