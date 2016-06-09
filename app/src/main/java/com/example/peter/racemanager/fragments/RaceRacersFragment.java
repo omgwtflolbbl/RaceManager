@@ -28,6 +28,7 @@ public class RaceRacersFragment extends Fragment {
     private RacerListAdapter racerListAdapter;
     private Race race;
     private Boolean rotated;
+    private Racer racer;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,7 +62,7 @@ public class RaceRacersFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_race_racers, container, false);
 
         ListView listView = (ListView) view.findViewById(R.id.race_racers_listview);
-        racerListAdapter = new RacerListAdapter(getActivity(), new ArrayList()<Racer>);
+        racerListAdapter = new RacerListAdapter(getActivity(), new ArrayList<Racer>());
         listView.setAdapter(racerListAdapter);
 
         // On click, get the race from that position and open a dialog box?

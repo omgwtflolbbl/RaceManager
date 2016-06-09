@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.models.Race;
@@ -29,6 +31,18 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         if (view == null) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.event_label, parent, false);
         }
+
+        ImageView imageView = (ImageView) view.findViewById(R.id.race_racers_photo);
+
+        TextView usernameText = (TextView) view.findViewById(R.id.race_racers_username);
+        usernameText.setText(racer.getUsername());
+
+        TextView frequencyText = (TextView) view.findViewById(R.id.race_racers_frequency);
+        frequencyText.setText(racer.getFrequency());
+
+        TextView pointsText = (TextView) view.findViewById(R.id.race_racers_points);
+        pointsText.setText(racer.getPoints());
+
         return view;
     }
 }

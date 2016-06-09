@@ -109,7 +109,7 @@ public class StatusService extends Service {
                     .build();
 
             notificationManager.notify(NOTIFICATION_ID, notification);
-
+        }
     }
 
     public void startAutomaticUpdate() {

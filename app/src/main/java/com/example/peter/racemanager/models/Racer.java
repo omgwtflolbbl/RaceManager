@@ -12,6 +12,7 @@ public class Racer {
     private String droneName;
     private String dronePhoto;
     private String frequency;
+    private int points;
 
     public Racer() {
         this.username = "EMPTY SLOT";
@@ -22,6 +23,7 @@ public class Racer {
         this.droneName = "-";
         this.dronePhoto = "-";
         this.frequency = "-";
+        this.points = 0;
     }
 
     public Racer(String username, String firstname, String lastname, String racerUrl, String racerPhoto, String droneName, String dronePhoto, String frequency) {
@@ -33,6 +35,7 @@ public class Racer {
         this.droneName = droneName;
         this.dronePhoto = dronePhoto;
         this.frequency = frequency;
+        this.points = points;
     }
 
     public String getUsername() {
@@ -65,5 +68,9 @@ public class Racer {
 
     public String getFrequency() {
         return frequency;
+    }
+
+    public int getPoints() {
+        return points;
     }
 }
