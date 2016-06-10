@@ -3,6 +3,7 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -135,11 +136,11 @@ public class RaceInfoFragment extends Fragment {
 
     public void updateBlockquote(String blockquote) {
         TextView blockquoteText = (TextView) getView().findViewById(R.id.race_info_blockquote);
-        blockquoteText.setText(blockquote);
+        blockquoteText.setText(Html.fromHtml(blockquote));
     }
 
     public void updateDescription(String description) {
         TextView descriptionText = (TextView) getView().findViewById(R.id.race_info_description);
-        descriptionText.setText(description);
+        descriptionText.setText(Html.fromHtml(description));
     }
 }

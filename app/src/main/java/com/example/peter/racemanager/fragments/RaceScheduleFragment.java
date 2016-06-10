@@ -2,9 +2,11 @@ package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +19,10 @@ import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.ScheduleViewPager;
 import com.example.peter.racemanager.adapters.RoundAdapter;
 import com.example.peter.racemanager.adapters.RoundAdapter2;
+import com.example.peter.racemanager.adapters.RoundAdapter3;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Round;
+import com.example.peter.racemanager.models.Slot;
 
 import java.util.ArrayList;
 
@@ -31,7 +35,7 @@ import java.util.ArrayList;
  * Use the {@link RaceScheduleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RaceScheduleFragment extends Fragment {
+public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFragment.ChangeSlotDialogListener, RoundAdapter3.onSlotSelectListener {
     private static final String RACE_KEY = "RACE_KEY";
     private static final String ROTATED_KEY = "ROTATED_KEY";
 
@@ -134,6 +138,7 @@ public class RaceScheduleFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void refreshRaceScheduleFragment(Race race);
+        void onUpdateSlotOnServer(Race race, Slot slot, String tag);
     }
 
     public Race getRace() {
@@ -147,5 +152,29 @@ public class RaceScheduleFragment extends Fragment {
                 roundAdapter2.update(race.getRounds(), race.getStatus());
             }
         });
+    }
+
+
+
+    public void showChangeSlotDialog(View view) {
+        Log.i("DIALOG STUFF", "fads");
+        //FragmentManager fm = getParentFragment().getChildFragmentManager();
+        FragmentManager fm = getChildFragmentManager();
+        String[] tag = view.getTag().toString().split(" ");
+        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString());
+        dialog.setTargetFragment(RaceScheduleFragment.this, 300);
+        dialog.show(fm, "some_unknown_text");
+    }
+
+    public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag) {
+
+        if (remove) {
+            slot.setUsername("EMPTY SLOT");
+        }
+        else {
+            slot.setPoints(points);
+        }
+
+        mListener.onUpdateSlotOnServer(race, slot, tag);
     }
 }

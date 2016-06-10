@@ -34,7 +34,7 @@ import java.util.Iterator;
 
 /**
  */
-public class RaceScheduleCardFragment extends Fragment implements ChangeSlotDialogFragment.ChangeSlotDialogListener, RoundAdapter3.onSlotSelectListener {
+public class RaceScheduleCardFragment extends Fragment/* implements ChangeSlotDialogFragment.ChangeSlotDialogListener, RoundAdapter3.onSlotSelectListener*/ {
     private static final String ROUND_KEY = "ROUND_KEY";
     private static final String INDEX_KEY = "INDEX_KEY";
     private static final String STATUS_KEY = "STATUS_KEY";
@@ -106,7 +106,7 @@ public class RaceScheduleCardFragment extends Fragment implements ChangeSlotDial
         roundText.setText(String.format("ROUND %d", index + 1));
 
         ListView listView = (ListView) view.findViewById(R.id.race_schedule_heat_listview);
-        roundAdapter3 = new RoundAdapter3(getActivity(), (ArrayList<Heat>) round.getHeats(), index, status, this);
+        roundAdapter3 = new RoundAdapter3(getActivity(), (ArrayList<Heat>) round.getHeats(), index, status, (RaceScheduleFragment) getParentFragment());
         listView.setAdapter(roundAdapter3);
         listView.setPadding(0, 100, 0, 20);
         listView.setClipToPadding(false);
@@ -153,11 +153,13 @@ public class RaceScheduleCardFragment extends Fragment implements ChangeSlotDial
         return status;
     }
 
+    /*
     // From RoundAdapter3 interface
     @Override
     public void showChangeSlotDialog(View view) {
         Log.i("DIALOG STUFF", "fads");
-        FragmentManager fm = getChildFragmentManager();
+        //FragmentManager fm = getParentFragment().getChildFragmentManager();
+        FragmentManager fm = getFragmentManager();
         String[] tag = view.getTag().toString().split(" ");
         ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(round.getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString());
         dialog.setTargetFragment(RaceScheduleCardFragment.this, 300);
@@ -177,7 +179,7 @@ public class RaceScheduleCardFragment extends Fragment implements ChangeSlotDial
         mListener.onUpdateSlotOnServer(((RaceScheduleFragment) getParentFragment()).getRace(), slot, tag);
 
         roundAdapter3.notifyDataSetChanged();
-    }
+    }*/
 
 
 }

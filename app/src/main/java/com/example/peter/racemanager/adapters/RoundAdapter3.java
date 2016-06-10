@@ -229,11 +229,4 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
     public interface onSlotSelectListener {
         void showChangeSlotDialog(View view);
     }
-
-    /*private void showChangeSlotDialog(View view) {
-        FragmentManager fm = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-        String[] tag = view.getTag().toString().split(" ");
-        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(getItem(Integer.parseInt(tag[1])).getSlot(tag[2]));
-        dialog.setTargetFragment(view.getRootView().getContext(), 300);
-    }*/
 }
