@@ -38,6 +38,7 @@ public class StatusService extends Service {
     public void onCreate() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         threads = new ArrayList<>();
+        runnables = new ArrayList<>();
         Log.i("SERVICEINFORMATION", "SERVICE IS BEING CREATED");
     }
 
@@ -76,43 +77,59 @@ public class StatusService extends Service {
         private DatabaseReference mDatabase;
         private String eventId;
         private String username;
-        private ValueEventListener statusListener;
-        private ValueEventListener structureListener;
+        private Boolean stopped;
 
         public ServiceRunnable(String eventId, String username) {
             this.eventId = eventId;
             this.username = username;
+            this.stopped = false;
             mDatabase = FirebaseDatabase.getInstance().getReference(String.format("events/%s", eventId));
         }
 
         public void run() {
-            statusListener = mDatabase.child("status").addValueEventListener(new ValueEventListener() {
+            mDatabase.child("status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String status = (String) dataSnapshot.child("status").getValue();
-                    String racing = (String) dataSnapshot.child("racing").getValue();
-                    String spotter = (String) dataSnapshot.child("spotting").getValue();
-                    String onDeck = (String) dataSnapshot.child("ondeck").getValue();
+                    if (stopped) {
+                        mDatabase.removeEventListener(this);
+                    }
+                    else {
+                        String status = (String) dataSnapshot.child("status").getValue();
+                        String racing = (String) dataSnapshot.child("racing").getValue();
+                        String spotter = (String) dataSnapshot.child("spotting").getValue();
+                        String onDeck = (String) dataSnapshot.child("ondeck").getValue();
 
-                    sendNotification(status, racing, spotter, onDeck);
-                    startAutomaticUpdate();
+                        sendNotification(status, racing, spotter, onDeck);
+                        startAutomaticUpdate();
+                    }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.i("SERVICE ERROR", databaseError.toString());
+                    if (stopped) {
+                        mDatabase.removeEventListener(this);
+                    }
                 }
             });
 
-            structureListener = mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
+            mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    startAutomaticUpdate();
+                    if (stopped) {
+                        mDatabase.removeEventListener(this);
+                    }
+                    else {
+                        startAutomaticUpdate();
+                    }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.i("SERVICE ERROR", databaseError.toString());
+                    if (stopped) {
+                        mDatabase.removeEventListener(this);
+                    }
                 }
             });
         }
@@ -135,8 +152,7 @@ public class StatusService extends Service {
         }
 
         public void stopListeners() {
-            mDatabase.removeEventListener(statusListener);
-            mDatabase.removeEventListener(structureListener);
+            stopped = true;
         }
     }
 
