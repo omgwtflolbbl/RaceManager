@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
+    public final static String FLASK = "http://015027c0.ngrok.io";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -81,7 +82,6 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        // Add the event fragment to the "fragment_container" LinearLayout
 
     }
 
@@ -99,36 +99,21 @@ public class MainActivity extends AppCompatActivity
                 Fragment fragment = getActiveFragment();
 
                 if (fragment instanceof EventsFragment) {
-                    /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    String username = sharedPreferences.getString("username","PKLee");
-                    Log.i("USERNAME", username);
-                    String URL = String.format("http://effbb36d.ngrok.io/users/%s/events", username);
-                    taskFragment.getEvents(URL);
-                    EventsFragment eventsFragment = (EventsFragment) fragment;
-                    eventsFragment.startRefreshing();*/
                     refreshEventsFragment((EventsFragment) fragment);
                 }
                 else if (fragment instanceof RaceScheduleFragment) {
-                    /*Log.i("FRAGMENTNAME", fragment.getClass().toString());
-                    RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) fragment;
-                    Race race = raceScheduleFragment.getRace();
-                    String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
-                    taskFragment.getUpdatedRaceSchedule(URL);*/
                     refreshRaceScheduleFragment(((RaceScheduleFragment) fragment).getRace());
                 }
                 else if (fragment instanceof RaceFragment) {
-                    /*Log.i("FRAGMENTNAME", fragment.getClass().toString());
-                    RaceFragment raceFragment = (RaceFragment) fragment;
-                    Race race = raceFragment.getRace();
-                    String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
-                    taskFragment.getUpdatedRace(URL);*/
                     refreshRaceFragment(((RaceFragment) fragment).getRace());
                 }
                 else {
                     Log.i("FRAGMENTNAME", fragment.getClass().toString());
                 }
-
-
+                return true;
+            case R.id.action_stop_service:
+                Intent intent = new Intent(this, StatusService.class);
+                this.stopService(intent);
                 return true;
             case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
@@ -186,18 +171,20 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = sharedPreferences.getString("username","PKLee");
         Log.i("USERNAME", username);
-        String URL = String.format("http://b659af17.ngrok.io/users/%s/events", username);
+        Log.i("FLASK", FLASK);
+        String URL = String.format("%s/users/%s/events", FLASK, username);
+        Log.i("URL", URL);
         taskFragment.getEvents(URL);
         fragment.startRefreshing();
     }
 
     public void refreshRaceFragment(Race race) {
-        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         taskFragment.getUpdatedRace(URL);
     }
 
     public void refreshRaceScheduleFragment(Race race) {
-        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         taskFragment.getUpdatedRaceSchedule(URL);
     }
 
@@ -211,7 +198,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
 
         // Start service
-        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         taskFragment.startServiceProcess(URL);
 
         Log.i("TARGETTIMER", Long.toString(System.currentTimeMillis() + 180*1000));
@@ -251,7 +238,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTimer) {
-        String URL = String.format("http://b659af17.ngrok.io/update/race/status/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/update/race/status/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         try {
             taskFragment.updateDatabaseRaceStatus(URL, status, racers, spotters, onDeck, targetTimer);
         } catch (IOException e) {
@@ -275,7 +262,7 @@ public class MainActivity extends AppCompatActivity
 
     // RaceScheduleCardFragment callbacks
     public void onUpdateSlotOnServer(Race race, Slot slot, String tag) {
-        String URL = String.format("http://b659af17.ngrok.io/update/race/structure/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/update/race/structure/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         taskFragment.updateDatabaseRaceSlot(URL, slot, tag);
     }
 

@@ -22,10 +22,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class StatusService extends Service {
 
     private static final int NOTIFICATION_ID = 1;
     NotificationManager notificationManager;
+    private ArrayList<ServiceRunnable> runnables;
+    private ArrayList<Thread> threads;
 
     public StatusService() {
     }
@@ -33,6 +37,7 @@ public class StatusService extends Service {
     @Override
     public void onCreate() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        threads = new ArrayList<>();
         Log.i("SERVICEINFORMATION", "SERVICE IS BEING CREATED");
     }
 
@@ -44,15 +49,15 @@ public class StatusService extends Service {
         Toast.makeText(getApplicationContext(), eventId, Toast.LENGTH_SHORT).show();
         ServiceRunnable runnable = new ServiceRunnable(eventId, username);
         Thread thread = new Thread(runnable);
+        runnables.add(runnable);
+        threads.add(thread);
         thread.start();
-
 
         return Service.START_REDELIVER_INTENT;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -60,6 +65,10 @@ public class StatusService extends Service {
     public void onDestroy() {
         Toast.makeText(getApplicationContext(), "SERVICE IS ENDING", Toast.LENGTH_SHORT).show();
         Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
+        for (int i = 0; i < threads.size(); i++) {
+            runnables.get(i).stopListeners();
+            threads.get(i).interrupt();
+        }
         super.onDestroy();
     }
 
@@ -67,7 +76,8 @@ public class StatusService extends Service {
         private DatabaseReference mDatabase;
         private String eventId;
         private String username;
-        private ValueEventListener listener;
+        private ValueEventListener statusListener;
+        private ValueEventListener structureListener;
 
         public ServiceRunnable(String eventId, String username) {
             this.eventId = eventId;
@@ -76,7 +86,7 @@ public class StatusService extends Service {
         }
 
         public void run() {
-            listener = mDatabase.child("status").addValueEventListener(new ValueEventListener() {
+            statusListener = mDatabase.child("status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String status = (String) dataSnapshot.child("status").getValue();
@@ -94,7 +104,7 @@ public class StatusService extends Service {
                 }
             });
 
-            mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
+            structureListener = mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     startAutomaticUpdate();
@@ -122,6 +132,11 @@ public class StatusService extends Service {
                     .build();
 
             notificationManager.notify(NOTIFICATION_ID, notification);
+        }
+
+        public void stopListeners() {
+            mDatabase.removeEventListener(statusListener);
+            mDatabase.removeEventListener(structureListener);
         }
     }
 

@@ -34,7 +34,7 @@ import java.util.Iterator;
 
 /**
  */
-public class RaceScheduleCardFragment extends Fragment/* implements ChangeSlotDialogFragment.ChangeSlotDialogListener, RoundAdapter3.onSlotSelectListener*/ {
+public class RaceScheduleCardFragment extends Fragment {
     private static final String ROUND_KEY = "ROUND_KEY";
     private static final String INDEX_KEY = "INDEX_KEY";
     private static final String STATUS_KEY = "STATUS_KEY";
@@ -152,34 +152,4 @@ public class RaceScheduleCardFragment extends Fragment/* implements ChangeSlotDi
     public String getStatus() {
         return status;
     }
-
-    /*
-    // From RoundAdapter3 interface
-    @Override
-    public void showChangeSlotDialog(View view) {
-        Log.i("DIALOG STUFF", "fads");
-        //FragmentManager fm = getParentFragment().getChildFragmentManager();
-        FragmentManager fm = getFragmentManager();
-        String[] tag = view.getTag().toString().split(" ");
-        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(round.getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString());
-        dialog.setTargetFragment(RaceScheduleCardFragment.this, 300);
-        dialog.show(fm, "some_unknown_text");
-    }
-
-    // From ChangeSlotDialogFragment interface
-    @Override
-    public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag) {
-        if (remove) {
-            slot.setUsername("EMPTY SLOT");
-        }
-        else {
-            slot.setPoints(points);
-        }
-
-        mListener.onUpdateSlotOnServer(((RaceScheduleFragment) getParentFragment()).getRace(), slot, tag);
-
-        roundAdapter3.notifyDataSetChanged();
-    }*/
-
-
 }

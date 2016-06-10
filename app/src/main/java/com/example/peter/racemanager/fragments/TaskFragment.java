@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.activities.MainActivity;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Round;
@@ -222,10 +223,10 @@ public class TaskFragment extends Fragment {
         switch (method) {
             case "SERVICE": mListener.StartStatusService(eventId);
                 break;
-            case "RACE_SCHEDULE": String URL = String.format("http://b659af17.ngrok.io/events/%s", eventId);
+            case "RACE_SCHEDULE": String URL = String.format("%s/events/%s", MainActivity.FLASK, eventId);
                 getUpdatedRaceData(URL, "RACE_SCHEDULE");
                 break;
-            case "RACE": String URL2 = String.format("http://b659af17.ngrok.io/events/%s", eventId);
+            case "RACE": String URL2 = String.format("%s/events/%s", MainActivity.FLASK, eventId);
                 getUpdatedRaceData(URL2, "RACE");
                 break;
             default: Log.i("WHAT THE HECK MAN", "YOU CRAZY");
