@@ -19,7 +19,7 @@
         android:paddingLeft="5dp"
         android:paddingEnd="5dp"
         android:paddingRight="5dp"
-        android:paddingTop="20dp"
+        android:paddingTop="15dp"
         android:textSize="18sp"
         android:layout_toRightOf="@+id/race_racers_photo"
         android:layout_toEndOf="@+id/race_racers_photo"
@@ -54,6 +54,6 @@
         android:textSize="18sp"
         android:gravity="center"
         android:layout_alignParentEnd="true"
-        android:text="12Pts"/>
+        android:text="12Pts" />
 
 </RelativeLayout>

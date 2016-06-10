@@ -23,18 +23,20 @@ import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceInfoFragment;
+import com.example.peter.racemanager.fragments.RaceRacersFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleCardFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
 
@@ -50,26 +52,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: FIGURE OUT WHAT THIS ACTUALLY DOES?!?
-        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable throwable) {
-                // fix our issues for static variables
-                //isActive = false;
-
-                // fix our issues for sharedpreferences
-                SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
-                SharedPreferences.Editor ed = sp.edit();
-                ed.putBoolean("active", false);
-                ed.commit();
-
-                // Handle everthing else
-                defaultHandler.uncaughtException(thread, throwable);
-            }
-        });
 
         // Set up broadcaster receiver so that we know when to we are getting important status updates
         LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));
@@ -159,29 +141,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // Store our shared preference
-        SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean("active", true);
-        ed.commit();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Store our shared preference
-        SharedPreferences sp = getSharedPreferences("OURINFO", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean("active", false);
-        ed.commit();
-
-    }
-
-    @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(statusReceiver);
         super.onDestroy();
@@ -215,8 +174,11 @@ public class MainActivity extends AppCompatActivity
         else if (fragment instanceof RaceFragment) {
             refreshRaceFragment(((RaceFragment) fragment).getRace());
         }
-        else {
+        else if (fragment instanceof RaceRacersFragment) {
             Log.i("FRAGMENTNAME", fragment.getClass().toString());
+        }
+        else {
+            //Log.i("FRAGMENTNAME", fragment.getClass().toString());
         }
     }
 
@@ -224,18 +186,18 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = sharedPreferences.getString("username","PKLee");
         Log.i("USERNAME", username);
-        String URL = String.format("http://effbb36d.ngrok.io/users/%s/events", username);
+        String URL = String.format("http://b659af17.ngrok.io/users/%s/events", username);
         taskFragment.getEvents(URL);
         fragment.startRefreshing();
     }
 
     public void refreshRaceFragment(Race race) {
-        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
         taskFragment.getUpdatedRace(URL);
     }
 
     public void refreshRaceScheduleFragment(Race race) {
-        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
         taskFragment.getUpdatedRaceSchedule(URL);
     }
 
@@ -248,8 +210,8 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack("RACE_FRAGMENT")
                 .commit();
 
-
-        String URL = String.format("http://effbb36d.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
+        // Start service
+        String URL = String.format("http://b659af17.ngrok.io/getEventIdFromURL/%s", race.getSiteURL().split(".com/")[1]);
         taskFragment.startServiceProcess(URL);
 
         Log.i("TARGETTIMER", Long.toString(System.currentTimeMillis() + 180*1000));
@@ -273,22 +235,24 @@ public class MainActivity extends AppCompatActivity
                         .replace(R.id.fragment_container, raceScheduleFragment, "RACE_SCHEDULE_FRAGMENT")
                         .addToBackStack("RACE_SCHEDULE_FRAGMENT")
                         .commit();
-                break;/*
+                break;
             case R.id.race_racers_button:
-                RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
+                RaceRacersFragment raceRacersFragment = RaceRacersFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                        .replace(R.id.fragment_container, raceInfoFragment)
+                        .replace(R.id.fragment_container, raceRacersFragment)
                         .addToBackStack(null)
                         .commit();
-                break;*/
+                break;
+            default:
+                Log.i("RACE_FRAGMENT", "Unknown button pressed");
+                break;
         }
     }
 
     public void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTimer) {
-        String URL = String.format("http://effbb36d.ngrok.io/update/race/status/%s", race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("http://b659af17.ngrok.io/update/race/status/%s", race.getSiteURL().split(".com/")[1]);
         try {
-            Log.i("TRY TO START", "PRCOESS WITH TASKFRAGMENT");
             taskFragment.updateDatabaseRaceStatus(URL, status, racers, spotters, onDeck, targetTimer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -305,16 +269,28 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void onFragmentInteraction(Race race) {
+
+    }
+
+    // RaceScheduleCardFragment callbacks
+    public void onUpdateSlotOnServer(Race race, Slot slot, String tag) {
+        String URL = String.format("http://b659af17.ngrok.io/update/race/structure/%s", race.getSiteURL().split(".com/")[1]);
+        taskFragment.updateDatabaseRaceSlot(URL, slot, tag);
+    }
+
     // TaskFragment callbacks
     public void OnRacesLoaded(final ArrayList<Race> races) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
-                eventsFragment.clearEventAdapter();
-                eventsFragment.repopulateEventAdapter(races);
-                eventsFragment.finishRefreshing();
-            }
-        });
+        if (getActiveFragment() instanceof EventsFragment) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
+                    eventsFragment.clearEventAdapter();
+                    eventsFragment.repopulateEventAdapter(races);
+                    eventsFragment.finishRefreshing();
+                }
+            });
+        }
     }
 
     public void StartStatusService(String eventId) {

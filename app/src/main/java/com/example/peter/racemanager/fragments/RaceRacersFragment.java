@@ -4,7 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,12 +25,12 @@ import java.util.ArrayList;
  */
 public class RaceRacersFragment extends Fragment {
     private static final String RACE_KEY = "RACE_KEY";
+    private static final String RACERS_KEY = "RACERS_KEY";
     private static final String ROTATED_KEY = "ROTATED_KEY";
 
     private RacerListAdapter racerListAdapter;
     private Race race;
     private Boolean rotated;
-    private Racer racer;
 
     private OnFragmentInteractionListener mListener;
 
@@ -53,6 +55,13 @@ public class RaceRacersFragment extends Fragment {
         if (savedInstanceState != null) {
             rotated = getArguments().getBoolean(ROTATED_KEY);
         }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_add_event).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -70,12 +79,62 @@ public class RaceRacersFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
                 Toast.makeText(getActivity(), racerListAdapter.getItem(i).getUsername(), Toast.LENGTH_SHORT).show();
-                Race race = (Race) adapterView.getItemAtPosition(i);
-                mListener.onFragmentInteraction(race);
+                Racer racer = (Racer) adapterView.getItemAtPosition(i);
+                //mListener.onFragmentInteraction(race);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+        ArrayList<Racer> racers = getArguments().getParcelableArrayList(RACERS_KEY);
+
+        if (racers != null) {
+            Log.i("RACE_RACERS_FRAGMENT", getArguments().toString());
+            racerListAdapter.clear();
+            racerListAdapter.addAll(racers);
+        }
+        else {
+            Log.i("RACE_RACERS_FRAGMENT", race.getRacers().get(0).getUsername() + race.getRacers().get(0).getFrequency());
+            race.calculatePoints();
+            racerListAdapter.addAll(race.getRacers());
+        }
+
+        /*
+        if (!rotated) {
+            mListener.refreshRaceRacersFragment(this);
+        }
+        else {
+            rotated = false;
+        }*/
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ArrayList<Racer> racers = new ArrayList<>();
+        for (int i = 0; i < racerListAdapter.getCount(); i++) {
+            racers.add(racerListAdapter.getItem(i));
+        }
+        getArguments().putParcelableArrayList(RACERS_KEY, racers);
+        getArguments().putParcelable(RACE_KEY, race);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (getActivity().isChangingConfigurations()) {
+            rotated = true;
+        }
+
+        outState.putBoolean(ROTATED_KEY, rotated);
     }
 
     public void onButtonPressed(Race race) {

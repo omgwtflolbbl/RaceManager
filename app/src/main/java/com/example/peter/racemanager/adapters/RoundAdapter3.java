@@ -1,9 +1,12 @@
 package com.example.peter.racemanager.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
@@ -16,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.fragments.ChangeSlotDialogFragment;
 import com.example.peter.racemanager.models.Heat;
 
 import java.util.ArrayList;
@@ -26,12 +30,14 @@ import java.util.Iterator;
  */
 public class RoundAdapter3 extends ArrayAdapter<Heat> {
     private int roundIndex;
+    private onSlotSelectListener mListener;
     private String status;
 
-    public RoundAdapter3 (Context context, ArrayList<Heat> heats, int roundIndex, String status) {
+    public RoundAdapter3 (Context context, ArrayList<Heat> heats, int roundIndex, String status, onSlotSelectListener mListener) {
         super(context, 0, heats);
         this.roundIndex = roundIndex;
         this.status = status;
+        this.mListener = mListener;
     }
 
     @Override
@@ -119,11 +125,12 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
 
         int j = 0;
 
+        // Create TextView for each slot
         while (slots.hasNext()) {
             String slot = slots.next();
             TextView slotText = new TextView(getContext());
             slotText.setTag(String.format("%d %d %s", roundIndex, position, slot));
-            slotText.setText(String.format("%s\n%s", heat.getSlot(slot).getUsername(), heat.getSlot(slot).getFrequency()));
+            slotText.setText(String.format("%s\n%s (%d Pt.)", heat.getSlot(slot).getUsername(), heat.getSlot(slot).getFrequency(), heat.getSlot(slot).getPoints()));
             slotText.setWidth(0);
             slotText.setGravity(Gravity.CENTER);
             if (j == 0) {
@@ -145,7 +152,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i("TEXTVIEW PRESSED", view.getTag().toString());
+                    mListener.showChangeSlotDialog(view);
                 }
             });
             GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();
@@ -218,4 +225,15 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             default: return R.drawable.slot_text_grey_br;
         }
     }
+
+    public interface onSlotSelectListener {
+        void showChangeSlotDialog(View view);
+    }
+
+    /*private void showChangeSlotDialog(View view) {
+        FragmentManager fm = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+        String[] tag = view.getTag().toString().split(" ");
+        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(getItem(Integer.parseInt(tag[1])).getSlot(tag[2]));
+        dialog.setTargetFragment(view.getRootView().getContext(), 300);
+    }*/
 }

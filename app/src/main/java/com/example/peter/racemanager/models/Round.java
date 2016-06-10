@@ -65,11 +65,11 @@ public class Round implements Parcelable {
         }
     }
 
-    public String findRacerInRound(String username) {
+    public Slot findRacerInRound(String username) {
         List<String> entries = new ArrayList<String>();
         for (int i = 0, size = heats.size(); i <  size; i++) {
             if (heats.get(i).findRacerInHeat(username) != null) {
-                return Integer.toString(i+1) + " " + heats.get(i).findRacerInHeat(username);
+                return heats.get(i).getSlot(heats.get(i).findRacerInHeat(username));
             }
         }
         return null;

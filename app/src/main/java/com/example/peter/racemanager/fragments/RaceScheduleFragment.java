@@ -3,6 +3,7 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -66,7 +67,7 @@ public class RaceScheduleFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        //menu.findItem(R.id.action_refresh).setVisible(false);
+        menu.findItem(R.id.action_add_event).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -132,7 +133,6 @@ public class RaceScheduleFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void refreshRaceScheduleFragment(Race race);
     }
 

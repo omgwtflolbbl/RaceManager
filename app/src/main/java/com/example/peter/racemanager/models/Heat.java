@@ -25,7 +25,7 @@ public class Heat implements Parcelable {
             Iterator<String> keys = json.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                Slot slot = new Slot(json.getJSONObject(key).getString("username"), json.getJSONObject(key).getString("frequency"));
+                Slot slot = new Slot(json.getJSONObject(key).getString("username"), json.getJSONObject(key).getString("frequency"), Integer.parseInt(json.getJSONObject(key).getString("points")));
                 heatMap.put(key, slot);
             }
         } catch (JSONException e) {

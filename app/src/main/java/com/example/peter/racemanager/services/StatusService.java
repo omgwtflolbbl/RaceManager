@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
@@ -71,11 +72,11 @@ public class StatusService extends Service {
         public ServiceRunnable(String eventId, String username) {
             this.eventId = eventId;
             this.username = username;
-            mDatabase = FirebaseDatabase.getInstance().getReference(String.format("events/%s/status", eventId));
+            mDatabase = FirebaseDatabase.getInstance().getReference(String.format("events/%s", eventId));
         }
 
         public void run() {
-            listener = mDatabase.addValueEventListener(new ValueEventListener() {
+            listener = mDatabase.child("status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String status = (String) dataSnapshot.child("status").getValue();
@@ -84,6 +85,18 @@ public class StatusService extends Service {
                     String onDeck = (String) dataSnapshot.child("ondeck").getValue();
 
                     sendNotification(status, racing, spotter, onDeck);
+                    startAutomaticUpdate();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.i("SERVICE ERROR", databaseError.toString());
+                }
+            });
+
+            mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
                     startAutomaticUpdate();
                 }
 

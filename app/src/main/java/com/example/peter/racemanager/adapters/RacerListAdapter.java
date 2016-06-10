@@ -1,6 +1,7 @@
 package com.example.peter.racemanager.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         Racer racer = getItem(position);
         // Check if the existing view is being used, otherwise inflate the view
         if (view == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.event_label, parent, false);
+            view = LayoutInflater.from(getContext()).inflate(R.layout.racer_list_label, parent, false);
         }
 
         ImageView imageView = (ImageView) view.findViewById(R.id.race_racers_photo);
@@ -41,7 +42,7 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         frequencyText.setText(racer.getFrequency());
 
         TextView pointsText = (TextView) view.findViewById(R.id.race_racers_points);
-        pointsText.setText(racer.getPoints());
+        pointsText.setText(Integer.toString(racer.getPoints()) + " Pt.");
 
         return view;
     }

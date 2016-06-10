@@ -15,6 +15,7 @@
     <color name="lightblue">#03A9F4</color>
     <color name="lightblueinner">#40C4FF</color>
     <color name="cyaninner">#84FFFF</color>
+    <color name="expblue">#33b5e5</color>
     <color name="blue50">#E3F2FD</color>
     <color name="blue100">#BBDEFB</color>
     <color name="blue200">#90CAF9</color>
@@ -25,6 +26,8 @@
     <color name="blue700">#1976D2</color>
     <color name="blue800">#1565C0</color>
     <color name="blue900">#0D47A1</color>
+    <color name="blueA200">#448AFF</color>
+    <color name="blueA400">#2979FF</color>
     <color name="pinkA100">#FF80AB</color>
     <color name="pinkA200">#FF4081</color>
     <color name="pinkA400">#F50057</color>

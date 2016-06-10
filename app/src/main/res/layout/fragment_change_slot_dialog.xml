@@ -1,0 +1,87 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:context="com.example.peter.racemanager.fragments.ChangeSlotDialogFragment">
+
+    <EditText
+        android:id="@+id/dialog_change_slot_points"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:background="@android:color/transparent"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingTop="10dp"
+        android:textSize="48sp"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:text="00" />
+
+    <TextView
+        android:id="@+id/dialog_change_slot_subtract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_toLeftOf="@+id/dialog_change_slot_points"
+        android:layout_toStartOf="@+id/dialog_change_slot_points"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="  &lt;"
+        android:scaleY="1.5"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/dialog_change_slot_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_toRightOf="@+id/dialog_change_slot_points"
+        android:layout_toEndOf="@+id/dialog_change_slot_points"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="48sp"
+        android:scaleY="1.5"
+        android:text=">  " />
+
+    <TextView
+        android:id="@+id/dialog_change_slot_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_below="@+id/dialog_change_slot_points"
+        android:layout_toStartOf="@+id/dialog_change_slot_save"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/expblue"
+        android:text="CANCEL" />
+
+    <TextView
+        android:id="@+id/dialog_change_slot_save"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_below="@+id/dialog_change_slot_points"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/expblue"
+        android:text="UPDATE" />
+
+</RelativeLayout>

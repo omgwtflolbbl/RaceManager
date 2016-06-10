@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by Peter on 5/27/2016.
@@ -25,6 +26,7 @@ public class Race implements Parcelable {
     private String description;
     private String raceId = "";
     private ArrayList<Round> rounds;
+    private ArrayList<Racer> racers;
     private String status;
     private Long targetTime;
 
@@ -32,20 +34,21 @@ public class Race implements Parcelable {
 
     public Race(){}
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String status, Long targetTime) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, String status, Long targetTime) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
         this.time = time;
         this.blockquote = blockquote;
         this.description = description;
+        this.racers = racers;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
         this.status = status;
         this.targetTime = targetTime;
     }
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, String status, Long targetTime, String raceId) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, String status, Long targetTime, String raceId) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -54,6 +57,7 @@ public class Race implements Parcelable {
         this.description = description;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
+        this.racers = racers;
         this.raceId = raceId;
         this.status = status;
         this.targetTime = targetTime;
@@ -134,6 +138,24 @@ public class Race implements Parcelable {
         return next;
     }
 
+    // Calculate all the point totals and update accordingly. In the future only the admin will need
+    // to call this, but for now just call it anytime it is actually necessary to use total point
+    // values.
+    // TODO: This should return a new list of users (or have getRacers called to pull update)
+    public void calculatePoints() {
+        for (int i = 0; i < getRacers().size(); i++) {
+            String username = getRacers().get(i).getUsername();
+            int total = 0;
+            for (int j = 0; j < getRounds().size(); j++) {
+                Slot slot = getRounds().get(j).findRacerInRound(username);
+                if (slot != null) {
+                    total = total + slot.getPoints();
+                }
+            }
+            getRacers().get(i).setPoints(total);
+        }
+    }
+
     public String getTitle() {
         return title;
     }
@@ -164,6 +186,10 @@ public class Race implements Parcelable {
 
     public ArrayList<Round> getRounds() {
         return rounds;
+    }
+
+    public ArrayList<Racer> getRacers() {
+        return racers;
     }
 
     public String getStatus() {
@@ -220,6 +246,10 @@ public class Race implements Parcelable {
         this.rounds = rounds;
     }
 
+    public void setRacers(ArrayList<Racer> racers) {
+        this.racers = racers;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -247,6 +277,7 @@ public class Race implements Parcelable {
         dest.writeString(this.description);
         dest.writeString(this.raceId);
         dest.writeTypedList(this.rounds);
+        dest.writeTypedList(this.racers);
         dest.writeString(this.status);
         dest.writeValue(this.targetTime);
         dest.writeLong(this.dateAndTime != null ? this.dateAndTime.getTime() : -1);
@@ -261,6 +292,7 @@ public class Race implements Parcelable {
         this.description = in.readString();
         this.raceId = in.readString();
         this.rounds = in.createTypedArrayList(Round.CREATOR);
+        this.racers = in.createTypedArrayList(Racer.CREATOR);
         this.status = in.readString();
         this.targetTime = (Long) in.readValue(Long.class.getClassLoader());
         long tmpDateAndTime = in.readLong();
