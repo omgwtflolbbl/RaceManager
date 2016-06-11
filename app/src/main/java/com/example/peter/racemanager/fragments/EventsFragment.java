@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
@@ -86,6 +87,9 @@ public class EventsFragment extends Fragment {
         if (refreshing) {
             startRefreshing();
         }
+        else{
+            emptyCheck();
+        }
         if (!rotated) {
             mListener.refreshEventsFragment(this);
         }
@@ -144,6 +148,18 @@ public class EventsFragment extends Fragment {
     public void repopulateEventAdapter(ArrayList<Race> races) {
         eventAdapter.addAll(races);
         eventAdapter.notifyDataSetChanged();
+        emptyCheck();
+    }
+
+    public void emptyCheck() {
+        TextView emptyText = (TextView) getView().findViewById(R.id.event_empty_text);
+        if (eventAdapter.getCount() == 0) {
+            Log.i("EVENTS", "NO RACES FOUND");
+            emptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyText.setVisibility(View.GONE);
+        }
     }
 
     public void addToEventAdapter(Race race) {

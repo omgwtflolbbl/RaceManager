@@ -44,10 +44,8 @@ public class StatusService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
         String eventId = intent.getStringExtra("EVENT_ID");
         String username = intent.getStringExtra("USERNAME");
-        Toast.makeText(getApplicationContext(), eventId, Toast.LENGTH_SHORT).show();
         ServiceRunnable runnable = new ServiceRunnable(eventId, username);
         Thread thread = new Thread(runnable);
         runnables.add(runnable);
@@ -73,6 +71,7 @@ public class StatusService extends Service {
         super.onDestroy();
     }
 
+    // Runnable will listen for changes and send notifications/trigger updates as needed
     private class ServiceRunnable implements Runnable {
         private DatabaseReference mDatabase;
         private String eventId;
@@ -87,12 +86,16 @@ public class StatusService extends Service {
         }
 
         public void run() {
+            // Listens for changes to a specific race's status so that users can automatically know
+            // what stage of the race we're at
             mDatabase.child("status").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    // For removal
                     if (stopped) {
                         mDatabase.removeEventListener(this);
                     }
+                    // Sends notification and begins update process
                     else {
                         String status = (String) dataSnapshot.child("status").getValue();
                         String racing = (String) dataSnapshot.child("racing").getValue();
@@ -113,9 +116,13 @@ public class StatusService extends Service {
                 }
             });
 
+            // Listens for any changes to the actual structure of the race. This means point updates,
+            // moved racers, changed frequencies, whatever. Should NOT create a notification, only
+            // a silent update.
             mDatabase.child("raceStructure").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    // For removal
                     if (stopped) {
                         mDatabase.removeEventListener(this);
                     }
@@ -134,6 +141,8 @@ public class StatusService extends Service {
             });
         }
 
+        // Builds a notification and sends it to be viewed.
+        // TODO: Open RaceManager from notification press
         public void sendNotification(String status, String racing, String spotter, String onDeck) {
             racing = racing.replace(username, String.format("<b>%s</b>", username));
             spotter = spotter.replace(username, String.format("<b>%s</b>", username));
@@ -151,11 +160,14 @@ public class StatusService extends Service {
             notificationManager.notify(NOTIFICATION_ID, notification);
         }
 
+        // For removal
         public void stopListeners() {
             stopped = true;
         }
     }
 
+    // Sends broadcast to be picked up by MainActivity. The MainActivity should then sort out how to
+    // update based on current screen via MainActivity.startUpdating.
     public void startAutomaticUpdate() {
         Log.i("SERVICEINFORMATION", "BROADCASTING");
         Intent intent = new Intent("RaceManager-Update-Info");

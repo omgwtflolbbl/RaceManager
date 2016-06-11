@@ -1,6 +1,7 @@
 package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -154,8 +156,6 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         });
     }
 
-
-
     public void showChangeSlotDialog(View view) {
         Log.i("DIALOG STUFF", "fads");
         //FragmentManager fm = getParentFragment().getChildFragmentManager();
@@ -176,5 +176,21 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         }
 
         mListener.onUpdateSlotOnServer(race, slot, tag);
+    }
+
+    // Check what this user can actually see. Probably need to break this up into two parts so that
+    // one part checks it, and the other actually does something based on that (in case I need to
+    // check permissions elsewhere like if a user can open a dialog or something).
+    public Boolean checkPermissions() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String username = sharedPreferences.getString("username", null);
+        if (race.getAdmins().contains(username)) {
+            // YER A WIZARD HARRY
+            return true;
+        }
+        else {
+            // FILTHY COMMONER
+            return false;
+        }
     }
 }

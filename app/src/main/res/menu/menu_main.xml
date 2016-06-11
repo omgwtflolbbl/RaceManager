@@ -11,6 +11,14 @@
         android:title="Add"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/action_logout"
+        android:title="Logout"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_logout_complete"
+        android:title="Full Logout"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_stop_service"
         android:title="Stop Service"
         app:showAsAction="never" />

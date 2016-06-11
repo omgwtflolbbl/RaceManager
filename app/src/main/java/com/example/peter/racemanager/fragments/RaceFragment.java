@@ -1,10 +1,12 @@
 package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,6 +95,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
             race = args.getParcelable(RACE_KEY);
         }
         checkRaceStatus();
+        onChangedViewPermissions();
         if (!rotated) {
             mListener.refreshRaceFragment(race);
         }
@@ -151,7 +154,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     public interface OnRaceListener {
         void onRaceButton(View view, Race race);
-        //void onSendStatusUpdate(Race race, String json);
         void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTime);
         void refreshRaceFragment(Race race);
     }
@@ -230,8 +232,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
             }
         }
 
-
-
         // If the race is not already finished, start process for sending update to Firebase
         if (!status.equals("F")) {
             // Figure out the target time based on the text input
@@ -290,5 +290,32 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
                 });
             }
         }
+    }
+
+    // Decide change what can be seen
+    public void onChangedViewPermissions() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (checkPermissions()) {
+                    getView().findViewById(R.id.race_countdown_button).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.race_time_input).setVisibility(View.VISIBLE);
+                }
+                else {
+                    getView().findViewById(R.id.race_countdown_button).setVisibility(View.GONE);
+                    getView().findViewById(R.id.race_time_input).setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    // Check what this user can actually see. Probably need to break this up into two parts so that
+    // one part checks it, and the other actually does something based on that (in case I need to
+    // check permissions elsewhere like if a user can open a dialog or something).
+    public Boolean checkPermissions() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String username = sharedPreferences.getString("username", null);
+        return race.getAdmins().contains(username);
+
     }
 }

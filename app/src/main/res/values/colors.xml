@@ -40,6 +40,8 @@
     <color name="bluegrey500">#607D8B</color>
     <color name="bluegrey900">#263238</color>
     <color name="white">#FFFFFF</color>
+    <color name="overlay">#80000000</color>
+    <color name="overlaylight">#40000000</color>
 
 
 </resources>

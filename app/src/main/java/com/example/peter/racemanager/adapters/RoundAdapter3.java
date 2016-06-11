@@ -17,9 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.activities.LoginActivity;
 import com.example.peter.racemanager.fragments.ChangeSlotDialogFragment;
+import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.models.Heat;
 
 import java.util.ArrayList;
@@ -152,7 +155,12 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.showChangeSlotDialog(view);
+                    if (((RaceScheduleFragment) mListener).checkPermissions()) {
+                        mListener.showChangeSlotDialog(view);
+                    }
+                    else {
+                        Toast.makeText(getContext(), "WONK WONK WONK", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();
@@ -168,7 +176,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         // For highlighting user in cards
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String username = sharedPreferences.getString("username","AnonymousSpectator");
-        if (!username.equals("AnonymousSpectator") && heat.findRacerInHeat(username) != null) {
+        if (!username.equals(LoginActivity.GUEST) && heat.findRacerInHeat(username) != null) {
             String racerLoc = String.format("%d %d %s", roundIndex, position, heat.findRacerInHeat(username));
                 view.findViewWithTag(racerLoc).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.pinkA200));
         }

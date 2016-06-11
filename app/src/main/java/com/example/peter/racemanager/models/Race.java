@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class Race implements Parcelable {
     private String raceId = "";
     private ArrayList<Round> rounds;
     private ArrayList<Racer> racers;
+    private ArrayList<String> admins;
     private String status;
     private Long targetTime;
 
@@ -34,7 +36,7 @@ public class Race implements Parcelable {
 
     public Race(){}
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, String status, Long targetTime) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -44,11 +46,12 @@ public class Race implements Parcelable {
         this.racers = racers;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
+        this.admins = admins;
         this.status = status;
         this.targetTime = targetTime;
     }
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, String status, Long targetTime, String raceId) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime, String raceId) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
@@ -58,6 +61,7 @@ public class Race implements Parcelable {
         this.setDateAndTime(date, time);
         this.rounds = rounds;
         this.racers = racers;
+        this.admins = admins;
         this.raceId = raceId;
         this.status = status;
         this.targetTime = targetTime;
@@ -192,6 +196,10 @@ public class Race implements Parcelable {
         return racers;
     }
 
+    public ArrayList<String> getAdmins() {
+        return admins;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -248,6 +256,10 @@ public class Race implements Parcelable {
 
     public void setRacers(ArrayList<Racer> racers) {
         this.racers = racers;
+    }
+
+    public void setAdmins(ArrayList<String> admins) {
+        this.admins = admins;
     }
 
     public void setStatus(String status) {

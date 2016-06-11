@@ -40,6 +40,8 @@ import okhttp3.Response;
  * are not directly needed to be handled via the long running service class StatusService. This
  * means calls to the server and to Firebase in order to get things like lists of races, event data,
  * user info, etc.
+ *
+ * Unless you're LoginActivity, in which case I guess you're special and we don't care about you.
  */
 public class TaskFragment extends Fragment {
     /**
@@ -80,20 +82,13 @@ public class TaskFragment extends Fragment {
         setRetainInstance(true);
         client = new OkHttpClient();
     }
-
+/*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         TextView textView = new TextView(getActivity());
         textView.setText(R.string.hello_blank_fragment);
         return textView;
-    }
-
-    /*
-    public void onButtonPressed(String result) {
-        if (mListener != null) {
-            mListener.OnRacesLoaded(result);
-        }
     }*/
 
     @Override
@@ -164,14 +159,22 @@ public class TaskFragment extends Fragment {
                             String frequency = userJson.getString("frequency");
                             racers.add(new Racer(username, racerURL, racerPhoto, droneName, droneURL, frequency));
                         }
+                        Iterator<String> adminIter = raceJson.getJSONObject("admins").keys();
+                        ArrayList<String> admins = new ArrayList<String>();
+                        while (adminIter.hasNext()) {
+                            admins.add(adminIter.next());
+                        }
+
                         String status = raceJson.getJSONObject("status").getString("status");
                         Long targetTime = Long.parseLong(raceJson.getJSONObject("status").getString("time"));
 
-                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, status, targetTime);
+                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, admins, status, targetTime);
                         races.add(race);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    response.close();
                 }
                 mListener.OnRacesLoaded(races);
             }
@@ -213,6 +216,8 @@ public class TaskFragment extends Fragment {
                     result = json.getString("id");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    response.close();
                 }
                 sendEventID(result, method);
             }
@@ -273,13 +278,20 @@ public class TaskFragment extends Fragment {
                         String frequency = userJson.getString("frequency");
                         racers.add(new Racer(username, racerURL, racerPhoto, droneName, droneURL, frequency));
                     }
+                    Iterator<String> adminIter = json.getJSONObject("admins").keys();
+                    ArrayList<String> admins = new ArrayList<String>();
+                    while (adminIter.hasNext()) {
+                        admins.add(adminIter.next());
+                    }
                     String status = json.getJSONObject("status").getString("status");
                     Long targetTime = Long.parseLong(json.getJSONObject("status").getString("time"));
 
-                    race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, status, targetTime);
+                    race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, admins, status, targetTime);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    response.close();
                 }
                 sendRace(race, method);
             }

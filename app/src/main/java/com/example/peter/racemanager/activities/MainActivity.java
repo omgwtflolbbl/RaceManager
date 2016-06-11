@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +46,6 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("STATUS RECEIVER", "RECEIVED MESSAGE");
             startUpdating();
         }
     };
@@ -53,20 +53,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Check if user is logged in. Otherwise, go to login screen.
+        validateUser();
 
         // Set up broadcaster receiver so that we know when to we are getting important status updates
         LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));
 
-        setContentView(R.layout.activity_main);
 
-        EventsFragment eventsFragment = null;
 
-        if (savedInstanceState != null) {
-            eventsFragment = (EventsFragment) getSupportFragmentManager().getFragment(savedInstanceState, "EVENTS_FRAGMENT");
-        }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        // Check if we have a retained TaskFragment already.
         if (taskFragment == null) {
             taskFragment = new TaskFragment();
             getSupportFragmentManager().beginTransaction()
@@ -74,6 +74,11 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
+        // Check if we have an EventsFragment already. If so, get old state. Else, create a new one.
+        EventsFragment eventsFragment = null;
+        if (savedInstanceState != null) {
+            eventsFragment = (EventsFragment) getSupportFragmentManager().getFragment(savedInstanceState, "EVENTS_FRAGMENT");
+        }
         if (eventsFragment == null) {
             eventsFragment = new EventsFragment();
             getSupportFragmentManager().beginTransaction()
@@ -81,8 +86,41 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("EVENTS_FRAGMENT")
                     .commit();
         }
+    }
 
+    // Check if this is a valid/guest user or invalid by seeing if they have a username
+    protected void validateUser() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getString("username", null) == null) {
+            // Force to LoginActivity
+            sendToLogin();
+        }
+    }
 
+    // Change to LoginActivity
+    protected void sendToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    // Logout the user
+    protected void logout() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.remove("username");
+        editor.remove("token");
+        editor.apply();
+        sendToLogin();
+    }
+
+    // Full logout including removing guest token - this can't be retrieved!
+    protected void fullLogout() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.remove("guestToken");
+        editor.apply();
+        logout();
     }
 
     @Override
@@ -110,6 +148,12 @@ public class MainActivity extends AppCompatActivity
                 else {
                     Log.i("FRAGMENTNAME", fragment.getClass().toString());
                 }
+                return true;
+            case R.id.action_logout:
+                logout();
+                return true;
+            case R.id.action_logout_complete:
+                fullLogout();
                 return true;
             case R.id.action_stop_service:
                 Intent intent = new Intent(this, StatusService.class);
@@ -169,11 +213,17 @@ public class MainActivity extends AppCompatActivity
 
     public void refreshEventsFragment(EventsFragment fragment) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = sharedPreferences.getString("username","PKLee");
-        Log.i("USERNAME", username);
-        Log.i("FLASK", FLASK);
-        String URL = String.format("%s/users/%s/events", FLASK, username);
-        Log.i("URL", URL);
+        String username = sharedPreferences.getString("username", ".");
+        String URL = "";
+        if (username.equals(LoginActivity.GUEST)) {
+            // Need to go through guests
+            username = sharedPreferences.getString("token", ".");
+            URL = String.format("%s/guests/%s/events", FLASK, username);
+        }
+        else {
+            // Need to go through users
+            URL = String.format("%s/users/%s/events", FLASK, username);
+        }
         taskFragment.getEvents(URL);
         fragment.startRefreshing();
     }
@@ -200,8 +250,6 @@ public class MainActivity extends AppCompatActivity
         // Start service
         String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
         taskFragment.startServiceProcess(URL);
-
-        Log.i("TARGETTIMER", Long.toString(System.currentTimeMillis() + 180*1000));
     }
 
     // RaceFragment callbacks
@@ -252,10 +300,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
     public void onFragmentInteraction(Race race) {
 
     }
@@ -301,8 +345,8 @@ public class MainActivity extends AppCompatActivity
             RaceFragment raceFragment = (RaceFragment) getActiveFragment();
             raceFragment.setRace(race);
             raceFragment.checkRaceStatus();
+            raceFragment.onChangedViewPermissions();
         }
-
     }
 
 

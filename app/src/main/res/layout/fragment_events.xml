@@ -7,12 +7,20 @@
     tools:context=".fragments.EventsFragment"
     tools:showIn="@layout/activity_main">
 
+    <TextView
+        android:id="@+id/event_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@color/overlaylight"
+        android:textSize="22sp"
+        android:text="@string/no_events"/>
+
     <ListView
         android:id="@+id/event_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none">
-
     </ListView>
 
     <RelativeLayout
