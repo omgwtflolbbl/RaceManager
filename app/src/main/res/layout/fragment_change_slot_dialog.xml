@@ -53,10 +53,30 @@
         android:text=">  " />
 
     <TextView
+        android:id="@+id/dialog_change_empty_slot_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_change_slot_points"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="3dp"
+        android:textSize="18dp"
+        android:text="Remove racer from slot?"/>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/dialog_change_empty_slot_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_below="@+id/dialog_change_slot_points"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
         android:id="@+id/dialog_change_slot_cancel"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:layout_below="@+id/dialog_change_slot_points"
+        android:layout_below="@+id/dialog_change_empty_slot_checkbox"
         android:layout_toStartOf="@+id/dialog_change_slot_save"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
@@ -71,7 +91,7 @@
         android:id="@+id/dialog_change_slot_save"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:layout_below="@+id/dialog_change_slot_points"
+        android:layout_below="@+id/dialog_change_empty_slot_checkbox"
         android:layout_alignParentEnd="true"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"

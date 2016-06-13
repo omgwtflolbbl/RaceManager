@@ -60,7 +60,7 @@ public class RaceRacersFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_add_event).setVisible(false);
+        //menu.findItem(R.id.action_add_event).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 

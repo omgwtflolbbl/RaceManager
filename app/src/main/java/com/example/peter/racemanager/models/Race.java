@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Peter on 5/27/2016.
@@ -68,16 +69,48 @@ public class Race implements Parcelable {
     }
     // Tentative constructor for Race objects being built directly from some JSON received from Firebase
     // Will obviously need to be reworked, either here or on the flask server that actually sends it
-    public static Race fromJson(JSONObject jsonObject) {
+    public static Race fromJson(JSONObject json) {
         Race race = new Race();
         try {
-            race.title = jsonObject.getString("title");
-            race.siteURL = jsonObject.getString("siteURL");
-            race.date = jsonObject.getString("date");
-            race.time = jsonObject.getString("time");
-            race.blockquote = jsonObject.getString("blockquote");
-            race.description = jsonObject.getString("description");
+            // Basic race info
+            race.title = json.getString("title");
+            race.date = json.getString("date");
+            race.time = json.getString("time");
             race.setDateAndTime(race.date, race.time);
+            race.blockquote = json.getString("blockquote");
+            race.description = json.getString("description");
+            race.siteURL = json.getString("eventURL");
+
+            // Round information
+            List<Round> rounds = new Round().fromJsonToRoundList(json.getJSONArray("raceStructure"));
+            race.rounds = (ArrayList<Round>) rounds;
+
+            // Racer information
+            Iterator<String> racerKeys = json.getJSONObject("racers").keys();
+            ArrayList<Racer> racers = new ArrayList<Racer>();
+            while (racerKeys.hasNext()) {
+                String username = racerKeys.next();
+                JSONObject userJson = json.getJSONObject("racers").getJSONObject(username);
+                String racerURL = userJson.getString("racerPage");
+                String racerPhoto = userJson.getString("racerPhoto");
+                String droneName = userJson.getString("dronename");
+                String droneURL = userJson.getString("droneURL");
+                String frequency = userJson.getString("frequency");
+                racers.add(new Racer(username, racerURL, racerPhoto, droneName, droneURL, frequency));
+            }
+            race.racers = racers;
+
+            // Admin information
+            Iterator<String> adminIter = json.getJSONObject("admins").keys();
+            ArrayList<String> admins = new ArrayList<String>();
+            while (adminIter.hasNext()) {
+                admins.add(adminIter.next());
+            }
+            race.admins = admins;
+
+            // Status data
+            race.status = json.getJSONObject("status").getString("status");
+            race.targetTime = Long.parseLong(json.getJSONObject("status").getString("time"));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

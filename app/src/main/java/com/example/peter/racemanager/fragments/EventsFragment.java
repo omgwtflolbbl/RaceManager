@@ -3,8 +3,12 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,7 +26,7 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsFragment extends Fragment {
+public class EventsFragment extends Fragment implements AddRaceDialogFragment.AddRaceDialogListener {
     private static final String REFRESHING_KEY = "REFRESHING_KEY";
     private static final String ROTATED_KEY = "ROTATED_KEY";
 
@@ -42,6 +46,29 @@ public class EventsFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }*/
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_events, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_event:
+                showAddRaceDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -138,6 +165,7 @@ public class EventsFragment extends Fragment {
     public interface OnEventSelectedListener {
         void onEventSelected(Race race);
         void refreshEventsFragment(EventsFragment fragment);
+        void addNewEvent(String URL);
     }
 
     public void clearEventAdapter() {
@@ -181,5 +209,16 @@ public class EventsFragment extends Fragment {
         relativeLayout.setVisibility(View.GONE);
         ListView listView = (ListView) getView().findViewById(R.id.event_listview);
         listView.setVisibility(View.VISIBLE);
+    }
+
+    public void showAddRaceDialog() {
+        FragmentManager fm = getChildFragmentManager();
+        AddRaceDialogFragment dialog = new AddRaceDialogFragment();
+        dialog.setTargetFragment(EventsFragment.this, 301);
+        dialog.show(fm, "add_race");
+    }
+
+    public void onFinishAddRaceDialog(String URL) {
+        mListener.addNewEvent(URL);
     }
 }

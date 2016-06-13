@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
-    public final static String FLASK = "http://015027c0.ngrok.io";
+    public final static String FLASK = "http://0a6a30e0.ngrok.io";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -252,6 +252,13 @@ public class MainActivity extends AppCompatActivity
         taskFragment.startServiceProcess(URL);
     }
 
+    public void addNewEvent(String inputURL) {
+        String requestURL = String.format("%s/add/event", FLASK);
+        String username = PreferenceManager.getDefaultSharedPreferences(this).getString("token", null);
+        String usertype = PreferenceManager.getDefaultSharedPreferences(this).getString("username", LoginActivity.GUEST).equals(LoginActivity.GUEST) ? "guest" : "multigp";
+        taskFragment.addEventByURL(requestURL, inputURL, username, usertype);
+    }
+
     // RaceFragment callbacks
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
@@ -322,6 +329,16 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+    @Override
+    public void OnEventsAddedToUsername() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startUpdating();
+            }
+        });
     }
 
     public void StartStatusService(String eventId) {

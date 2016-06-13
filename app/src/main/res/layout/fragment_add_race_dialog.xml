@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.peter.racemanager.fragments.AddRaceDialogFragment">
+
+    <TextView
+        android:id="@+id/dialog_add_race_explanation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start watching a race by copy and pasting its full MultiGP web address here." />
+
+    <EditText
+        android:id="@+id/dialog_add_race_multigp_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_add_race_explanation"
+        android:hint="MultiGP URL"/>
+
+    <TextView
+        android:id="@+id/dialog_add_race_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_below="@+id/dialog_add_race_multigp_url"
+        android:layout_toStartOf="@+id/dialog_add_race_save"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/expblue"
+        android:text="CANCEL" />
+
+    <TextView
+        android:id="@+id/dialog_add_race_save"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_below="@+id/dialog_add_race_multigp_url"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/expblue"
+        android:text="UPDATE" />
+</RelativeLayout>

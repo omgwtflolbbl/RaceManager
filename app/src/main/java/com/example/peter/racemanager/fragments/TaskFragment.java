@@ -49,6 +49,7 @@ public class TaskFragment extends Fragment {
      */
     public interface TaskCallbacks {
         void OnRacesLoaded(ArrayList<Race> races);
+        void OnEventsAddedToUsername();
         void StartStatusService(String eventId);
         void UpdateRaceSchedule(Race race);
         void UpdateRace(Race race);
@@ -68,7 +69,6 @@ public class TaskFragment extends Fragment {
     public static TaskFragment newInstance() {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
-        //args.putParcelable(CLIENT_KEY, client);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,20 +76,9 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            // set stuff up
-        }
         setRetainInstance(true);
         client = new OkHttpClient();
     }
-/*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        TextView textView = new TextView(getActivity());
-        textView.setText(R.string.hello_blank_fragment);
-        return textView;
-    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -125,50 +114,21 @@ public class TaskFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-                String result = "";
                 ArrayList<Race> races = new ArrayList<Race>();
 
-                Headers responseHeaders = response.headers();
+                /*Headers responseHeaders = response.headers();
                 for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                    //System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
-                //System.out.println(response.body().string());
-                //String result = "";
+                System.out.println(response.body().string());
+                */
                 try {
                     JSONObject json = new JSONObject(response.body().string());
                     Iterator<String> iter = json.keys();
                     while (iter.hasNext()) {
                         String raceId = iter.next();
                         JSONObject raceJson = json.getJSONObject(raceId);
-                        String title = raceJson.getString("title");
-                        String date = raceJson.getString("date");
-                        String time = raceJson.getString("time");
-                        String blockquote = raceJson.getString("blockquote");
-                        String description = raceJson.getString("description");
-                        String siteURL = raceJson.getString("eventURL");
-                        List<Round> rounds = new Round().fromJsonToRoundList(raceJson.getJSONArray("raceStructure"));
-                        Iterator<String> racerKeys = raceJson.getJSONObject("racers").keys();
-                        ArrayList<Racer> racers = new ArrayList<Racer>();
-                        while (racerKeys.hasNext()) {
-                            String username = racerKeys.next();
-                            JSONObject userJson = raceJson.getJSONObject("racers").getJSONObject(username);
-                            String racerURL = userJson.getString("racerPage");
-                            String racerPhoto = userJson.getString("racerPhoto");
-                            String droneName = userJson.getString("dronename");
-                            String droneURL = userJson.getString("droneURL");
-                            String frequency = userJson.getString("frequency");
-                            racers.add(new Racer(username, racerURL, racerPhoto, droneName, droneURL, frequency));
-                        }
-                        Iterator<String> adminIter = raceJson.getJSONObject("admins").keys();
-                        ArrayList<String> admins = new ArrayList<String>();
-                        while (adminIter.hasNext()) {
-                            admins.add(adminIter.next());
-                        }
-
-                        String status = raceJson.getJSONObject("status").getString("status");
-                        Long targetTime = Long.parseLong(raceJson.getJSONObject("status").getString("time"));
-
-                        Race race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, admins, status, targetTime);
+                        Race race = Race.fromJson(raceJson);
                         races.add(race);
                     }
                 } catch (JSONException e) {
@@ -259,35 +219,7 @@ public class TaskFragment extends Fragment {
 
                 try {
                     JSONObject json = new JSONObject(response.body().string());
-                    String title = json.getString("title");
-                    String date = json.getString("date");
-                    String time = json.getString("time");
-                    String blockquote = json.getString("blockquote");
-                    String description = json.getString("description");
-                    String siteURL = json.getString("eventURL");
-                    Iterator<String> racerKeys = json.getJSONObject("racers").keys();
-                    List<Round> rounds = new Round().fromJsonToRoundList(json.getJSONArray("raceStructure"));
-                    ArrayList<Racer> racers = new ArrayList<Racer>();
-                    while (racerKeys.hasNext()) {
-                        String username = racerKeys.next();
-                        JSONObject userJson = json.getJSONObject("racers").getJSONObject(username);
-                        String racerURL = userJson.getString("racerPage");
-                        String racerPhoto = userJson.getString("racerPhoto");
-                        String droneName = userJson.getString("dronename");
-                        String droneURL = userJson.getString("droneURL");
-                        String frequency = userJson.getString("frequency");
-                        racers.add(new Racer(username, racerURL, racerPhoto, droneName, droneURL, frequency));
-                    }
-                    Iterator<String> adminIter = json.getJSONObject("admins").keys();
-                    ArrayList<String> admins = new ArrayList<String>();
-                    while (adminIter.hasNext()) {
-                        admins.add(adminIter.next());
-                    }
-                    String status = json.getJSONObject("status").getString("status");
-                    Long targetTime = Long.parseLong(json.getJSONObject("status").getString("time"));
-
-                    race = new Race(title, siteURL, date, time, blockquote, description, (ArrayList<Round>) rounds, racers, admins, status, targetTime);
-
+                    race = Race.fromJson(json);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } finally {
@@ -316,7 +248,6 @@ public class TaskFragment extends Fragment {
                 .add("ondeck", onDeck)
                 .add("time", Long.toString(targetTimer))
                 .build();
-        //RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(URL)
                 .post(body)
@@ -331,6 +262,7 @@ public class TaskFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                response.close();
             }
         });
     }
@@ -359,9 +291,42 @@ public class TaskFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
+                response.close();
             }
         });
     }
 
+    public void addEventByURL(String requestURL, String inputURL, String username, String usertype) {
+        Log.i("USERNAME", username);
+        Log.i("USERTPYE", usertype);
+        RequestBody body = new FormBody.Builder()
+                .add("url", inputURL)
+                .add("username", username)
+                .add("usertype", usertype)
+                .build();
+        Request request = new Request.Builder()
+                .url(requestURL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                response.close();
+                mListener.OnEventsAddedToUsername();
+            }
+        });
+    }
 }

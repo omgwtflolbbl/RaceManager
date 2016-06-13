@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class ChangeSlotDialogFragment extends DialogFragment {
     private TextView minus;
     private TextView plus;
     private EditText count;
+    private CheckBox remove;
     private TextView update;
     private TextView cancel;
     private ChangeSlotDialogListener mListener;
@@ -93,11 +95,13 @@ public class ChangeSlotDialogFragment extends DialogFragment {
             }
         });
 
+        remove = (CheckBox) view.findViewById(R.id.dialog_change_empty_slot_checkbox);
+
         update = (TextView) view.findViewById(R.id.dialog_change_slot_save);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onFinishChangeSlotDialog(Integer.parseInt(count.getText().toString()), false, slot, tag);
+                mListener.onFinishChangeSlotDialog(Integer.parseInt(count.getText().toString()), remove.isChecked(), slot, tag);
                 dismiss();
             }
         });

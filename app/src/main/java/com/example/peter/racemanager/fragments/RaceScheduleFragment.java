@@ -73,7 +73,7 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_add_event).setVisible(false);
+        //menu.findItem(R.id.action_add_event).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -157,8 +157,6 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
     }
 
     public void showChangeSlotDialog(View view) {
-        Log.i("DIALOG STUFF", "fads");
-        //FragmentManager fm = getParentFragment().getChildFragmentManager();
         FragmentManager fm = getChildFragmentManager();
         String[] tag = view.getTag().toString().split(" ");
         ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString());
