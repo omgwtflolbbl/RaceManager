@@ -1,0 +1,13 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.peter.racemanager.fragments.BuildRaceStructureBFragment">
+
+    <TextView
+        android:id="@+id/build_race_b_general_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose which frequencies will occupy which slots (ex. 5645 in slot A, 5880 and 5885 in slot D). One offs and special cases can also be assigned and then specified later."/>
+
+</FrameLayout>

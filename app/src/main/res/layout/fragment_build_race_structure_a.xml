@@ -1,0 +1,112 @@
+<!-- <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"> -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:orientation="vertical"
+    tools:context="com.example.peter.racemanager.fragments.BuildRaceStructureAFragment">
+
+    <TextView
+        android:id="@+id/build_race_a_general_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use this wizard to do a full restructure or rebuild of a race. Completing this wizard WILL replace all old data."
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Maximum racers per heat:"
+        android:gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select allowed frequency bands" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_fatshark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Fatshark/ImmersionRC (5740-5880)" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_boscam_e"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Boscam E (5645-5945)"/>
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_boscam_a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Boscam A (5725-5885)" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_raceband"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Raceband (5658-5917)" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_betaband"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Beta Band (5733-5866)" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_1.3ghz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="1.3 Ghz (1080-1360)" />
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/build_race_a_checkbox_template"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:gravity="center_vertical"
+        android:text="Use template" />
+
+    <TextView
+        android:id="@+id/build_race_a_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="end"
+        android:text="Continue" />
+
+    <TextView
+        android:id="@+id/build_race_a_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="end"
+        android:text="Cancel"/>
+
+</LinearLayout>
+<!--</ScrollView>-->
