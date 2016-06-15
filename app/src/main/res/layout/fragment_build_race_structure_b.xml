@@ -1,13 +1,1659 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:cards="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.peter.racemanager.fragments.BuildRaceStructureBFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/build_race_b_general_instructions"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Choose which frequencies will occupy which slots (ex. 5645 in slot A, 5880 and 5885 in slot D). One offs and special cases can also be assigned and then specified later."/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp"
+        tools:context="com.example.peter.racemanager.fragments.BuildRaceStructureBFragment">
 
-</FrameLayout>
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/build_race_b_general_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose which frequencies will occupy which slots (ex. 5645 in slot A, 5880 and 5885 in slot D). One offs and special cases can also be assigned and then specified later."/>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_a_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot A Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_a_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_a_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_a_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_a_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_a_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_a_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_a_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_a_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_b"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_b_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot B Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_b_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_b_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_b_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_b_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_b_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_b_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_b_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_b_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_c"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_c_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot C Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_c_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_c_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_c_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_c_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_c_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_c_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_c_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_c_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_d"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_d_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot D Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_d_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_d_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_d_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_d_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_d_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_d_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_d_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_d_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_e"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_e_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot E Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_e_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_e_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_e_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_e_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_e_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_e_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_e_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_e_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_f"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_f_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot F Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_f_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_f_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_f_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_f_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_f_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_f_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_f_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_f_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_g"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_g_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot G Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_g_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_g_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_g_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_g_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_g_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_g_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_g_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_g_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_slot_h"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/build_race_b_slot_h_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Slot H Frequencies"/>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_h_frequency_1_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_1_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_band_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_1_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_1_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_band_1"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_frequency_1"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_1_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_h_frequency_2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_2_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_band_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_2_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_2_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_band_2"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_frequency_2"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_2_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_h_frequency_3_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_3_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_band_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_3_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_3_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_band_3"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_frequency_3"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_3_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/build_race_b_slot_h_frequency_4_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_4_text_includes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:text=" &#10148; Band"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_band_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_4_text_includes"
+                        android:spinnerMode="dialog"
+                        android:entries="@array/array_name"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_frequency_4_text_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center_vertical"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_band_4"
+                        android:text=" Frequency"/>
+
+                    <Spinner
+                        android:id="@+id/build_race_b_slot_h_frequency_4"
+                        android:layout_width="100dp"
+                        android:layout_height="36dp"
+                        android:layout_toEndOf="@+id/build_race_b_slot_h_frequency_4_text_frequency"
+                        android:spinnerMode="dialog" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_add_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Add a frequency"/>
+
+                    <TextView
+                        android:id="@+id/build_race_b_slot_h_swap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_toStartOf="@id/build_race_b_slot_h_add_frequency"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="Something else"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_b_card_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/build_race_b_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:text="Cancel"/>
+
+                <TextView
+                    android:id="@+id/build_race_b_continue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:text="Continue" />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

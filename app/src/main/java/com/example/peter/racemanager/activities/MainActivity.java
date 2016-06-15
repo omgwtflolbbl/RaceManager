@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
-    public final static String FLASK = "http://83c853d5.ngrok.io";
+    public final static String FLASK = "http://952aaac4.ngrok.io";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
