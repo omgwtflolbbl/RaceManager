@@ -2,6 +2,8 @@ package com.example.peter.racemanager.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +37,7 @@ public class EventAdapter extends ArrayAdapter<Race> {
             view = LayoutInflater.from(getContext()).inflate(R.layout.event_label, parent, false);
         }
         // Get views that need to be populated
-        RelativeLayout labelLayout = (RelativeLayout) view.findViewById(R.id.event_label_layout);
+        CardView labelLayout = (CardView) view.findViewById(R.id.event_label_layout);
         //CardView labelLayout = (CardView) view.findViewById(R.id.event_label_layout);
         TextView raceName = (TextView) view.findViewById(R.id.event_label_race_name);
         TextView raceDateTime = (TextView) view.findViewById(R.id.event_label_race_datetime);
@@ -53,10 +55,10 @@ public class EventAdapter extends ArrayAdapter<Race> {
         // Some stuff to see if the race is still open or not
         Date date = new Date();
         if (race.getDateAndTime().before(date)) {
-            labelLayout.setBackgroundColor(Color.RED);
+            labelLayout.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.redA100));
         }
         else {
-            labelLayout.setBackgroundColor(Color.GREEN);
+            labelLayout.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.greenA100));
         }
 
         // Return the view to be displayed

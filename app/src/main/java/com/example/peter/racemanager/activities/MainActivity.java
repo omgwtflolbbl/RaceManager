@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
-    public final static String FLASK = "http://952aaac4.ngrok.io";
+    //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
+    public final static String FLASK = "http://pesolve.asuscomm.com:5000";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -357,12 +358,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void UpdateRace(Race race) {
+    public void UpdateRace(final Race race) {
         if (getActiveFragment() instanceof  RaceFragment) {
-            RaceFragment raceFragment = (RaceFragment) getActiveFragment();
-            raceFragment.setRace(race);
-            raceFragment.checkRaceStatus();
-            raceFragment.onChangedViewPermissions();
+            final RaceFragment raceFragment = (RaceFragment) getActiveFragment();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    raceFragment.setRace(race);
+                    raceFragment.checkRaceStatus();
+                    raceFragment.onChangedViewPermissions();
+                }
+            });
         }
     }
 

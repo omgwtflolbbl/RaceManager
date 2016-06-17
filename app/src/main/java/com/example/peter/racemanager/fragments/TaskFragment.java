@@ -2,6 +2,7 @@ package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.SntpClient;
 import com.example.peter.racemanager.activities.MainActivity;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
@@ -61,6 +63,7 @@ public class TaskFragment extends Fragment {
     private static final String CLIENT_KEY = "client_key";
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
+    public static Long SntpOffset;
 
     public TaskFragment() {
         // Required empty public constructor
@@ -77,7 +80,9 @@ public class TaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        Log.i("We're Here","Woot?");
         client = new OkHttpClient();
+        setSntpOffset();
     }
 
     @Override
@@ -95,6 +100,29 @@ public class TaskFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void setSntpOffset() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                SntpClient sntpClient = new SntpClient();
+                Log.i("Trying SNTP stuff", "Probably gonna fail");
+                if (sntpClient.requestTime("0.us.pool.ntp.org", 30000)) {
+                    Long sntpTime = sntpClient.getNtpTime();
+                    Log.i("SNTP TIME", sntpTime.toString());
+                    Log.i("CURRENT TIME", Long.toString(System.currentTimeMillis()));
+                    Log.i("OFFSET", Long.toString(sntpTime-System.currentTimeMillis()));
+                    SntpOffset = sntpTime-System.currentTimeMillis();
+                }
+                else  {
+                    Log.i("SNTP FAILURE?", "WHO KNOWS MANG");
+                    Log.i("SNTP TIME", Long.toString(sntpClient.getNtpTime()));
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     public void getEvents(String URL) {

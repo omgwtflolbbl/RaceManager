@@ -20,7 +20,10 @@
         android:id="@+id/event_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        android:padding="8dp"
+        android:scrollbars="none"
+        android:divider="@null"
+        android:clipToPadding="false">
     </ListView>
 
     <RelativeLayout

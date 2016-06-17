@@ -35,7 +35,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     private Race race;
     private OnRaceListener mListener;
-    private static Handler handler = new Handler();
+    private final static Handler handler = new Handler();
     private static CountdownRunnable countdownRunnable;
     private Boolean rotated = false;
 
@@ -89,6 +89,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+
+        stopTimer();
 
         Bundle args = getArguments();
         if (args.size() > 0) {
@@ -236,7 +238,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
         if (!status.equals("F")) {
             // Figure out the target time based on the text input
             // Add 15 seconds worth to value just for buffer's sake
-            Long targetTime = System.currentTimeMillis() + Long.parseLong(editText.getText().toString()) * 1000 + 15000;
+            Long targetTime = System.currentTimeMillis() +TaskFragment.SntpOffset + Long.parseLong(editText.getText().toString()) * 1000 + 15000;
             mListener.onSendStatusUpdate(race, state, racers, spotters, onDeck, targetTime);
         }
     }
@@ -251,6 +253,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     public void stopTimer() {
         handler.removeCallbacks(countdownRunnable);
+        Log.i("HANDLER CALLED", "STOP THAT SHIT");
+        TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
+        textView.setText("00:00:000");
     }
 
     // Runnable to use with handler to update time text widget
@@ -266,7 +271,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
         }
 
         public void run() {
-            currentTime = targetTime - System.currentTimeMillis();
+            currentTime = targetTime - System.currentTimeMillis() - TaskFragment.SntpOffset;
             final String text = String.format("%02d:%02d:%03d", (currentTime / 60000) % 60, (currentTime / 1000) % 60, currentTime % 1000);
             if (currentTime > 0 ) {
                 if (getActivity() != null) {
