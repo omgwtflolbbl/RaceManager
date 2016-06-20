@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
@@ -37,7 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
     //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
@@ -263,6 +264,14 @@ public class MainActivity extends AppCompatActivity
     // RaceFragment callbacks
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
+            case R.id.race_builder_button:
+                BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false);
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                        .replace(R.id.fragment_container, buildRaceStructureAFragment, "BUILD_RACE_STRUCTURE_A_FRAGMENT")
+                        .addToBackStack("BUILD_RACE_STRUCTURE_A_FRAGMENT")
+                        .commit();
+                break;
             case R.id.race_info_button:
                 RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
@@ -309,6 +318,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onFragmentInteraction(Race race) {
+
+    }
+
+    public void onFragmentInteraction(Uri uri) {
 
     }
 

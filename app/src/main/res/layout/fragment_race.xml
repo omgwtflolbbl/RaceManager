@@ -29,6 +29,12 @@
         android:text="Countdown"/>
 
     <Button
+        android:id="@+id/race_builder_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rebuild Race"/>
+
+    <Button
         android:id="@+id/race_info_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

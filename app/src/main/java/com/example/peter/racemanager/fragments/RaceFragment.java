@@ -77,6 +77,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
         View view =  inflater.inflate(R.layout.fragment_race, container, false);
         Button countdownButton = (Button) view.findViewById(R.id.race_countdown_button);
         countdownButton.setOnClickListener(this);
+        Button raceBuilderButton = (Button) view.findViewById(R.id.race_builder_button);
+        raceBuilderButton.setOnClickListener(this);
         Button raceInfoButton = (Button) view.findViewById(R.id.race_info_button);
         raceInfoButton.setOnClickListener(this);
         Button raceScheduleButton = (Button) view.findViewById(R.id.race_schedule_button);
@@ -252,7 +254,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
     }
 
     public void stopTimer() {
-        handler.removeCallbacks(countdownRunnable);
+        handler.removeCallbacksAndMessages(null);
         Log.i("HANDLER CALLED", "STOP THAT SHIT");
         TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
         textView.setText("00:00:000");
@@ -305,10 +307,12 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
                 if (checkPermissions()) {
                     getView().findViewById(R.id.race_countdown_button).setVisibility(View.VISIBLE);
                     getView().findViewById(R.id.race_time_input).setVisibility(View.VISIBLE);
+                    getView().findViewById(R.id.race_builder_button).setVisibility(View.VISIBLE);
                 }
                 else {
                     getView().findViewById(R.id.race_countdown_button).setVisibility(View.GONE);
                     getView().findViewById(R.id.race_time_input).setVisibility(View.GONE);
+                    getView().findViewById(R.id.race_builder_button).setVisibility(View.GONE);
                 }
             }
         });
