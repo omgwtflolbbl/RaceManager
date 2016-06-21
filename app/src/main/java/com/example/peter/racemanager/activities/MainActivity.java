@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
+import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
+import com.example.peter.racemanager.fragments.BuildRaceStructureCFragment;
 import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
@@ -30,6 +32,7 @@ import com.example.peter.racemanager.fragments.RaceScheduleCardFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
+import com.example.peter.racemanager.models.AddFrequencySlot;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
@@ -38,7 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
     //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
@@ -265,36 +268,36 @@ public class MainActivity extends AppCompatActivity
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
             case R.id.race_builder_button:
-                BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false);
+                BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false, true);
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                        .replace(R.id.fragment_container, buildRaceStructureAFragment, "BUILD_RACE_STRUCTURE_A_FRAGMENT")
-                        .addToBackStack("BUILD_RACE_STRUCTURE_A_FRAGMENT")
-                        .commit();
+                    .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                    .replace(R.id.fragment_container, buildRaceStructureAFragment, "BUILD_RACE_STRUCTURE_A_FRAGMENT")
+                    .addToBackStack("BUILD_RACE_STRUCTURE_A_FRAGMENT")
+                    .commit();
                 break;
             case R.id.race_info_button:
                 RaceInfoFragment raceInfoFragment = RaceInfoFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                        .replace(R.id.fragment_container, raceInfoFragment, "RACE_INFO_FRAGMENT")
-                        .addToBackStack("RACE_INFO_FRAGMENT")
-                        .commit();
+                    .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                    .replace(R.id.fragment_container, raceInfoFragment, "RACE_INFO_FRAGMENT")
+                    .addToBackStack("RACE_INFO_FRAGMENT")
+                    .commit();
                 break;
             case R.id.race_schedule_button:
                 RaceScheduleFragment raceScheduleFragment = RaceScheduleFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                        .replace(R.id.fragment_container, raceScheduleFragment, "RACE_SCHEDULE_FRAGMENT")
-                        .addToBackStack("RACE_SCHEDULE_FRAGMENT")
-                        .commit();
+                    .replace(R.id.fragment_container, raceScheduleFragment, "RACE_SCHEDULE_FRAGMENT")
+                    .addToBackStack("RACE_SCHEDULE_FRAGMENT")
+                    .commit();
                 break;
             case R.id.race_racers_button:
                 RaceRacersFragment raceRacersFragment = RaceRacersFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                        .replace(R.id.fragment_container, raceRacersFragment)
-                        .addToBackStack(null)
-                        .commit();
+                    .replace(R.id.fragment_container, raceRacersFragment, "RACE_RACERS_FRAGMENT")
+                    .addToBackStack("RACE_RACERS_FRAGMENT")
+                    .commit();
                 break;
             default:
                 Log.i("RACE_FRAGMENT", "Unknown button pressed");
@@ -310,6 +313,16 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+    }
+
+    // BuildRaceScructureAFragment callbacks
+    public void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots) {
+        BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(numSlots, freqSlots);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_B_FRAGMENT")
+                .addToBackStack("BUILD_RACE_STRUCTURE_B_FRAGMENT")
+                .commit();
     }
 
     // RaceInfoFragment callbacks

@@ -256,8 +256,10 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
     public void stopTimer() {
         handler.removeCallbacksAndMessages(null);
         Log.i("HANDLER CALLED", "STOP THAT SHIT");
-        TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-        textView.setText("00:00:000");
+        if (getView() != null) {
+            TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
+            textView.setText("00:00:000");
+        }
     }
 
     // Runnable to use with handler to update time text widget

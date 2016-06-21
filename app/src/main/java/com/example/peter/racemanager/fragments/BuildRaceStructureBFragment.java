@@ -7,8 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.models.AddFrequencySlot;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +28,8 @@ public class BuildRaceStructureBFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    // UI stuff
 
     private OnFragmentInteractionListener mListener;
 

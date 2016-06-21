@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/build_race_b_slot_frequency_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/build_race_b_text_includes"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:gravity="center_vertical"
+        android:text=" &#10148; Band"/>
+
+    <RelativeLayout
+        android:id="@+id/build_race_spinner_bg_band"
+        android:layout_width="92dp"
+        android:layout_height="28dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/spinner_bg"
+        android:layout_toEndOf="@+id/build_race_b_text_includes"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+
+        <Spinner
+            android:id="@+id/build_race_b_spinner_band"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:paddingEnd="19dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:spinnerMode="dialog" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@mipmap/drop" />
+
+    </RelativeLayout>
+
+    <!--<Spinner
+        android:id="@+id/build_race_b_spinner_band"
+        android:layout_width="100dp"
+        android:layout_height="36dp"
+        android:layout_toEndOf="@+id/build_race_b_text_includes"
+        android:spinnerMode="dialog" />-->
+
+    <TextView
+        android:id="@+id/build_race_b_text_frequency"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:gravity="center_vertical"
+        android:layout_toEndOf="@+id/build_race_spinner_bg_band"
+        android:text="Frequency"/>
+
+    <RelativeLayout
+        android:id="@+id/build_race_spinner_bg_frequency"
+        android:layout_width="92dp"
+        android:layout_height="28dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/spinner_bg"
+        android:layout_toEndOf="@+id/build_race_b_text_frequency"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+
+        <Spinner
+            android:id="@+id/build_race_b_spinner_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:paddingEnd="19dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:spinnerMode="dialog" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@mipmap/drop" />
+
+    </RelativeLayout>
+
+    <!--<Spinner
+        android:id="@+id/build_race_b_spinner_frequency"
+        android:layout_width="100dp"
+        android:layout_height="36dp"
+        android:layout_toEndOf="@+id/build_race_b_text_frequency"
+        android:spinnerMode="dialog" />-->
+
+</RelativeLayout>

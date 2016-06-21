@@ -14,6 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.models.AddFrequencySlot;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * First fragment dealing with the recreation of a race from pretty much scratch.
@@ -27,6 +31,7 @@ public class BuildRaceStructureAFragment extends Fragment {
     private final static String R_KEY = "R_KEY";
     private final static String B_KEY = "B_KEY";
     private final static String B13_KEY = "B13_KEY";
+    private final static String TEMP_KEY = "TEMP_KEY";
 
     // Logic stuff
     private int numRacers;
@@ -36,6 +41,7 @@ public class BuildRaceStructureAFragment extends Fragment {
     private boolean raceband;
     private boolean betaband;
     private boolean b13;
+    private boolean temp;
 
     // UI stuff
     private EditText numRacersText;
@@ -45,6 +51,7 @@ public class BuildRaceStructureAFragment extends Fragment {
     private CheckedTextView racebandCheckbox;
     private CheckedTextView betabandCheckbox;
     private CheckedTextView b13Checkbox;
+    private CheckedTextView templateCheckbox;
     private TextView continueButton;
     private TextView cancelButton;
 
@@ -54,7 +61,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static BuildRaceStructureAFragment newInstance(int numRacers, boolean fatshark, boolean boscamE, boolean boscamA, boolean raceband, boolean betaband, boolean b13) {
+    public static BuildRaceStructureAFragment newInstance(int numRacers, boolean fatshark, boolean boscamE, boolean boscamA, boolean raceband, boolean betaband, boolean b13, boolean temp) {
         BuildRaceStructureAFragment fragment = new BuildRaceStructureAFragment();
         Bundle args = new Bundle();
         args.putInt(NUM_KEY, numRacers);
@@ -64,6 +71,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         args.putBoolean(R_KEY, raceband);
         args.putBoolean(B_KEY, betaband);
         args.putBoolean(B13_KEY, b13);
+        args.putBoolean(TEMP_KEY, temp);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,7 +86,8 @@ public class BuildRaceStructureAFragment extends Fragment {
             boscamA = getArguments().getBoolean(BA_KEY);
             raceband = getArguments().getBoolean(R_KEY);
             betaband = getArguments().getBoolean(B_KEY);
-            b13 = getArguments().getBoolean(B13_KEY, b13);
+            b13 = getArguments().getBoolean(B13_KEY);
+            temp = getArguments().getBoolean(TEMP_KEY);
         }
         Log.i("BUILDER", "ONCREATE");
     }
@@ -146,6 +155,15 @@ public class BuildRaceStructureAFragment extends Fragment {
             }
         });
 
+        templateCheckbox = (CheckedTextView) view.findViewById(R.id.build_race_a_checkbox_template);
+        templateCheckbox.setChecked(temp);
+        templateCheckbox.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                ((CheckedTextView) v).toggle();
+            }
+        });
+
         continueButton = (TextView) view.findViewById(R.id.build_race_a_continue);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +171,7 @@ public class BuildRaceStructureAFragment extends Fragment {
                 onContinue();
             }
         });
+
         cancelButton = (TextView) view.findViewById(R.id.build_race_a_cancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +185,34 @@ public class BuildRaceStructureAFragment extends Fragment {
 
     public void onContinue() {
         Toast.makeText(getContext(), "CONTINUE", Toast.LENGTH_SHORT).show();
+        boolean[] bands = calculateBands();
+        ArrayList<ArrayList<AddFrequencySlot>> freqSlots = getPackage();
+
+        mListener.BuildRaceAToB(Integer.parseInt(numRacersText.getText().toString()), bands, freqSlots);
+    }
+
+    public ArrayList<ArrayList<AddFrequencySlot>> getPackage() {
+        ArrayList<ArrayList<AddFrequencySlot>> freqSlots = emptySlotFreqPackage();
+
+        boolean[] availableBands = calculateBands();
+
+        if (templateCheckbox.isChecked()) {
+            freqSlots.get(0).add(new AddFrequencySlot(availableBands, "Boscam E", "(E4) 5645"));
+            freqSlots.get(1).add(new AddFrequencySlot(availableBands, "Boscam E", "(E2) 5685"));
+            freqSlots.get(2).add(new AddFrequencySlot(availableBands, "Fatshark", "(F2) 5760"));
+            freqSlots.get(3).add(new AddFrequencySlot(availableBands, "Fatshark", "(F4) 5800"));
+            freqSlots.get(4).add(new AddFrequencySlot(availableBands, "Fatshark", "(F7) 5860"));
+            freqSlots.get(5).add(new AddFrequencySlot(availableBands, "Boscam E", "(E6) 5905"));
+            freqSlots.get(6).add(new AddFrequencySlot(availableBands, "Boscam E", "(E8) 5945"));
+            freqSlots.get(7).add(new AddFrequencySlot(availableBands, "CUSTOM", "CUSTOM"));
+        }
+        else {
+            for (int i = 0; i < freqSlots.size(); i++) {
+                freqSlots.get(i).add(new AddFrequencySlot(availableBands));
+            }
+        }
+
+        return freqSlots;
     }
 
     public void onCancel() {
@@ -183,6 +230,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         getArguments().putBoolean(R_KEY, racebandCheckbox.isChecked());
         getArguments().putBoolean(B_KEY, betabandCheckbox.isChecked());
         getArguments().putBoolean(B13_KEY, b13Checkbox.isChecked());
+        getArguments().putBoolean(TEMP_KEY, templateCheckbox.isChecked());
     }
 
     @Override
@@ -202,7 +250,31 @@ public class BuildRaceStructureAFragment extends Fragment {
         mListener = null;
     }
 
+    // Create boolean matrix for determining what bands are allowed in the next portion
+    public boolean[] calculateBands() {
+        boolean[] bands = new boolean[8];
+        bands[0] = fatsharkCheckbox.isChecked();
+        bands[1] = boscamECheckbox.isChecked();
+        bands[2] = boscamACheckbox.isChecked();
+        bands[3] = racebandCheckbox.isChecked();
+        bands[4] = betabandCheckbox.isChecked();
+        bands[5] = b13Checkbox.isChecked();
+
+        return bands;
+    }
+
+    // Create an empty arraylist of arraylists to prep and send to next step
+    public ArrayList<ArrayList<AddFrequencySlot>> emptySlotFreqPackage() {
+        ArrayList<ArrayList<AddFrequencySlot>> freqSlots = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++) {
+            freqSlots.add(new ArrayList<AddFrequencySlot>());
+        }
+
+        return freqSlots;
+    }
+
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots);
     }
 }
