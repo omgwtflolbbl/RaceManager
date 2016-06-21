@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.adapters.FrequencyBuilderAdapter;
@@ -139,10 +140,24 @@ public class BuildRaceStructureCFragment extends Fragment {
 
         // Assign adapters
         for (int i = 0; i < listViews.size(); i++) {
-            Log.i("FRAGMENTC", "ABOUT TO SET FIRST ADAPTER");
             listViews.get(i).setAdapter(adapters.get(i));
-            Log.i("FRAGMENTC", "JUST SET FIRST ADAPTER");
         }
+
+        TextView continueButton = (TextView) view.findViewById(R.id.build_race_b_continue);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: SOMETHING
+            }
+        });
+
+        TextView cancelButton = (TextView) view.findViewById(R.id.build_race_b_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
 
         return view;
     }

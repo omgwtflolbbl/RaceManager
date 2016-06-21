@@ -303,21 +303,22 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     // Decide change what can be seen
     public void onChangedViewPermissions() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (checkPermissions()) {
-                    getView().findViewById(R.id.race_countdown_button).setVisibility(View.VISIBLE);
-                    getView().findViewById(R.id.race_time_input).setVisibility(View.VISIBLE);
-                    getView().findViewById(R.id.race_builder_button).setVisibility(View.VISIBLE);
+        if (getView() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (checkPermissions()) {
+                        getView().findViewById(R.id.race_countdown_button).setVisibility(View.VISIBLE);
+                        getView().findViewById(R.id.race_time_input).setVisibility(View.VISIBLE);
+                        getView().findViewById(R.id.race_builder_button).setVisibility(View.VISIBLE);
+                    } else {
+                        getView().findViewById(R.id.race_countdown_button).setVisibility(View.GONE);
+                        getView().findViewById(R.id.race_time_input).setVisibility(View.GONE);
+                        getView().findViewById(R.id.race_builder_button).setVisibility(View.GONE);
+                    }
                 }
-                else {
-                    getView().findViewById(R.id.race_countdown_button).setVisibility(View.GONE);
-                    getView().findViewById(R.id.race_time_input).setVisibility(View.GONE);
-                    getView().findViewById(R.id.race_builder_button).setVisibility(View.GONE);
-                }
-            }
-        });
+            });
+        }
     }
 
     // Check what this user can actually see. Probably need to break this up into two parts so that

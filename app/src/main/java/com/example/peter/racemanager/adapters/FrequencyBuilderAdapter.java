@@ -49,16 +49,9 @@ public class FrequencyBuilderAdapter extends ArrayAdapter<AddFrequencySlot> {
         bandSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String A = "ONITEMSELECTED";
-                Log.i(A, parent.getItemAtPosition(position).toString());
                 freqSlot.setCurrentBand(parent.getItemAtPosition(position).toString());
                 freqSlot.setAvailableFrequencies();
-                for (String freq:freqSlot.getAvailableFrequencies()) {
-                    Log.i(A, freq);
-                    //Log.i(A, freqAdapter.toString());
-                }
                 freqAdapter.notifyDataSetChanged();
-                Toast.makeText(parent.getContext(), parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

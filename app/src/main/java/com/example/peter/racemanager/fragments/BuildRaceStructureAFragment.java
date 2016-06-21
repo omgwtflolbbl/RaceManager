@@ -176,7 +176,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onCancel();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
@@ -184,7 +184,6 @@ public class BuildRaceStructureAFragment extends Fragment {
     }
 
     public void onContinue() {
-        Toast.makeText(getContext(), "CONTINUE", Toast.LENGTH_SHORT).show();
         boolean[] bands = calculateBands();
         ArrayList<ArrayList<AddFrequencySlot>> freqSlots = getPackage();
 
@@ -213,10 +212,6 @@ public class BuildRaceStructureAFragment extends Fragment {
         }
 
         return freqSlots;
-    }
-
-    public void onCancel() {
-        Toast.makeText(getContext(), "CANCEL", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -252,7 +247,7 @@ public class BuildRaceStructureAFragment extends Fragment {
 
     // Create boolean matrix for determining what bands are allowed in the next portion
     public boolean[] calculateBands() {
-        boolean[] bands = new boolean[8];
+        boolean[] bands = new boolean[6];
         bands[0] = fatsharkCheckbox.isChecked();
         bands[1] = boscamECheckbox.isChecked();
         bands[2] = boscamACheckbox.isChecked();
