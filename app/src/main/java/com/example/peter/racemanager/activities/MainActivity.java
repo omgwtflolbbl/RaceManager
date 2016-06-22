@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
             case R.id.race_builder_button:
-                BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false, true);
+                BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false, true, race);
                 getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                     .replace(R.id.fragment_container, buildRaceStructureAFragment, "BUILD_RACE_STRUCTURE_A_FRAGMENT")
@@ -316,8 +316,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     // BuildRaceScructureAFragment callbacks
-    public void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots) {
-        BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(numSlots, freqSlots);
+    public void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots, Race race) {
+        BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(numSlots, bands, freqSlots, race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_B_FRAGMENT")

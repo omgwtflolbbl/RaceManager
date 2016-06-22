@@ -45,11 +45,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot A Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_a_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -102,11 +103,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot B Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_b_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -159,11 +161,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot C Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_c_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -216,11 +219,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot D Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_d_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -273,11 +277,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot E Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_e_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -330,11 +335,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot F Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_f_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -387,11 +393,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot G Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_g_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="wrap_content"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -444,11 +451,12 @@
                     android:layout_height="wrap_content"
                     android:text="Slot H Frequencies"/>
 
-                <ListView
+                <com.example.peter.racemanager.ExpandableHeightListView
                     android:id="@+id/build_race_b_slot_h_listview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </ListView>
+                    android:layout_height="fill_parent"
+                    android:divider="@null">
+                </com.example.peter.racemanager.ExpandableHeightListView>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

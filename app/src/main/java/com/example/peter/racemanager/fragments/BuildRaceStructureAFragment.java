@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.models.AddFrequencySlot;
+import com.example.peter.racemanager.models.Race;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class BuildRaceStructureAFragment extends Fragment {
     private final static String B_KEY = "B_KEY";
     private final static String B13_KEY = "B13_KEY";
     private final static String TEMP_KEY = "TEMP_KEY";
+    private final static String RACE_KEY = "RACE_KEY";
 
     // Logic stuff
     private int numRacers;
@@ -42,6 +44,7 @@ public class BuildRaceStructureAFragment extends Fragment {
     private boolean betaband;
     private boolean b13;
     private boolean temp;
+    private Race race;
 
     // UI stuff
     private EditText numRacersText;
@@ -61,7 +64,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static BuildRaceStructureAFragment newInstance(int numRacers, boolean fatshark, boolean boscamE, boolean boscamA, boolean raceband, boolean betaband, boolean b13, boolean temp) {
+    public static BuildRaceStructureAFragment newInstance(int numRacers, boolean fatshark, boolean boscamE, boolean boscamA, boolean raceband, boolean betaband, boolean b13, boolean temp, Race race) {
         BuildRaceStructureAFragment fragment = new BuildRaceStructureAFragment();
         Bundle args = new Bundle();
         args.putInt(NUM_KEY, numRacers);
@@ -72,6 +75,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         args.putBoolean(B_KEY, betaband);
         args.putBoolean(B13_KEY, b13);
         args.putBoolean(TEMP_KEY, temp);
+        args.putParcelable(RACE_KEY, race);
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,8 +92,8 @@ public class BuildRaceStructureAFragment extends Fragment {
             betaband = getArguments().getBoolean(B_KEY);
             b13 = getArguments().getBoolean(B13_KEY);
             temp = getArguments().getBoolean(TEMP_KEY);
+            race = getArguments().getParcelable(RACE_KEY);
         }
-        Log.i("BUILDER", "ONCREATE");
     }
 
     @Override
@@ -187,7 +191,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         boolean[] bands = calculateBands();
         ArrayList<ArrayList<AddFrequencySlot>> freqSlots = getPackage();
 
-        mListener.BuildRaceAToB(Integer.parseInt(numRacersText.getText().toString()), bands, freqSlots);
+        mListener.BuildRaceAToB(Integer.parseInt(numRacersText.getText().toString()), bands, freqSlots, race);
     }
 
     public ArrayList<ArrayList<AddFrequencySlot>> getPackage() {
@@ -226,6 +230,7 @@ public class BuildRaceStructureAFragment extends Fragment {
         getArguments().putBoolean(B_KEY, betabandCheckbox.isChecked());
         getArguments().putBoolean(B13_KEY, b13Checkbox.isChecked());
         getArguments().putBoolean(TEMP_KEY, templateCheckbox.isChecked());
+        getArguments().putParcelable(RACE_KEY, race);
     }
 
     @Override
@@ -270,6 +275,6 @@ public class BuildRaceStructureAFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots);
+        void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots, Race race);
     }
 }
