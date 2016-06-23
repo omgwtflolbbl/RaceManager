@@ -1,0 +1,81 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    tools:context=".fragments.AddRacerFrequencyPairDialogFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Select Frequency"/>
+
+    <View style="@style/Divider"/>
+
+    <ListView
+        android:id="@+id/dialog_add_racer_frequency_pair_frequency_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice">
+
+    </ListView>
+
+    <View style="@style/Divider"/>
+
+    <TextView
+        android:id="@+id/dialog_add_racer_frequency_pair_racer_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Select Racer" />
+
+    <View style="@style/Divider"/>
+
+    <ListView
+        android:id="@+id/dialog_add_racer_frequency_pair_username_listview"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:minHeight="100dp"
+        android:layout_weight="1"
+        android:choiceMode="singleChoice">
+
+    </ListView>
+
+    <View style="@style/Divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_add_racer_frequency_pair_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="Cancel" />
+
+        <TextView
+            android:id="@+id/dialog_add_racer_frequency_pair_add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="Add" />
+
+    </LinearLayout>
+
+</LinearLayout>

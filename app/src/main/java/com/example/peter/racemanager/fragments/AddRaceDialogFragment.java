@@ -48,9 +48,6 @@ public class AddRaceDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_race_dialog, container);
 
-        Log.i("PFRAG", getParentFragment().toString());
-        Log.i("CONTEXT", getContext().toString());
-
         getDialog().setTitle("Add a race");
 
         try {

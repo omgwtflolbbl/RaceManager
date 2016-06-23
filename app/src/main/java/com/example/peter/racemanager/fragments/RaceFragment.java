@@ -248,9 +248,11 @@ public class RaceFragment extends Fragment implements View.OnClickListener {
 
     // For starting the timer with a synced target time
     public void startTimer(long targetTime) {
-        TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-        countdownRunnable = new CountdownRunnable(textView, targetTime);
-        handler.post(countdownRunnable);
+        if (getView() != null) {
+            TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
+            countdownRunnable = new CountdownRunnable(textView, targetTime);
+            handler.post(countdownRunnable);
+        }
     }
 
     public void stopTimer() {

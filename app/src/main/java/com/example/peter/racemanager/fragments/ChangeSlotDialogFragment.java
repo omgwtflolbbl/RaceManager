@@ -57,9 +57,6 @@ public class ChangeSlotDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_change_slot_dialog, container);
 
-        Log.i("PFRAG", getParentFragment().toString());
-        Log.i("CONTEXT", getContext().toString());
-
         try {
             mListener = (ChangeSlotDialogListener) getParentFragment();
         } catch (ClassCastException e) {
@@ -69,8 +66,6 @@ public class ChangeSlotDialogFragment extends DialogFragment {
         slot = getArguments().getParcelable(SLOT_KEY);
         tag = getArguments().getString(TAG_KEY);
 
-        /*title = (TextView) view.findViewById(R.id.dialog_change_slot_title);
-        title.setText(String.format("Update slot (%s)", slot.getUsername()));*/
         getDialog().setTitle(slot.getUsername());
 
         count = (EditText) view.findViewById(R.id.dialog_change_slot_points);
@@ -120,11 +115,6 @@ public class ChangeSlotDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    // Send data back to parent fragment
-    public void sendResult() {
-
     }
 
     public interface ChangeSlotDialogListener {

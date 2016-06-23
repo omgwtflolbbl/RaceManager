@@ -43,6 +43,7 @@ public class FrequencyBuilderAdapter extends ArrayAdapter<AddFrequencySlot> {
         Spinner freqSpinner = (Spinner) view.findViewById(R.id.build_race_b_spinner_frequency);
         final ArrayAdapter<String> freqAdapter = new ArrayAdapter<String>(parent.getContext(), R.layout.spinner_item, freqSlot.getAvailableFrequencies());
         freqAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        freqSpinner.setOnItemSelectedListener(null);
         freqSpinner.setAdapter(freqAdapter);
         freqSpinner.setSelection(freqSlot.getAvailableFrequencies().indexOf(freqSlot.getCurrentFrequency()), false);
 

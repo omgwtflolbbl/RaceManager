@@ -7,13 +7,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
     //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
@@ -315,9 +313,19 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    // BuildRaceScructureAFragment callbacks
+    // BuildRaceStructureAFragment callbacks
     public void BuildRaceAToB(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> freqSlots, Race race) {
-        BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(numSlots, bands, freqSlots, race);
+        BuildRaceStructureBFragment fragment = BuildRaceStructureBFragment.newInstance(numSlots, bands, freqSlots, race);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_B_FRAGMENT")
+                .addToBackStack("BUILD_RACE_STRUCTURE_B_FRAGMENT")
+                .commit();
+    }
+
+    // BuildRaceStructureBFragment callbacks
+    public void BuildRaceBToC(ArrayList<String> freq, Race race) {
+        BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(freq, race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_B_FRAGMENT")

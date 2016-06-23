@@ -4,23 +4,28 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 
 import com.example.peter.racemanager.ExpandableHeightListView;
 import com.example.peter.racemanager.R;
-import com.example.peter.racemanager.adapters.FrequencyBuilderAdapter;
-import com.example.peter.racemanager.models.AddFrequencySlot;
+import com.example.peter.racemanager.adapters.RacerFrequencyAdapter;
 import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Racer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,58 +35,50 @@ import java.util.List;
  * Use the {@link BuildRaceStructureCFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BuildRaceStructureCFragment extends Fragment {
-    private static final String NUM_KEY = "NUM_KEY";
-    private static final String A_KEY = "A_KEY";
-    private static final String B_KEY = "B_KEY";
-    private static final String C_KEY = "C_KEY";
-    private static final String D_KEY = "D_KEY";
-    private static final String E_KEY = "E_KEY";
-    private static final String F_KEY = "F_KEY";
-    private static final String G_KEY = "G_KEY";
-    private static final String H_KEY = "H_KEY";
-    private static final String BANDS_KEY = "BANDS_KEY";
+public class BuildRaceStructureCFragment extends Fragment implements AddRacerFrequencyPairDialogFragment.AddRacerFrequencyPairDialogListener, RacerFrequencyAdapter.RacerFrequencyAdapterListener {
+    private static final String RACERS_KEY = "RACERS_KEY";
+    private static final String FREQ_KEY = "FREQ_KEY";
+    private static final String MAP_KEY = "MAP_KEY";
+    private static final String RACERS_A_KEY = "RACERS_A_KEY";
+    private static final String RACERS_B_KEY = "RACERS_B_KEY";
+    private static final String RACERS_C_KEY = "RACERS_C_KEY";
+    private static final String RACERS_D_KEY = "RACERS_D_KEY";
+    private static final String RACERS_E_KEY = "RACERS_E_KEY";
+    private static final String RACERS_F_KEY = "RACERS_F_KEY";
+    private static final String RACERS_G_KEY = "RACERS_G_KEY";
+    private static final String RACERS_H_KEY = "RACERS_H_KEY";
     private static final String RACE_KEY = "RACE_KEY";
 
-    // Other stuff
-    private int numSlots;
-    private List<List<AddFrequencySlot>> freqSlots;
-    private List<AddFrequencySlot> freqSlotA;
-    private List<AddFrequencySlot> freqSlotB;
-    private List<AddFrequencySlot> freqSlotC;
-    private List<AddFrequencySlot> freqSlotD;
-    private List<AddFrequencySlot> freqSlotE;
-    private List<AddFrequencySlot> freqSlotF;
-    private List<AddFrequencySlot> freqSlotG;
-    private List<AddFrequencySlot> freqSlotH;
-    private boolean[] bands;
+    // Model stuff
+    private Map<String, Boolean> racersMap;
+    private List<Racer> racers;
+    private List<List<Racer>> slots;
+    private List<Racer> racersInA;
+    private List<Racer> racersInB;
+    private List<Racer> racersInC;
+    private List<Racer> racersInD;
+    private List<Racer> racersInE;
+    private List<Racer> racersInF;
+    private List<Racer> racersInG;
+    private List<Racer> racersInH;
+    private List<List<String>> freqChart;
     private Race race;
 
     // UI stuff
-    private List<CardView> cards;
+    private List<CardView> cardViews;
     private List<ExpandableHeightListView> listViews;
-    private List<FrequencyBuilderAdapter> adapters;
-    private List<TextView> addButtons;
+    private List<RacerFrequencyAdapter> adapters;
+    private List<LinearLayout> addButtons;
 
     private OnFragmentInteractionListener mListener;
 
     public BuildRaceStructureCFragment() {
         // Required empty public constructor
     }
-
-    public static BuildRaceStructureCFragment newInstance(int numSlots, boolean[] bands, ArrayList<ArrayList<AddFrequencySlot>> slotFreqs, Race race) {
+    public static BuildRaceStructureCFragment newInstance(ArrayList<String> freqChart, Race race) {
         BuildRaceStructureCFragment fragment = new BuildRaceStructureCFragment();
         Bundle args = new Bundle();
-        args.putInt(NUM_KEY, numSlots);
-        args.putParcelableArrayList(A_KEY, slotFreqs.get(0));
-        args.putParcelableArrayList(B_KEY, slotFreqs.get(1));
-        args.putParcelableArrayList(C_KEY, slotFreqs.get(2));
-        args.putParcelableArrayList(D_KEY, slotFreqs.get(3));
-        args.putParcelableArrayList(E_KEY, slotFreqs.get(4));
-        args.putParcelableArrayList(F_KEY, slotFreqs.get(5));
-        args.putParcelableArrayList(G_KEY, slotFreqs.get(6));
-        args.putParcelableArrayList(H_KEY, slotFreqs.get(7));
-        args.putBooleanArray(BANDS_KEY, bands);
+        args.putStringArrayList(FREQ_KEY, freqChart);
         args.putParcelable(RACE_KEY, race);
         fragment.setArguments(args);
         return fragment;
@@ -91,26 +88,67 @@ public class BuildRaceStructureCFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            numSlots = getArguments().getInt(NUM_KEY);
-            freqSlotA = getArguments().getParcelableArrayList(A_KEY);
-            freqSlotB = getArguments().getParcelableArrayList(B_KEY);
-            freqSlotC = getArguments().getParcelableArrayList(C_KEY);
-            freqSlotD = getArguments().getParcelableArrayList(D_KEY);
-            freqSlotE = getArguments().getParcelableArrayList(E_KEY);
-            freqSlotF = getArguments().getParcelableArrayList(F_KEY);
-            freqSlotG = getArguments().getParcelableArrayList(G_KEY);
-            freqSlotH = getArguments().getParcelableArrayList(H_KEY);
-            freqSlots = new ArrayList<>();
-            freqSlots.add(freqSlotA);
-            freqSlots.add(freqSlotB);
-            freqSlots.add(freqSlotC);
-            freqSlots.add(freqSlotD);
-            freqSlots.add(freqSlotE);
-            freqSlots.add(freqSlotF);
-            freqSlots.add(freqSlotG);
-            freqSlots.add(freqSlotH);
-            bands = getArguments().getBooleanArray(BANDS_KEY);
+            if (getArguments().containsKey(RACERS_A_KEY)) {
+                racersInA = getArguments().getParcelableArrayList(RACERS_A_KEY);
+                racersInB = getArguments().getParcelableArrayList(RACERS_B_KEY);
+                racersInC = getArguments().getParcelableArrayList(RACERS_C_KEY);
+                racersInD = getArguments().getParcelableArrayList(RACERS_D_KEY);
+                racersInE = getArguments().getParcelableArrayList(RACERS_E_KEY);
+                racersInF = getArguments().getParcelableArrayList(RACERS_F_KEY);
+                racersInG = getArguments().getParcelableArrayList(RACERS_G_KEY);
+                racersInH = getArguments().getParcelableArrayList(RACERS_H_KEY);
+            }
+            else {
+                racersInA = new ArrayList<>();
+                racersInB = new ArrayList<>();
+                racersInC = new ArrayList<>();
+                racersInD = new ArrayList<>();
+                racersInE = new ArrayList<>();
+                racersInF = new ArrayList<>();
+                racersInG = new ArrayList<>();
+                racersInH = new ArrayList<>();
+            }
+
+            slots = new ArrayList<>();
+            slots.add(racersInA);
+            slots.add(racersInB);
+            slots.add(racersInC);
+            slots.add(racersInD);
+            slots.add(racersInE);
+            slots.add(racersInF);
+            slots.add(racersInG);
+            slots.add(racersInH);
+
+            if (getArguments().containsKey(RACERS_KEY)) {
+                racers = getArguments().getParcelableArrayList(RACERS_KEY);
+            }
+
+            ArrayList<String> chart = getArguments().getStringArrayList(FREQ_KEY);
+            freqChart = new ArrayList<>();
+            for (int i = 0; i < chart.size(); i++) {
+                freqChart.add(new ArrayList<String>(Arrays.asList(chart.get(i).split(";"))));
+            }
+
             race = getArguments().getParcelable(RACE_KEY);
+
+            if (getArguments().containsKey(MAP_KEY)) {
+                racersMap = (HashMap<String, Boolean>) getArguments().getSerializable(MAP_KEY);
+                System.out.println(racersMap.toString());
+                racers = new ArrayList<>();
+                for (int i = 0; i < race.getRacers().size(); i++) {
+                    Racer racer = race.getRacers().get(i);
+                    racers.add(new Racer(racer.getUsername(), racer.getRacerUrl(), racer.getRacerPhoto(), racer.getDroneName(), racer.getdroneURL(), "", 0));
+                }
+            }
+            else {
+                racersMap = new HashMap<>();
+                racers = new ArrayList<>();
+                for (int i = 0; i < race.getRacers().size(); i++) {
+                    Racer racer = race.getRacers().get(i);
+                    racersMap.put(racer.getUsername(), false);
+                    racers.add(new Racer(racer.getUsername(), racer.getRacerUrl(), racer.getRacerPhoto(), racer.getDroneName(), racer.getdroneURL(), "", 0));
+                }
+            }
         }
     }
 
@@ -120,99 +158,72 @@ public class BuildRaceStructureCFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_build_race_structure_c, container, false);
 
-
-        // Put all of the slot cards into one arraylist
-        cards = new ArrayList<>();
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_a));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_b));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_c));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_d));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_e));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_f));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_g));
-        cards.add((CardView) view.findViewById(R.id.build_race_b_card_slot_h));
-
-        // Set visibility according to the number of allowed slots per heat
-        for (int i = numSlots; i < cards.size(); i++) {
-            cards.get(i).setVisibility(View.GONE);
-        }
-
-        // Put all of the listViews into one arraylist
+        // Make arraylist of listviews
         listViews = new ArrayList<>();
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_a_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_b_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_c_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_d_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_e_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_f_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_g_listview));
-        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_b_slot_h_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_a_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_b_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_c_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_d_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_e_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_f_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_g_listview));
+        listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_h_listview));
 
-        // Put all of the adapters into one arraylist
+        // Make arraylist of adapters
         adapters = new ArrayList<>();
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotA));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotB));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotC));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotD));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotE));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotF));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotG));
-        adapters.add(new FrequencyBuilderAdapter(getContext(), (ArrayList<AddFrequencySlot>) freqSlotH));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInA, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInB, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInC, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInD, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInE, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInF, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInG, this));
+        adapters.add(new RacerFrequencyAdapter(getContext(), (ArrayList<Racer>) racersInH, this));
 
-        // Assign adapters
+        // Set adapters to listviews and make expandable
         for (int i = 0; i < listViews.size(); i++) {
             listViews.get(i).setAdapter(adapters.get(i));
             listViews.get(i).setExpanded(true);
         }
 
-        // Make add buttons function for the adapaters
+        // Make arraylist of add buttons
         addButtons = new ArrayList<>();
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_a_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_b_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_c_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_d_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_e_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_f_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_g_add_frequency));
-        addButtons.add((TextView) view.findViewById(R.id.build_race_b_slot_h_add_frequency));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_a_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_b_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_c_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_d_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_e_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_f_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_g_add_button));
+        addButtons.add((LinearLayout) view.findViewById(R.id.build_race_c_slot_h_add_button));
 
+        // Make add buttons do stuff
         for (int i = 0; i < addButtons.size(); i++) {
             final int index = i;
             addButtons.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    freqSlots.get(index).add(new AddFrequencySlot(bands, "CUSTOM", "CUSTOM"));
-                    adapters.get(index).notifyDataSetChanged();
+                    showAddRacerFrequencyPairDialog(index);
                 }
             });
         }
 
+        // Set visibility of stuff depending on number of allowed slots
+        cardViews = new ArrayList<>();
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_a));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_b));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_c));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_d));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_e));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_f));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_g));
+        cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_h));
 
-        TextView continueButton = (TextView) view.findViewById(R.id.build_race_b_continue);
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: SOMETHING
-                String LOG = "CONTINUE TEST";
-                for (int i = 0; i < cards.size(); i++) {
-                    if (cards.get(i).getVisibility() == View.VISIBLE) {
-                        Log.i(LOG, "CARD " + (char) ('A' + i));
-                        for (int j = 0; j < adapters.get(i).getCount(); j++) {
-                            adapters.get(i).notifyDataSetChanged();
-                            Log.i(LOG, "CARD " + (char) ('A' + i) + " FREQUENCY " + adapters.get(i).getItem(j).getCurrentFrequency());
-                        }
-                    }
-                }
+        for (int i = 0; i < cardViews.size(); i++) {
+            if (freqChart.get(i).get(0).equals("")) {
+                cardViews.get(i).setVisibility(View.GONE);
             }
-        });
-
-        TextView cancelButton = (TextView) view.findViewById(R.id.build_race_b_cancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+        }
 
         return view;
     }
@@ -221,17 +232,15 @@ public class BuildRaceStructureCFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        getArguments().putInt(NUM_KEY, numSlots);
-        getArguments().putParcelableArrayList(A_KEY, (ArrayList<AddFrequencySlot>) freqSlotA);
-        getArguments().putParcelableArrayList(B_KEY, (ArrayList<AddFrequencySlot>) freqSlotB);
-        getArguments().putParcelableArrayList(C_KEY, (ArrayList<AddFrequencySlot>) freqSlotC);
-        getArguments().putParcelableArrayList(D_KEY, (ArrayList<AddFrequencySlot>) freqSlotD);
-        getArguments().putParcelableArrayList(E_KEY, (ArrayList<AddFrequencySlot>) freqSlotE);
-        getArguments().putParcelableArrayList(F_KEY, (ArrayList<AddFrequencySlot>) freqSlotF);
-        getArguments().putParcelableArrayList(G_KEY, (ArrayList<AddFrequencySlot>) freqSlotG);
-        getArguments().putParcelableArrayList(H_KEY, (ArrayList<AddFrequencySlot>) freqSlotH);
-        getArguments().putBooleanArray(BANDS_KEY, bands);
-        getArguments().putParcelable(RACE_KEY, race);
+        getArguments().putParcelableArrayList(RACERS_A_KEY, (ArrayList<Racer>) racersInA);
+        getArguments().putParcelableArrayList(RACERS_B_KEY, (ArrayList<Racer>) racersInB);
+        getArguments().putParcelableArrayList(RACERS_C_KEY, (ArrayList<Racer>) racersInC);
+        getArguments().putParcelableArrayList(RACERS_D_KEY, (ArrayList<Racer>) racersInD);
+        getArguments().putParcelableArrayList(RACERS_E_KEY, (ArrayList<Racer>) racersInE);
+        getArguments().putParcelableArrayList(RACERS_F_KEY, (ArrayList<Racer>) racersInF);
+        getArguments().putParcelableArrayList(RACERS_G_KEY, (ArrayList<Racer>) racersInG);
+        getArguments().putParcelableArrayList(RACERS_H_KEY, (ArrayList<Racer>) racersInH);
+        getArguments().putSerializable(MAP_KEY, (HashMap<String, Boolean>) racersMap);
     }
 
     @Override
@@ -249,6 +258,44 @@ public class BuildRaceStructureCFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void showAddRacerFrequencyPairDialog(int i) {
+        FragmentManager fm = getChildFragmentManager();
+
+        // Generate a list of frequencies allowed by this slot
+        ArrayList<String> frequencies = (ArrayList<String>) freqChart.get(i);
+
+        // Create an arraylist that finds everyone who has yet to be assigned a frequency
+        ArrayList<String> usernames = new ArrayList<>();
+        for (String username : racersMap.keySet()) {
+            if (!racersMap.get(username)) {
+                usernames.add(username);
+            }
+        }
+
+        Collections.sort(usernames, String.CASE_INSENSITIVE_ORDER);
+
+        AddRacerFrequencyPairDialogFragment dialog = AddRacerFrequencyPairDialogFragment.newInstance(frequencies, usernames, i, racersMap.size());
+        //dialog.setTargetFragment(BuildRaceStructureCFragment.this, 300);
+        dialog.show(fm, "some other unknown text");
+
+    }
+
+    public void OnFinishAddRacerFrequencyPairDialog(String frequency, String username, int i) {
+        racersMap.put(username, true);
+        Racer match = null;
+        for (Racer racer : racers) {
+            if (racer.getUsername().equals(username)) {
+                match = new Racer(racer.getUsername(), racer.getRacerUrl(), racer.getRacerPhoto(), racer.getDroneName(), racer.getdroneURL(), frequency, racer.getPoints());
+            }
+        }
+        slots.get(i).add(match);
+        adapters.get(i).notifyDataSetChanged();
+    }
+
+    public void setFalseOnMap(String username) {
+        racersMap.put(username, false);
     }
 
     public interface OnFragmentInteractionListener {
