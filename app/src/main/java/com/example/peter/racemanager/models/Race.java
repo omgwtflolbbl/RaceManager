@@ -141,6 +141,67 @@ public class Race implements Parcelable {
         return races;
     }
 
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("title", getTitle());
+            json.put("date", getDate());
+            json.put("time", getTime());
+            json.put("blockquote", getBlockquote());
+            json.put("description", getDescription());
+            json.put("eventURL", getSiteURL());
+
+            JSONObject statusJson = new JSONObject();
+            statusJson.put("ondeck", "None");
+            statusJson.put("racing", "None");
+            statusJson.put("spotting", "None");
+            statusJson.put("status", getStatus());
+            statusJson.put("time", getTargetTime());
+            json.put("status", statusJson);
+
+            JSONObject adminsJson = new JSONObject();
+            for (String admin : getAdmins()) {
+                adminsJson.put(admin, "true");
+            }
+            json.put("admins", adminsJson);
+
+            JSONObject racersJson = new JSONObject();
+            for (Racer racer : getRacers()) {
+                JSONObject racerJson = new JSONObject();
+                racerJson.put("droneURL", racer.getdroneURL());
+                racerJson.put("dronename", racer.getDroneName());
+                racerJson.put("frequency", racer.getFrequency());
+                racerJson.put("racerPage", racer.getRacerUrl());
+                racerJson.put("racerPhoto", racer.getRacerPhoto());
+                racersJson.put(racer.getUsername(), racerJson);
+            }
+            json.put("racers", racersJson);
+
+            JSONArray raceStructureJson = new JSONArray();
+            for (Round round : getRounds()) {
+                JSONArray roundJson = new JSONArray();
+                for (Heat heat : round.getHeats()) {
+                    JSONObject heatJson = new JSONObject();
+                    for (String slotKey : heat.getKeys()) {
+                        JSONObject slotJson = new JSONObject();
+                        slotJson.put("username", heat.getSlot(slotKey).getUsername());
+                        slotJson.put("frequency", heat.getSlot(slotKey).getFrequency());
+                        slotJson.put("points", heat.getSlot(slotKey).getPoints());
+                        heatJson.put(slotKey, slotJson);
+                    }
+                    roundJson.put(heatJson);
+                }
+                raceStructureJson.put(roundJson);
+            }
+            json.put("raceStructure", raceStructureJson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
     public int[] getNext(int[] current) {
         // First check if the "current" is even valid and return invalid if not
         if (current[0] == -1 || current[1] == -1) {

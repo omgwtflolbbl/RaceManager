@@ -24,9 +24,11 @@ import com.example.peter.racemanager.activities.LoginActivity;
 import com.example.peter.racemanager.fragments.ChangeSlotDialogFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.models.Heat;
+import com.example.peter.racemanager.models.Slot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 /**
  * Created by Peter on 6/5/2016.
@@ -124,7 +126,8 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         heatText.setLayoutParams(heatParams);
         gridLayout.addView(heatText);
 
-        Iterator<String> slots = heat.getKeys().iterator();
+        Iterator<String> slots = heat.getHeatMap().keySet().iterator();
+        //Iterator<String> slots = heat.getKeys().iterator();
 
         int j = 0;
 
@@ -143,10 +146,20 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
                 slotText.setBackgroundResource(pickColorTR(color));
             }
             else if (j == heat.numSlots() - 2) {
-                slotText.setBackgroundResource(pickColorBL(color));
+                if (j % 2 == 0) {
+                    slotText.setBackgroundResource(pickColorBL(color));
+                }
+                else {
+                    slotText.setBackgroundResource(pickColorBR(color));
+                }
             }
             else if (j == heat.numSlots() - 1) {
-                slotText.setBackgroundResource(pickColorBR(color));
+                if (j % 2 == 0) {
+                    slotText.setBackgroundResource(pickColorBL(color));
+                }
+                else {
+                    slotText.setBackgroundResource(pickColorBR(color));
+                }
             }
             else {
                 slotText.setBackgroundResource(pickColor(color));

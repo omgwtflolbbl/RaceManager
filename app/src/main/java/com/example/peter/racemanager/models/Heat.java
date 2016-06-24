@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created by Peter on 6/1/2016.
@@ -20,11 +21,11 @@ public class Heat implements Parcelable {
     private Map<String, Slot> heatMap;
 
     public Heat () {
-        heatMap = new HashMap<>();
+        heatMap = new TreeMap<>();
     }
 
     public Heat(JSONObject json) {
-        heatMap = new LinkedHashMap<String, Slot>();
+        heatMap = new TreeMap<>();
         try {
             Iterator<String> keys = json.keys();
             while (keys.hasNext()) {
@@ -43,6 +44,10 @@ public class Heat implements Parcelable {
 
     public int numSlots() {
         return heatMap.size();
+    }
+
+    public Map<String, Slot> getHeatMap() {
+        return heatMap;
     }
 
     public Slot getSlot(String slotKey) {

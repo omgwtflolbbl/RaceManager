@@ -61,8 +61,7 @@ public class TaskFragment extends Fragment {
     private TaskCallbacks mListener;
 
     private static final String CLIENT_KEY = "client_key";
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static Long SntpOffset;
 
     public TaskFragment() {
@@ -325,8 +324,6 @@ public class TaskFragment extends Fragment {
     }
 
     public void addEventByURL(String requestURL, String inputURL, String username, String usertype) {
-        Log.i("USERNAME", username);
-        Log.i("USERTPYE", usertype);
         RequestBody body = new FormBody.Builder()
                 .add("url", inputURL)
                 .add("username", username)
@@ -354,6 +351,69 @@ public class TaskFragment extends Fragment {
 
                 response.close();
                 mListener.OnEventsAddedToUsername();
+            }
+        });
+    }
+
+    public void sendRebuiltRace(String URL, Race race) {
+        RequestBody body = RequestBody.create(JSON, race.toJSONObject().toString());
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                response.close();
+            }
+        });
+    }
+
+    public void test() {
+        JSONObject json;
+        String jsonStr = "";
+        try {
+            json = new JSONObject();
+            json.put("HELLO WORLD", "IT'S ME");
+            jsonStr = json.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(String.format("%s/test",  MainActivity.FLASK))
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                response.close();
             }
         });
     }

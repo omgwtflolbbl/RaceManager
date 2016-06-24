@@ -44,9 +44,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener {
 
-    public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
-    //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
-    public final static String FLASK = "http://pesolve.asuscomm.com:5000";
+    public final static String FLASK = "http://401c9741.ngrok.io";
+    //public final static String FLASK = "http://pesolve.asuscomm.com:5000";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -336,7 +335,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    // BuildRaceStructureBFragment callbacks
+    // BuildRaceStructureCFragment callbacks
     public void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race) {
         BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(racersInSlots, race);
         getSupportFragmentManager().beginTransaction()
@@ -344,6 +343,16 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_D_FRAGMENT")
                 .addToBackStack("BUILD_RACE_STRUCTURE_D_FRAGMENT")
                 .commit();
+    }
+
+    // BuildRaceStructureDFragment callbacks
+    public void onFinishWizard(Race race) {
+        taskFragment.test();
+        String URL = String.format("%s/rebuild/race/%s", FLASK, race.getSiteURL().split(".com/")[1]);
+        taskFragment.sendRebuiltRace(URL, race);
+
+        // Exit the wizard completely
+        getSupportFragmentManager().popBackStack("RACE_FRAGMENT", 0);
     }
 
     // RaceInfoFragment callbacks
