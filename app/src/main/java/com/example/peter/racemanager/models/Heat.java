@@ -19,6 +19,10 @@ import java.util.Set;
 public class Heat implements Parcelable {
     private Map<String, Slot> heatMap;
 
+    public Heat () {
+        heatMap = new HashMap<>();
+    }
+
     public Heat(JSONObject json) {
         heatMap = new LinkedHashMap<String, Slot>();
         try {
@@ -77,6 +81,10 @@ public class Heat implements Parcelable {
 
     public void addSlot(String slotKey) {
         Slot slot = new Slot();
+        heatMap.put(slotKey, slot);
+    }
+
+    public void addSlot(String slotKey, Slot slot) {
         heatMap.put(slotKey, slot);
     }
 

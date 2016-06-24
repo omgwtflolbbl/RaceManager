@@ -190,16 +190,12 @@ public class BuildRaceStructureBFragment extends Fragment {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: SOMETHING
-                String LOG = "CONTINUE TEST";
                 ArrayList<String> chart = new ArrayList<>();
                 for (int i = 0; i < cards.size(); i++) {
                     String freqString = "";
                     if (cards.get(i).getVisibility() == View.VISIBLE) {
-                        Log.i(LOG, "CARD " + (char) ('A' + i));
                         for (int j = 0; j < adapters.get(i).getCount(); j++) {
                             adapters.get(i).notifyDataSetChanged();
-                            Log.i(LOG, "CARD " + (char) ('A' + i) + " FREQUENCY " + adapters.get(i).getItem(j).getCurrentFrequency());
                             freqString += ";" + adapters.get(i).getItem(j).getCurrentFrequency();
                         }
                     }

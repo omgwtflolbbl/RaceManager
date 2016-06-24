@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.peter.racemanager.ExpandableHeightListView;
 import com.example.peter.racemanager.R;
@@ -69,6 +70,7 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
     private List<ExpandableHeightListView> listViews;
     private List<RacerFrequencyAdapter> adapters;
     private List<LinearLayout> addButtons;
+    private List<TextView> headers;
 
     private OnFragmentInteractionListener mListener;
 
@@ -158,6 +160,35 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_build_race_structure_c, container, false);
 
+        // Assign logic to auto assign button
+        TextView autoButton = (TextView) view.findViewById(R.id.build_race_c_auto_button);
+        autoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autoAssign();
+            }
+        });
+
+        // Assign logic to reset button
+        TextView resetButton = (TextView) view.findViewById(R.id.build_race_c_reset_button);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetAll();
+            }
+        });
+
+        // Make arraylist of header texts for updates
+        headers = new ArrayList<>();
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_a_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_b_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_c_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_d_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_e_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_f_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_g_title));
+        headers.add((TextView) view.findViewById(R.id.build_race_c_slot_h_title));
+
         // Make arraylist of listviews
         listViews = new ArrayList<>();
         listViews.add((ExpandableHeightListView) view.findViewById(R.id.build_race_c_slot_a_listview));
@@ -219,11 +250,27 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
         cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_g));
         cardViews.add((CardView) view.findViewById(R.id.build_race_c_card_h));
 
-        for (int i = 0; i < cardViews.size(); i++) {
-            if (freqChart.get(i).get(0).equals("")) {
-                cardViews.get(i).setVisibility(View.GONE);
-            }
+        for (int i = numSlots(); i < cardViews.size(); i++) {
+            cardViews.get(i).setVisibility(View.GONE);
         }
+
+        TextView continueButton = (TextView) view.findViewById(R.id.build_race_c_continue);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onContinue();
+            }
+        });
+
+        TextView cancelButton = (TextView) view.findViewById(R.id.build_race_c_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        updateHeaders();
 
         return view;
     }
@@ -260,13 +307,81 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
         mListener = null;
     }
 
-    public void showAddRacerFrequencyPairDialog(int i) {
-        FragmentManager fm = getChildFragmentManager();
+    // Returns the number of slots allowed for this race
+    public int numSlots() {
+        for (int i = 0; i < freqChart.size(); i++) {
+            if (freqChart.get(i).get(0).equals("")) {
+                return i;
+            }
+        }
+        return 8;
+    }
 
-        // Generate a list of frequencies allowed by this slot
-        ArrayList<String> frequencies = (ArrayList<String>) freqChart.get(i);
+    // Updates the headers to reflect how many users are assigned to that slot
+    public void updateHeaders() {
+        for (int i = 0, size = numSlots(); i < size; i++) {
+            headers.get(i).setText(String.format("Slot %s Racers (%d)", (char) ('A' + i), slots.get(i).size()));
+        }
+    }
 
-        // Create an arraylist that finds everyone who has yet to be assigned a frequency
+    // This function should find everyone who has yet to be assigned a frequency and assign them to a
+    // frequency, while making sure to keep the number of people assigned to each frequency as even
+    // as possible.
+    public void autoAssign() {
+        ArrayList<String> usernames = availableUsers();
+        // Loop over every username still unassigned
+        while (usernames.size() > 0) {
+            // Find out which allowed slot has the least number of assigned users
+            int lowestIndex = 0;
+            int lowestSize = Integer.MAX_VALUE;
+            for (int i = 0; i < numSlots(); i++) {
+                if (slots.get(i).size() < lowestSize) {
+                    lowestIndex = i;
+                    lowestSize = slots.get(i).size();
+                }
+            }
+
+            // TODO: Refactor this and OnFinishDialog to use the same method for inserting user into adapters and marking as done
+            // Now that we have the most empty slot comparatively, add the first user to that slot
+            // using the first frequency option available in that slot
+            String username = usernames.get(0);
+            String frequency = freqChart.get(lowestIndex).get(0);
+
+            // Mark racer as having been added
+            racersMap.put(username, true);
+
+            // Update the listviews
+            Racer match = null;
+            for (Racer racer : racers) {
+                if (racer.getUsername().equals(username)) {
+                    match = new Racer(racer.getUsername(), racer.getRacerUrl(), racer.getRacerPhoto(), racer.getDroneName(), racer.getdroneURL(), frequency, racer.getPoints());
+                }
+            }
+            slots.get(lowestIndex).add(match);
+            adapters.get(lowestIndex).notifyDataSetChanged();
+
+            // Remove this user now that they should be handled
+            usernames.remove(0);
+        }
+        updateHeaders();
+    }
+
+    // Resets the list of who is available and removes everyone from their assigned slots
+    public void resetAll() {
+        // Reset the frequencies of each Racer object and the hashmap of available racers
+        for (Racer racer : racers) {
+            racer.setFrequency("");
+            racersMap.put(racer.getUsername(), false);
+        }
+        for (int i = 0; i < slots.size(); i++) {
+            slots.get(i).clear();
+            adapters.get(i).notifyDataSetChanged();
+        }
+        updateHeaders();
+    }
+
+    // Returns an arraylist that finds everyone who has yet to be assigned a frequency
+    public ArrayList<String> availableUsers() {
         ArrayList<String> usernames = new ArrayList<>();
         for (String username : racersMap.keySet()) {
             if (!racersMap.get(username)) {
@@ -274,8 +389,21 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
             }
         }
 
+        return usernames;
+    }
+
+    // Opens up dialog box to add a new frequency/racer pairing
+    public void showAddRacerFrequencyPairDialog(int i) {
+        FragmentManager fm = getChildFragmentManager();
+
+        // Generate a list of frequencies allowed by this slot
+        ArrayList<String> frequencies = (ArrayList<String>) freqChart.get(i);
+
+        // Get available people and sort them for easier picking
+        ArrayList<String> usernames = availableUsers();
         Collections.sort(usernames, String.CASE_INSENSITIVE_ORDER);
 
+        // Display the dialog fragment
         AddRacerFrequencyPairDialogFragment dialog = AddRacerFrequencyPairDialogFragment.newInstance(frequencies, usernames, i, racersMap.size());
         //dialog.setTargetFragment(BuildRaceStructureCFragment.this, 300);
         dialog.show(fm, "some other unknown text");
@@ -283,7 +411,10 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
     }
 
     public void OnFinishAddRacerFrequencyPairDialog(String frequency, String username, int i) {
+        // Mark racer as having been added
         racersMap.put(username, true);
+
+        // Update the listviews
         Racer match = null;
         for (Racer racer : racers) {
             if (racer.getUsername().equals(username)) {
@@ -292,13 +423,19 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
         }
         slots.get(i).add(match);
         adapters.get(i).notifyDataSetChanged();
+        updateHeaders();
     }
 
     public void setFalseOnMap(String username) {
         racersMap.put(username, false);
+        updateHeaders();
+    }
+
+    public void onContinue() {
+        mListener.BuildRaceCToD(slots, race);
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race);
     }
 }

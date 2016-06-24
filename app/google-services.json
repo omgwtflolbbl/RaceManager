@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1050927565322",
+    "firebase_url": "https://project-2848401830613063315.firebaseio.com",
+    "project_id": "project-2848401830613063315",
+    "storage_bucket": "project-2848401830613063315.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050927565322:android:f62b457808eb1ae1",
+        "android_client_info": {
+          "package_name": "com.example.peter.racemanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050927565322-hrklo7131nm0174l19pgdmspp7klva76.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.peter.racemanager",
+            "certificate_hash": "3D2A9D7A1FD91A45B23E5EB20115CD0CEFB9E8D1"
+          }
+        },
+        {
+          "client_id": "1050927565322-c3vmrhdac9rsf3bcm52v9mgt5ar6n02t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-vrSRk1H1ZDLXK5j9mM59t3Ur69nXx5Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050927565322-c3vmrhdac9rsf3bcm52v9mgt5ar6n02t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

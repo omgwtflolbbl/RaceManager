@@ -21,6 +21,7 @@ import android.view.View;
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureCFragment;
+import com.example.peter.racemanager.fragments.BuildRaceStructureDFragment;
 import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.RaceFragment;
@@ -32,14 +33,16 @@ import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.AddFrequencySlot;
 import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener {
 
     public final static String EXTRA_MESSAGE = "com.example.peter.racemanager.MESSAGE";
     //public final static String FLASK = "http://cc6e4e1c.ngrok.io";
@@ -328,8 +331,18 @@ public class MainActivity extends AppCompatActivity
         BuildRaceStructureCFragment fragment = BuildRaceStructureCFragment.newInstance(freq, race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_B_FRAGMENT")
-                .addToBackStack("BUILD_RACE_STRUCTURE_B_FRAGMENT")
+                .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_C_FRAGMENT")
+                .addToBackStack("BUILD_RACE_STRUCTURE_C_FRAGMENT")
+                .commit();
+    }
+
+    // BuildRaceStructureBFragment callbacks
+    public void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race) {
+        BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(racersInSlots, race);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_D_FRAGMENT")
+                .addToBackStack("BUILD_RACE_STRUCTURE_D_FRAGMENT")
                 .commit();
     }
 

@@ -15,6 +15,10 @@ import java.util.List;
 public class Round implements Parcelable {
     private List<Heat> heats;
 
+    public Round() {
+        heats = new ArrayList<>();
+    }
+
     public Round fromJsonToRound(JSONArray json) {
         Round round = new Round();
         try {
@@ -89,14 +93,11 @@ public class Round implements Parcelable {
         dest.writeTypedList(this.heats);
     }
 
-    public Round() {
-    }
-
     protected Round(Parcel in) {
         this.heats = in.createTypedArrayList(Heat.CREATOR);
     }
 
-    public static final Parcelable.Creator<Round> CREATOR = new Parcelable.Creator<Round>() {
+    public static final Creator<Round> CREATOR = new Creator<Round>() {
         @Override
         public Round createFromParcel(Parcel source) {
             return new Round(source);

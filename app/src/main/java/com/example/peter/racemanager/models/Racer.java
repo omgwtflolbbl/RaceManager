@@ -49,6 +49,10 @@ public class Racer implements Parcelable {
         this.points = points;
     }
 
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
     public String getUsername() {
         return username;
     }

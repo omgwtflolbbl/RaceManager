@@ -3,6 +3,7 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -88,7 +89,12 @@ public class AddRacerFrequencyPairDialogFragment extends DialogFragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.OnFinishAddRacerFrequencyPairDialog(freqAdapter.getItem(freqListView.getCheckedItemPosition()), usersAdapter.getItem(usersListView.getCheckedItemPosition()), i);
+                if (!(freqAdapter.getCount()==0) && !(usersAdapter.getCount()==0)) {
+                    mListener.OnFinishAddRacerFrequencyPairDialog(freqAdapter.getItem(freqListView.getCheckedItemPosition()), usersAdapter.getItem(usersListView.getCheckedItemPosition()), i);
+                }
+                else{
+                    System.out.println("HEYO!");
+                }
                 dismiss();
             }
         });

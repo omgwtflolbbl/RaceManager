@@ -83,6 +83,14 @@ public class BuildRaceStructureAFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_build_race_structure_a, container, false);
+
         if (getArguments() != null) {
             numRacers = getArguments().getInt(NUM_KEY);
             fatshark = getArguments().getBoolean(FS_KEY);
@@ -94,13 +102,6 @@ public class BuildRaceStructureAFragment extends Fragment {
             temp = getArguments().getBoolean(TEMP_KEY);
             race = getArguments().getParcelable(RACE_KEY);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_build_race_structure_a, container, false);
 
         numRacersText = (EditText) view.findViewById(R.id.build_race_a_num_racers);
         numRacersText.setText(Integer.toString(numRacers));

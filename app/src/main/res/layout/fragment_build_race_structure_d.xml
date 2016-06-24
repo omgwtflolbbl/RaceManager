@@ -1,0 +1,137 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:cards="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:orientation="vertical"
+        tools:context="com.example.peter.racemanager.fragments.BuildRaceStructureDFragment">
+        
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp">
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                android:text="Finally, choose how many rounds to race, and how your heats will be sorted. After finishing here, the race structure and frequencies for this race will be updated." />
+            
+        </android.support.v7.widget.CardView>
+        
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Number of rounds:" />
+
+                <EditText
+                    android:id="@+id/build_race_d_number_rounds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"/>
+
+            </LinearLayout>
+            
+        </android.support.v7.widget.CardView>
+        
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cards:contentPadding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select matching method"/>
+
+                <android.support.v7.widget.AppCompatCheckedTextView
+                    android:id="@+id/build_race_d_choice_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:checkMark="?android:attr/textCheckMark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Use order as is (no shuffle)"/>
+
+                <android.support.v7.widget.AppCompatCheckedTextView
+                    android:id="@+id/build_race_d_choice_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:checkMark="?android:attr/textCheckMark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Shuffled once (each round identical)"/>
+
+                <android.support.v7.widget.AppCompatCheckedTextView
+                    android:id="@+id/build_race_d_choice_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:checkMark="?android:attr/textCheckMark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Shuffle each (each round unique)"/>
+
+            </LinearLayout>
+            
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/build_race_d_card_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/build_race_d_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:text="Cancel"/>
+
+                <TextView
+                    android:id="@+id/build_race_d_finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:text="Finish" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+    
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
