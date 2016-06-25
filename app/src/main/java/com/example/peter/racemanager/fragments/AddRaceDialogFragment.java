@@ -34,8 +34,8 @@ public class AddRaceDialogFragment extends DialogFragment {
         // Empty constructor
     }
 
-    public static ChangeSlotDialogFragment newInstance(Slot slot, String tag) {
-        ChangeSlotDialogFragment fragment = new ChangeSlotDialogFragment();
+    public static AddRaceDialogFragment newInstance(Slot slot, String tag) {
+        AddRaceDialogFragment fragment = new AddRaceDialogFragment();
         Bundle args = new Bundle();
         args.putParcelable(SLOT_KEY, slot);
         args.putString(TAG_KEY, tag);

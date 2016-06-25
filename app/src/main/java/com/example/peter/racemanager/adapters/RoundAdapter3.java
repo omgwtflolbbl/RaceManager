@@ -172,7 +172,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
                         mListener.showChangeSlotDialog(view);
                     }
                     else {
-                        Toast.makeText(getContext(), "WONK WONK WONK", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "WONK WONK WONK", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

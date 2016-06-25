@@ -503,22 +503,32 @@
 
                 <TextView
                     android:id="@+id/build_race_b_cancel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:gravity="center"
                     android:layout_gravity="start"
                     android:layout_weight="1"
                     android:textColor="@android:color/holo_blue_light"
+                    android:background="@drawable/custom_button"
                     android:text="Cancel"/>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_weight="0"
+                    android:background="@color/grey200" />
 
                 <TextView
                     android:id="@+id/build_race_b_continue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:gravity="center"
                     android:layout_gravity="end"
                     android:layout_weight="1"
                     android:textColor="@android:color/holo_blue_light"
+                    android:background="@drawable/custom_button"
                     android:text="Continue" />
 
 

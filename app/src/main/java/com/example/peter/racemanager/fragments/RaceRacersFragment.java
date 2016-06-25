@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
@@ -78,9 +79,24 @@ public class RaceRacersFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-                Toast.makeText(getActivity(), racerListAdapter.getItem(i).getUsername(), Toast.LENGTH_SHORT).show();
                 Racer racer = (Racer) adapterView.getItemAtPosition(i);
                 //mListener.onFragmentInteraction(race);
+            }
+        });
+
+        TextView nameSortButton = (TextView) view.findViewById(R.id.race_racers_sort_name);
+        nameSortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                racerListAdapter.setSort("name");
+            }
+        });
+
+        TextView pointSortButton = (TextView) view.findViewById(R.id.race_racers_sort_points);
+        pointSortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                racerListAdapter.setSort("points");
             }
         });
 

@@ -13,12 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.models.Race;
+import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This dialog is to appear whenever an admin presses on a slot in the raceschedulefragment or the
@@ -28,6 +35,7 @@ public class ChangeSlotDialogFragment extends DialogFragment {
 
     private static final String SLOT_KEY = "SLOT_KEY";
     private static final String TAG_KEY = "TAG_KEY";
+    private static final String RACE_KEY = "RACE_KEY";
 
     private Slot slot;
     private TextView minus;
@@ -36,18 +44,21 @@ public class ChangeSlotDialogFragment extends DialogFragment {
     private CheckBox remove;
     private TextView update;
     private TextView cancel;
+    private Spinner spinner;
     private ChangeSlotDialogListener mListener;
     private String tag;
+    private Race race;
 
     public ChangeSlotDialogFragment() {
         // Empty constructor
     }
 
-    public static ChangeSlotDialogFragment newInstance(Slot slot, String tag) {
+    public static ChangeSlotDialogFragment newInstance(Slot slot, String tag, Race race) {
         ChangeSlotDialogFragment fragment = new ChangeSlotDialogFragment();
         Bundle args = new Bundle();
         args.putParcelable(SLOT_KEY, slot);
         args.putString(TAG_KEY, tag);
+        args.putParcelable(RACE_KEY, race);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +76,7 @@ public class ChangeSlotDialogFragment extends DialogFragment {
 
         slot = getArguments().getParcelable(SLOT_KEY);
         tag = getArguments().getString(TAG_KEY);
+        race = getArguments().getParcelable(RACE_KEY);
 
         getDialog().setTitle(slot.getUsername());
 
@@ -90,13 +102,24 @@ public class ChangeSlotDialogFragment extends DialogFragment {
             }
         });
 
+        spinner = (Spinner) view.findViewById(R.id.dialog_change_slot_spinner);
+        List<String> usernames = new ArrayList<>();
+        usernames.add("Empty slot");
+        for (Racer racer : race.getRacers()) {
+            usernames.add(racer.getUsername());
+        }
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, usernames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0, false);
+
         remove = (CheckBox) view.findViewById(R.id.dialog_change_empty_slot_checkbox);
 
         update = (TextView) view.findViewById(R.id.dialog_change_slot_save);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onFinishChangeSlotDialog(Integer.parseInt(count.getText().toString()), remove.isChecked(), slot, tag);
+                mListener.onFinishChangeSlotDialog(Integer.parseInt(count.getText().toString()), remove.isChecked(), slot, tag, adapter.getItem(spinner.getSelectedItemPosition()));
                 dismiss();
             }
         });
@@ -118,6 +141,6 @@ public class ChangeSlotDialogFragment extends DialogFragment {
     }
 
     public interface ChangeSlotDialogListener {
-        void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag);
+        void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag, String newUser);
     }
 }

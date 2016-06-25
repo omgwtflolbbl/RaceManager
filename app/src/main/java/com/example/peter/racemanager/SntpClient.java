@@ -65,29 +65,21 @@ public class SntpClient
         DatagramSocket socket = null;
         try {
             socket = new DatagramSocket();
-            Log.i("INSIDE SNTPCLIENT", "1");
             socket.setSoTimeout(timeout);
-            Log.i("INSIDE SNTPCLIENT", "2");
             InetAddress address = InetAddress.getByName(host);
-            Log.i("INSIDE SNTPCLIENT", "2.5");
             byte[] buffer = new byte[NTP_PACKET_SIZE];
             DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
-            Log.i("INSIDE SNTPCLIENT", "3");
             // set mode = 3 (client) and version = 3
             // mode is in low 3 bits of first byte
             // version is in bits 3-5 of first byte
             buffer[0] = NTP_MODE_CLIENT | (NTP_VERSION << 3);
-            Log.i("INSIDE SNTPCLIENT", "4");
             // get current time and write it to the request packet
             long requestTime = System.currentTimeMillis();
             long requestTicks = SystemClock.elapsedRealtime();
             writeTimeStamp(buffer, TRANSMIT_TIME_OFFSET, requestTime);
-            Log.i("INSIDE SNTPCLIENT", "5");
             socket.send(request);
-            Log.i("INSIDE SNTPCLIENT", "6");
             // read the response
             DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-            Log.i("INSIDE SNTPCLIENT", "7");
             socket.receive(response);
             long responseTicks = SystemClock.elapsedRealtime();
             long responseTime = requestTime + (responseTicks - requestTicks);

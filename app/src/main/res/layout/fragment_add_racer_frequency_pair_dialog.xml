@@ -45,7 +45,13 @@
 
     </ListView>
 
-    <View style="@style/Divider"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@color/grey200"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,7 +60,7 @@
 
         <TextView
             android:id="@+id/dialog_add_racer_frequency_pair_cancel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
@@ -62,11 +68,19 @@
             android:clickable="true"
             android:focusable="true"
             android:textColor="@android:color/holo_blue_light"
+            android:background="@drawable/custom_button"
             android:text="Cancel" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="0"
+            android:background="@color/grey200" />
 
         <TextView
             android:id="@+id/dialog_add_racer_frequency_pair_add"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
@@ -74,6 +88,7 @@
             android:clickable="true"
             android:focusable="true"
             android:textColor="@android:color/holo_blue_light"
+            android:background="@drawable/custom_button"
             android:text="Add" />
 
     </LinearLayout>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.AppCompatCheckedTextView
-    android:id="@+id/adapter_checked_textview"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/adapter_checked_textview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
+    android:background="@drawable/custom_button"
     android:checkMark="?android:attr/textCheckMark">
 
 </android.support.v7.widget.AppCompatCheckedTextView>

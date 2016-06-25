@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.RacerNameComparator;
+import com.example.peter.racemanager.RacerPointComparator;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 
@@ -20,8 +22,11 @@ import java.util.ArrayList;
  */
 public class RacerListAdapter extends ArrayAdapter<Racer> {
 
+    private String sort;
+
     public RacerListAdapter (Context context, ArrayList<Racer> racers) {
         super(context, 0, racers);
+        sort = "name";
     }
 
     @Override
@@ -45,5 +50,24 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         pointsText.setText(Integer.toString(racer.getPoints()) + " Pt.");
 
         return view;
+    }
+
+    // Override notifyDataSetChanged to sort the racers based on user preference
+    @Override
+    public void notifyDataSetChanged() {
+        this.setNotifyOnChange(false);
+        if (sort.equals("name")) {
+            this.sort(new RacerNameComparator());
+        }
+        else if (sort.equals("points")) {
+            this.sort(new RacerPointComparator());
+        }
+        //this.setNotifyOnChange(true);
+        super.notifyDataSetChanged();
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+        notifyDataSetChanged();
     }
 }

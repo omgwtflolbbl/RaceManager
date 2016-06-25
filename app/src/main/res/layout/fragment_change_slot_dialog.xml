@@ -19,6 +19,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:paddingTop="10dp"
+        android:layout_marginBottom="16dp"
         android:textSize="48sp"
         android:digits="0123456789"
         android:inputType="number"
@@ -54,19 +55,51 @@
 
     <TextView
         android:id="@+id/dialog_change_empty_slot_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
         android:layout_below="@id/dialog_change_slot_points"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="3dp"
+        android:gravity="center"
         android:textSize="18dp"
-        android:text="Remove racer from slot?"/>
+        android:text="Change racer?"/>
+
+    <RelativeLayout
+        android:id="@+id/dialog_change_slot_spinner_bg"
+        android:layout_width="92dp"
+        android:layout_height="28dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/spinner_bg"
+        android:layout_toEndOf="@+id/dialog_change_empty_slot_text"
+        android:layout_below="@id/dialog_change_slot_points"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+
+        <Spinner
+            android:id="@+id/dialog_change_slot_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:paddingEnd="19dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:spinnerMode="dialog" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@mipmap/drop" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/dialog_change_empty_slot_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
         android:layout_below="@+id/dialog_change_slot_points"
@@ -84,7 +117,8 @@
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/expblue"
+        android:textColor="@android:color/holo_blue_light"
+        android:background="@drawable/custom_button"
         android:text="CANCEL" />
 
     <TextView
@@ -101,7 +135,8 @@
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/expblue"
+        android:textColor="@android:color/holo_blue_light"
+        android:background="@drawable/custom_button"
         android:text="UPDATE" />
 
 </RelativeLayout>

@@ -109,14 +109,11 @@ public class TaskFragment extends Fragment {
                 Log.i("Trying SNTP stuff", "Probably gonna fail");
                 if (sntpClient.requestTime("0.us.pool.ntp.org", 30000)) {
                     Long sntpTime = sntpClient.getNtpTime();
-                    Log.i("SNTP TIME", sntpTime.toString());
-                    Log.i("CURRENT TIME", Long.toString(System.currentTimeMillis()));
-                    Log.i("OFFSET", Long.toString(sntpTime-System.currentTimeMillis()));
                     SntpOffset = sntpTime-System.currentTimeMillis();
+                    Log.i("GOT SNTP TIME", "IT WAS GLORIOUS");
                 }
                 else  {
                     Log.i("SNTP FAILURE?", "WHO KNOWS MANG");
-                    Log.i("SNTP TIME", Long.toString(sntpClient.getNtpTime()));
                 }
             }
         };

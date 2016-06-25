@@ -282,23 +282,6 @@ public class BuildRaceStructureDFragment extends Fragment {
 
         Race race = generateNewRace();
 
-        System.out.println("Title: " + race.getTitle());
-        System.out.println("Date: " + race.getDate());
-        System.out.println("Time: " + race.getTime());
-        System.out.println("RaceStructure: ");
-        for (int i = 0; i < race.getRounds().size(); i++) {
-            System.out.println("Round " + (i+1));
-            for (int j = 0; j < race.getRounds().get(i).length(); j++) {
-                System.out.println("Heat " + (j+1));
-                for (String key : race.getRounds().get(i).getHeat(j).getKeys()) {
-                    System.out.println("Slot " + key + " - " + race.getRounds().get(i).getHeat(j).getSlot(key).getUsername() +  " - " + race.getRounds().get(i).getHeat(j).getSlot(key).getFrequency());
-                }
-            }
-        }
-        System.out.println("Racers:");
-        for (Racer racer : race.getRacers()) {
-            System.out.println(racer.getUsername() + " " + racer.getFrequency());
-        }
         mListener.onFinishWizard(race);
     }
 

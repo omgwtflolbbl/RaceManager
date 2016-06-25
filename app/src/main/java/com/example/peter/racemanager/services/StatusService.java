@@ -62,7 +62,6 @@ public class StatusService extends Service {
 
     @Override
     public void onDestroy() {
-        Toast.makeText(getApplicationContext(), "SERVICE IS ENDING", Toast.LENGTH_SHORT).show();
         Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
         for (int i = 0; i < threads.size(); i++) {
             runnables.get(i).stopListeners();

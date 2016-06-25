@@ -15,7 +15,11 @@
     <color name="lightblue">#03A9F4</color>
     <color name="lightblueinner">#40C4FF</color>
     <color name="cyaninner">#84FFFF</color>
-    <color name="expblue">#33b5e5</color>
+    <color name="grey100">#F5F5F5</color>
+    <color name="grey200">#EEEEEE</color>
+    <color name="grey300">#E0E0E0</color>
+    <color name="grey400">#BDBDBD</color>
+    <color name="grey500">#9E9E9E</color>
     <color name="blue50">#E3F2FD</color>
     <color name="blue100">#BBDEFB</color>
     <color name="blue200">#90CAF9</color>

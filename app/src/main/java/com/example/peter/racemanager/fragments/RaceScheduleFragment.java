@@ -159,15 +159,20 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
     public void showChangeSlotDialog(View view) {
         FragmentManager fm = getChildFragmentManager();
         String[] tag = view.getTag().toString().split(" ");
-        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString());
+        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString(), race);
         dialog.setTargetFragment(RaceScheduleFragment.this, 300);
         dialog.show(fm, "some_unknown_text");
     }
 
-    public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag) {
+    public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag, String newUser) {
 
         if (remove) {
-            slot.setUsername("EMPTY SLOT");
+            if (newUser.equals("Empty slot")) {
+                slot.setUsername("EMPTY SLOT");
+            }
+            else {
+                slot.setUsername(newUser);
+            }
         }
         else {
             slot.setPoints(points);

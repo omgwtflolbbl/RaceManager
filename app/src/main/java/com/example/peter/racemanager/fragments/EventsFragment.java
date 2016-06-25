@@ -92,7 +92,6 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-                Toast.makeText(getActivity(), eventAdapter.getItem(i).getTitle(), Toast.LENGTH_SHORT).show();
                 Race race = (Race) adapterView.getItemAtPosition(i);
                 mListener.onEventSelected(race);
             }

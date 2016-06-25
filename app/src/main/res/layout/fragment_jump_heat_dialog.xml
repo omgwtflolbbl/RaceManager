@@ -1,0 +1,153 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.peter.racemanager.fragments.JumpHeatDialogFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginTop="6dp"
+        android:text="Round"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_jump_slot_round_subtract"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="  &lt;"
+            android:textSize="32sp"
+            android:scaleY="1.5" />
+
+        <EditText
+            android:id="@+id/dialog_jump_heat_round_text"
+            android:layout_width="30dp"
+            android:layout_height="42dp"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="false"
+            android:gravity="center"
+            android:background="@android:color/transparent"
+            android:textSize="32sp"
+            android:text="1"/>
+
+        <TextView
+            android:id="@+id/dialog_jump_slot_round_add"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_blue_light"
+            android:scaleY="1.5"
+            android:textSize="32sp"
+            android:text=">  " />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:text="Heat"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_jump_slot_heat_subtract"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="  &lt;"
+            android:textSize="32sp"
+            android:scaleY="1.5" />
+
+        <EditText
+            android:id="@+id/dialog_jump_heat_heat_text"
+            android:layout_width="30dp"
+            android:layout_height="42dp"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="false"
+            android:gravity="center"
+            android:background="@android:color/transparent"
+            android:textSize="32sp"
+            android:text="1"/>
+
+        <TextView
+            android:id="@+id/dialog_jump_slot_heat_add"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_blue_light"
+            android:scaleY="1.5"
+            android:textSize="32sp"
+            android:text=">  " />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@color/grey200"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/dialog_jump_heat_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:gravity="center"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:textColor="@android:color/holo_blue_light"
+            android:background="@drawable/custom_button"
+            android:text="Cancel"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="0"
+            android:background="@color/grey200" />
+
+        <TextView
+            android:id="@+id/dialog_jump_heat_jump"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:gravity="center"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:textColor="@android:color/holo_blue_light"
+            android:background="@drawable/custom_button"
+            android:text="Change" />
+
+    </LinearLayout>
+
+</LinearLayout>
