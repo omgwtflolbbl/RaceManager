@@ -48,6 +48,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     TextView currentStatusText;
     Button flowButton;
     Button jumpButton;
+    TextView racerWelcome;
+    TextView racerFrequency;
+    TextView racerPoints;
 
     public RaceFragment() {
         // Required empty public constructor
@@ -85,6 +88,10 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_race, container, false);
+
+        racerWelcome = (TextView) view.findViewById(R.id.race_racer_welcome);
+        racerFrequency = (TextView) view.findViewById(R.id.race_racer_frequency);
+        racerPoints = (TextView) view.findViewById(R.id.race_racers_points);
 
         currentStatusText = (TextView) view.findViewById(R.id.race_current_status_text);
 
@@ -205,6 +212,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         }
         setCurrentStatusText();
         setFlowButtonText();
+        setRacerText();
     }
 
     // Controls the status displayed on top of countdown widget
@@ -266,6 +274,20 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         }
         else if (status.charAt(0) == 'F') {
             flowButton.setText("Done");
+        }
+    }
+
+    public void setRacerText() {
+        if (checkRacerPermissions()) {
+            String username = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("username", null);
+            race.calculatePoints();
+            for (Racer racer : race.getRacers()) {
+                if (racer.getUsername().equals(username)) {
+                    racerWelcome.setText(String.format(Locale.US, "Welcome, %s!", username));
+                    racerFrequency.setText(String.format(Locale.US, "Your assigned frequency is %s", racer.getFrequency()));
+                    racerPoints.setText(String.format(Locale.US, "You currently have %d points", racer.getPoints()));
+                }
+            }
         }
     }
 
