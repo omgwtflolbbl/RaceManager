@@ -165,7 +165,6 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
     }
 
     public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag, String newUser) {
-
         if (remove) {
             if (newUser.equals("Empty slot")) {
                 slot.setUsername("EMPTY SLOT");

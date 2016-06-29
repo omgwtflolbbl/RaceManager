@@ -109,17 +109,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:text="Race length (seconds)"/>
 
                     <EditText
                         android:id="@+id/race_time_input"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
-                        android:digits="0123456789"
                         android:inputType="number"
                         android:background="@android:drawable/editbox_background_normal"
                         android:gravity="center"
                         android:textColor="@android:color/holo_blue_light"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
                         android:text="120"/>
 
                 </LinearLayout>
@@ -152,15 +154,45 @@
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/race_builder_button"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rebuild Race"/>
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/race_admin_admins_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Manage Admins"/>
+
+                    <Button
+                        android:id="@+id/race_builder_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Rebuild Race"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
+
+        <ListView
+            android:id="@+id/race_current_heat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ListView
+            android:id="@+id/race_spotter_heat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ListView
+            android:id="@+id/race_ondeck_heat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/race_card_basic"

@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:textColor="@android:color/holo_blue_light"
             android:background="@drawable/custom_button"
-            android:text="Sort Points"/>
+            android:text="Sort by points"/>
 
         <View
             android:layout_width="1dp"
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:textColor="@android:color/holo_blue_light"
             android:background="@drawable/custom_button"
-            android:text="Sort Names" />
+            android:text="Sort by name" />
 
     </LinearLayout>
 

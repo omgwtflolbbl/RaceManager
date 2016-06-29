@@ -22,12 +22,14 @@ import android.widget.Toast;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.LoginActivity;
 import com.example.peter.racemanager.fragments.ChangeSlotDialogFragment;
+import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.models.Heat;
 import com.example.peter.racemanager.models.Slot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeMap;
 
 /**
@@ -35,6 +37,7 @@ import java.util.TreeMap;
  */
 public class RoundAdapter3 extends ArrayAdapter<Heat> {
     private int roundIndex;
+    private int heatIndex;
     private onSlotSelectListener mListener;
     private String status;
 
@@ -43,6 +46,15 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         this.roundIndex = roundIndex;
         this.status = status;
         this.mListener = mListener;
+        this.heatIndex = -1;
+    }
+
+    public RoundAdapter3 (Context context, ArrayList<Heat> heats, int roundIndex, int heatIndex, String status, onSlotSelectListener mListener) {
+        super(context, 0, heats);
+        this.roundIndex = roundIndex;
+        this.status = status;
+        this.mListener = mListener;
+        this.heatIndex = heatIndex;
     }
 
     @Override
@@ -56,6 +68,10 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         }
         else {
             view = LayoutInflater.from(getContext()).inflate(R.layout.heat_card, parent, false);
+        }
+
+        if (heatIndex != -1) {
+            position = heatIndex;
         }
 
         // Figure out what color to make everything
@@ -115,7 +131,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         // Heat title
         final TextView heatText = new TextView(getContext());
         heatText.setTag(Integer.toString(position));
-        heatText.setText(String.format(" %d ", position + 1));
+        heatText.setText(String.format(Locale.US, " %d ", position + 1));
         heatText.setTextSize(32);
         heatText.setGravity(Gravity.CENTER);
         heatText.setHeight(GridLayout.LayoutParams.WRAP_CONTENT);
@@ -168,8 +184,15 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (((RaceScheduleFragment) mListener).checkPermissions()) {
-                        mListener.showChangeSlotDialog(view);
+                    if (mListener instanceof RaceScheduleFragment) {
+                        if (((RaceScheduleFragment) mListener).checkPermissions()) {
+                            mListener.showChangeSlotDialog(view);
+                        }
+                    }
+                    else if (mListener instanceof RaceFragment) {
+                        if (((RaceFragment) mListener).checkAdminPermissions()) {
+                            mListener.showChangeSlotDialog(view);
+                        }
                     }
                     else {
                         //Toast.makeText(getContext(), "WONK WONK WONK", Toast.LENGTH_SHORT).show();
@@ -245,6 +268,18 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             case "green": return R.drawable.slot_text_green_br;
             default: return R.drawable.slot_text_grey_br;
         }
+    }
+
+    public void setRoundIndex(int index) {
+        this.roundIndex = index;
+    }
+
+    public void setHeatIndex(int index) {
+        this.heatIndex = index;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public interface onSlotSelectListener {

@@ -59,14 +59,13 @@
         android:layout_height="36dp"
         android:layout_below="@id/dialog_change_slot_points"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         android:gravity="center"
         android:textSize="18dp"
         android:text="Change racer?"/>
 
     <RelativeLayout
         android:id="@+id/dialog_change_slot_spinner_bg"
-        android:layout_width="92dp"
+        android:layout_width="110dp"
         android:layout_height="28dp"
         android:layout_margin="4dp"
         android:background="@drawable/spinner_bg"

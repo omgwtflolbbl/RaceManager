@@ -3,12 +3,16 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,12 +20,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.activities.MainActivity;
+import com.example.peter.racemanager.adapters.RoundAdapter3;
+import com.example.peter.racemanager.models.Heat;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
+import com.example.peter.racemanager.models.Slot;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -33,7 +46,7 @@ import java.util.Locale;
  * Use the {@link RaceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RaceFragment extends Fragment implements View.OnClickListener, JumpHeatDialogFragment.JumpHeatDialogListener {
+public class RaceFragment extends Fragment implements View.OnClickListener, JumpHeatDialogFragment.JumpHeatDialogListener, RoundAdapter3.onSlotSelectListener, ChangeSlotDialogFragment.ChangeSlotDialogListener {
 
     private final static String RACE_KEY = "race_key";
     private final static String ROTATED_KEY = "rotated_key";
@@ -43,14 +56,24 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     private final static Handler handler = new Handler();
     private static CountdownRunnable countdownRunnable;
     private Boolean rotated = false;
+    private List<Heat> currentHeatList;
+    private List<Heat> spotterHeatList;
+    private List<Heat> ondeckHeatList;
 
     // UI stuff
-    TextView currentStatusText;
-    Button flowButton;
-    Button jumpButton;
-    TextView racerWelcome;
-    TextView racerFrequency;
-    TextView racerPoints;
+    private TextView currentStatusText;
+    private Button flowButton;
+    private Button jumpButton;
+    private Button adminsButton;
+    private TextView racerWelcome;
+    private TextView racerFrequency;
+    private TextView racerPoints;
+    private ListView currentHeatView;
+    private ListView spotterHeatView;
+    private ListView ondeckHeatView;
+
+    // Text to Speech
+    private static TextToSpeech textToSpeech;
 
     public RaceFragment() {
         // Required empty public constructor
@@ -121,12 +144,39 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             }
         });
 
+        adminsButton = (Button) view.findViewById(R.id.race_admin_admins_button);
+        adminsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        currentHeatView = (ListView) view.findViewById(R.id.race_current_heat);
+        currentHeatList = new ArrayList<>();
+
+        spotterHeatView = (ListView) view.findViewById(R.id.race_spotter_heat);
+        spotterHeatList = new ArrayList<>();
+
+        ondeckHeatView = (ListView) view.findViewById(R.id.race_ondeck_heat);
+        ondeckHeatList = new ArrayList<>();
+
+        prepareHeatViews();
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                textToSpeech.setLanguage(Locale.US);
+                textToSpeech.setSpeechRate((float) .9);
+            }
+        });
 
         stopTimer();
 
@@ -159,6 +209,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
         getArguments().putParcelable(RACE_KEY, race);
         getArguments().putBoolean(ROTATED_KEY, rotated);
+        textToSpeech.shutdown();
     }
 
     @Override
@@ -192,6 +243,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public interface OnRaceListener {
         void onRaceButton(View view, Race race);
         void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTime);
+        void onUpdateSlotOnServer(Race race, Slot slot, String tag);
         void refreshRaceFragment(Race race);
     }
 
@@ -213,6 +265,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         setCurrentStatusText();
         setFlowButtonText();
         setRacerText();
+        prepareHeatViews();
+        setBasicCardSpacing();
     }
 
     // Controls the status displayed on top of countdown widget
@@ -384,7 +438,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void startTimer(long targetTime) {
         if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-            countdownRunnable = new CountdownRunnable(textView, targetTime);
+            countdownRunnable = new CountdownRunnable(textView, targetTime, -1);
             handler.post(countdownRunnable);
         }
     }
@@ -403,11 +457,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
         final private TextView textView;
         final private long targetTime;
+        private long previousTime;
         private long currentTime;
 
-        public CountdownRunnable(TextView textView, long targetTime) {
+        private final long[] checkpoints = {1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000, 270000, 300000};
+
+        public CountdownRunnable(TextView textView, long targetTime, long previousTime) {
             this.textView = textView;
             this.targetTime = targetTime;
+            this.previousTime = previousTime;
         }
 
         public void run() {
@@ -415,6 +473,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             final String text = String.format("%02d:%02d:%03d", (currentTime / 60000) % 60, (currentTime / 1000) % 60, currentTime % 1000);
             if (currentTime > 0 ) {
                 if (getActivity() != null) {
+                    // Update clock
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -423,6 +482,39 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                             }
                         }
                     });
+
+                    // Timer readouts/alerts
+                    for (long checkpoint : checkpoints) {
+                        if (previousTime > checkpoint && currentTime <= checkpoint && ((MainActivity) getActivity()).getActiveFragment() instanceof RaceFragment) {
+                            // Start vibrating until up to 5 seconds past the target time
+                            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            v.vibrate(500);
+
+                            // Build string for verbal warning
+                            String speech = "";
+                            // If checkpoint > 10s, we want to include "minutes" and "seconds" in speech
+                            if (checkpoint > 10000) {
+                                // Plural or singular minute calls
+                                if (checkpoint > 90000) {
+                                    speech += String.format(Locale.US, "%d minutes", checkpoint / 1000 / 60);
+                                }
+                                else if (checkpoint > 30000) {
+                                    speech += String.format(Locale.US, "%d minute", checkpoint / 1000 / 60);
+                                }
+                                // Seconds calls if not a flat 0
+                                if ((checkpoint / 1000) % 60 != 0) {
+                                    speech += String.format(Locale.US, " %d seconds", (checkpoint / 1000) % 60);
+                                }
+                            }
+                            // Otherwise, we're at 10- seconds on THE FINAL COUNTDOOOOWN DO DO DOO DOOOO DO DO DOOT DOOT DOOOO
+                            else {
+                                speech = Long.toString(checkpoint / 1000);
+                            }
+
+                            textToSpeech.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+                        }
+                    }
+                    previousTime = currentTime;
                     handler.postDelayed(this, 33);
                 }
             }
@@ -433,8 +525,127 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                         textView.setText("00:00:000");
                     }
                 });
+
+                if (previousTime > 0 && currentTime <= 0) {
+                    // Start vibrating until up to 5 seconds past the target time
+                    Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(2000);
+
+                    textToSpeech.speak("Time's up", TextToSpeech.QUEUE_FLUSH, null);
+                }
             }
         }
+    }
+
+    public void prepareHeatViews() {
+        String status = race.getStatus();
+
+        if (status.equals("NS") || status.equals("F")) {
+            currentHeatView.setVisibility(View.GONE);
+            spotterHeatView.setVisibility(View.GONE);
+            ondeckHeatView.setVisibility(View.GONE);
+        }
+        else {
+            int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
+            currentHeatView.setVisibility(View.VISIBLE);
+            currentHeatList.clear();
+            currentHeatList.add(race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]));
+            RoundAdapter3 currentHeatAdapter;
+            if (currentHeatView.getAdapter() == null) {
+                System.out.println("current adapter created");
+                currentHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) currentHeatList, currentIndex[0], currentIndex[1], status, this);
+                currentHeatView.setAdapter(currentHeatAdapter);
+            }
+            else {
+                currentHeatAdapter = (RoundAdapter3) currentHeatView.getAdapter();
+                currentHeatAdapter.setRoundIndex(currentIndex[0]);
+                currentHeatAdapter.setHeatIndex(currentIndex[1]);
+                currentHeatAdapter.setStatus(status);
+                currentHeatAdapter.notifyDataSetChanged();
+            }
+
+            int[] spotterIndex = race.getNext(currentIndex);
+            if (!(spotterIndex[0] == -1 || spotterIndex[1] == -1)) {
+                spotterHeatView.setVisibility(View.VISIBLE);
+                spotterHeatList.clear();
+                spotterHeatList.add(race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]));
+                RoundAdapter3 spotterHeatAdapter;
+                if (spotterHeatView.getAdapter() == null) {
+                    System.out.println("spotter adapter created");
+                    spotterHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) spotterHeatList, spotterIndex[0], spotterIndex[1], String.format(Locale.US, "W %d %d", spotterIndex[0], spotterIndex[1]), this);
+                    spotterHeatView.setAdapter(spotterHeatAdapter);
+                } else {
+                    spotterHeatAdapter = (RoundAdapter3) spotterHeatView.getAdapter();
+                    spotterHeatAdapter.setRoundIndex(spotterIndex[0]);
+                    spotterHeatAdapter.setHeatIndex(spotterIndex[1]);
+                    spotterHeatAdapter.setStatus(status);
+                    spotterHeatAdapter.notifyDataSetChanged();
+                }
+            }
+            else {
+                spotterHeatView.setVisibility(View.GONE);
+            }
+
+            int[] onDeckIndex = race.getNext(spotterIndex);
+            if (!(onDeckIndex[0] == -1 || onDeckIndex[1] == -1)) {
+                ondeckHeatView.setVisibility(View.VISIBLE);
+                ondeckHeatList.clear();
+                ondeckHeatList.add(race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]));
+                RoundAdapter3 ondeckHeatAdapter;
+                if (ondeckHeatView.getAdapter() == null) {
+                    System.out.println("ondeckadapter created");
+                    ondeckHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) ondeckHeatList, onDeckIndex[0], onDeckIndex[1], String.format(Locale.US, "W %d %d", onDeckIndex[0], onDeckIndex[1]), this);
+                    ondeckHeatView.setAdapter(ondeckHeatAdapter);
+                } else {
+                    ondeckHeatAdapter = (RoundAdapter3) ondeckHeatView.getAdapter();
+                    ondeckHeatAdapter.setRoundIndex(onDeckIndex[0]);
+                    ondeckHeatAdapter.setHeatIndex(onDeckIndex[1]);
+                    ondeckHeatAdapter.setStatus(status);
+                    ondeckHeatAdapter.notifyDataSetChanged();
+                }
+            }
+            else {
+                ondeckHeatView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    // Adds margin between heat cards and basic navigation card if heat cards are present
+    public void setBasicCardSpacing() {
+        if (getView() != null) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) getView().findViewById(R.id.race_card_basic).getLayoutParams();
+            if (currentHeatView.getVisibility() == View.GONE && spotterHeatView.getVisibility() == View.GONE && ondeckHeatView.getVisibility() == View.GONE) {
+                params.topMargin = 0;
+            }
+            else {
+                params.topMargin = (int) (8 * Resources.getSystem().getDisplayMetrics().density);
+            }
+        }
+    }
+
+    // For when the heat cards have their slots touched
+    public void showChangeSlotDialog(View view) {
+        FragmentManager fm = getChildFragmentManager();
+        String[] tag = view.getTag().toString().split(" ");
+        ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString(), race);
+        dialog.show(fm, "some_unknown_text");
+    }
+
+    // On dialog finish
+    public void onFinishChangeSlotDialog(int points, boolean remove, Slot slot, String tag, String newUser) {
+        if (remove) {
+            if (newUser.equals("Empty slot")) {
+                slot.setUsername("EMPTY SLOT");
+            }
+            else {
+                slot.setUsername(newUser);
+            }
+        }
+        else {
+            slot.setPoints(points);
+        }
+
+        mListener.onUpdateSlotOnServer(race, slot, tag);
     }
 
     // Decide change what can be seen

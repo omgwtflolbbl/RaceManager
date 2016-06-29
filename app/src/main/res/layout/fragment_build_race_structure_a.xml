@@ -26,7 +26,7 @@
                 android:id="@+id/build_race_a_general_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Use this wizard to do a full restructure or rebuild of a race. Completing this wizard WILL replace all old data."
+                android:text="Use this wizard to do a full restructure or rebuild of a race. Make sure everyone who wants to join the race has joined on MultiGP and that you've pulled all of those users from MultiGP. Completing this wizard WILL replace all old data."
                 android:gravity="center_horizontal" />
 
         </android.support.v7.widget.CardView>
@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:drawable/editbox_background_normal"
-                    android:inputType="numberDecimal"
+                    android:inputType="number"
                     android:layout_gravity="center_horizontal" />
 
             </LinearLayout>

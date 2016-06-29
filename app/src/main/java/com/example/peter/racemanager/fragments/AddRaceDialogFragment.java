@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -62,8 +63,9 @@ public class AddRaceDialogFragment extends DialogFragment {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO do something like mListener.onFinishAddRaceDialog()
                 mListener.onFinishAddRaceDialog(urlField.getText().toString());
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(urlField.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 dismiss();
             }
         });
@@ -71,6 +73,8 @@ public class AddRaceDialogFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(urlField.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 dismiss();
             }
         });

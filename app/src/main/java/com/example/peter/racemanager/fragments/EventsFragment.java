@@ -213,7 +213,6 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
     public void showAddRaceDialog() {
         FragmentManager fm = getChildFragmentManager();
         AddRaceDialogFragment dialog = new AddRaceDialogFragment();
-        dialog.setTargetFragment(EventsFragment.this, 301);
         dialog.show(fm, "add_race");
     }
 

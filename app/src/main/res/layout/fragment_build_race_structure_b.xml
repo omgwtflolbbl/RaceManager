@@ -68,17 +68,6 @@
                         android:gravity="center"
                         android:text="Add a frequency"/>
 
-                    <TextView
-                        android:id="@+id/build_race_b_slot_a_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_a_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
-
                 </RelativeLayout>
 
             </LinearLayout>
@@ -125,17 +114,6 @@
                         android:textColor="@android:color/holo_blue_light"
                         android:gravity="center"
                         android:text="Add a frequency"/>
-
-                    <TextView
-                        android:id="@+id/build_race_b_slot_b_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_b_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
 
                 </RelativeLayout>
 
@@ -184,17 +162,6 @@
                         android:gravity="center"
                         android:text="Add a frequency"/>
 
-                    <TextView
-                        android:id="@+id/build_race_b_slot_c_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_c_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
-
                 </RelativeLayout>
 
             </LinearLayout>
@@ -241,17 +208,6 @@
                         android:textColor="@android:color/holo_blue_light"
                         android:gravity="center"
                         android:text="Add a frequency"/>
-
-                    <TextView
-                        android:id="@+id/build_race_b_slot_d_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_d_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
 
                 </RelativeLayout>
 
@@ -300,17 +256,6 @@
                         android:gravity="center"
                         android:text="Add a frequency"/>
 
-                    <TextView
-                        android:id="@+id/build_race_b_slot_e_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_e_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
-
                 </RelativeLayout>
 
             </LinearLayout>
@@ -357,17 +302,6 @@
                         android:textColor="@android:color/holo_blue_light"
                         android:gravity="center"
                         android:text="Add a frequency"/>
-
-                    <TextView
-                        android:id="@+id/build_race_b_slot_f_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_f_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
 
                 </RelativeLayout>
 
@@ -416,17 +350,6 @@
                         android:gravity="center"
                         android:text="Add a frequency"/>
 
-                    <TextView
-                        android:id="@+id/build_race_b_slot_g_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_g_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
-
                 </RelativeLayout>
 
             </LinearLayout>
@@ -473,17 +396,6 @@
                         android:textColor="@android:color/holo_blue_light"
                         android:gravity="center"
                         android:text="Add a frequency"/>
-
-                    <TextView
-                        android:id="@+id/build_race_b_slot_h_swap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:layout_toStartOf="@id/build_race_b_slot_h_add_frequency"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:gravity="center"
-                        android:text="Something else"/>
 
                 </RelativeLayout>
 
