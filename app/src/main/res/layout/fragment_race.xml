@@ -175,6 +175,12 @@
 
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/race_attendance_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Update Attendance From MultiGP"/>
+
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

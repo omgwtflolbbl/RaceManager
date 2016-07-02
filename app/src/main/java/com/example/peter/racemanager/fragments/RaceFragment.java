@@ -127,6 +127,14 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         Button raceRacersButton = (Button) view.findViewById(R.id.race_racers_button);
         raceRacersButton.setOnClickListener(this);
 
+        Button attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
+        attendanceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.getUpdatedAttendance(race);
+            }
+        });
+
         flowButton = (Button) view.findViewById(R.id.race_admin_flow_button);
         flowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +253,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTime);
         void onUpdateSlotOnServer(Race race, Slot slot, String tag);
         void refreshRaceFragment(Race race);
+        void getUpdatedAttendance(Race race);
     }
 
     public Race getRace() {

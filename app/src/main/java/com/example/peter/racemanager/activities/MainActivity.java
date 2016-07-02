@@ -68,9 +68,6 @@ public class MainActivity extends AppCompatActivity
         // Set up broadcaster receiver so that we know when to we are getting important status updates
         LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));
 
-
-
-
         // Check if we have a retained TaskFragment already.
         if (taskFragment == null) {
             taskFragment = new TaskFragment();
@@ -313,6 +310,12 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+    }
+
+    public void getUpdatedAttendance(Race race) {
+        String requestURL = String.format("%s/update/race/attendance/multigp", FLASK);
+        String inputURL = race.getSiteURL();
+        taskFragment.getUpdatedAttendance(requestURL, inputURL);
     }
 
     // BuildRaceStructureAFragment callbacks

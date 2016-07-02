@@ -55,6 +55,7 @@ public class TaskFragment extends Fragment {
         void StartStatusService(String eventId);
         void UpdateRaceSchedule(Race race);
         void UpdateRace(Race race);
+        void startUpdating();
     }
 
     private OkHttpClient client;
@@ -411,6 +412,36 @@ public class TaskFragment extends Fragment {
                 }
 
                 response.close();
+            }
+        });
+    }
+
+    public void getUpdatedAttendance(String requestURL, String inputURL) {
+        RequestBody body = new FormBody.Builder()
+                .add("url", inputURL)
+                .build();
+        Request request = new Request.Builder()
+                .url(requestURL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                response.close();
+                mListener.startUpdating();
             }
         });
     }
