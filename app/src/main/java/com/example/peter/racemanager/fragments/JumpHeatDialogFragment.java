@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -53,7 +54,7 @@ public class JumpHeatDialogFragment extends DialogFragment {
 
         race = getArguments().getParcelable(RACE_KEY);
 
-        getDialog().setTitle("Select target heat");
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         final EditText roundText = (EditText) view.findViewById(R.id.dialog_jump_heat_round_text);
         final EditText heatText = (EditText) view.findViewById(R.id.dialog_jump_heat_heat_text);

@@ -3,8 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:minWidth="300dp"
     android:orientation="vertical"
     tools:context="com.example.peter.racemanager.fragments.JumpHeatDialogFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:text="Select Target Heat"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@android:color/holo_blue_light" />
 
     <TextView
         android:layout_width="match_parent"

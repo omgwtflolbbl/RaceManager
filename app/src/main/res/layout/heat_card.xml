@@ -5,6 +5,7 @@
     android:id="@+id/race_schedule_heat_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    card:cardUseCompatPadding="true"
     card:cardCornerRadius="15dp">
 
     <android.support.v7.widget.GridLayout

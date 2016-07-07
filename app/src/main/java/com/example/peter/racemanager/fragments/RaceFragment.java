@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -437,7 +438,11 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         if (!status.equals("F")) {
             // Figure out the target time based on the text input
             // Add 15 seconds worth to value just for buffer's sake
-            Long targetTime = System.currentTimeMillis() +TaskFragment.SntpOffset + Long.parseLong(editText.getText().toString()) * 1000 + 15000;
+            Long targetTime = System.currentTimeMillis() + TaskFragment.SntpOffset + Long.parseLong(editText.getText().toString()) * 1000 + 5000;
+            if (state.charAt(0) == 'R') {
+                stopTimer();
+                startTimer(targetTime);
+            }
             mListener.onSendStatusUpdate(race, state, racers, spotters, onDeck, targetTime);
         }
     }
@@ -447,7 +452,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void startTimer(long targetTime) {
         if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-            countdownRunnable = new CountdownRunnable(textView, targetTime, -1);
+            countdownRunnable = new CountdownRunnable(textView, targetTime, Long.MAX_VALUE);
             handler.post(countdownRunnable);
         }
     }

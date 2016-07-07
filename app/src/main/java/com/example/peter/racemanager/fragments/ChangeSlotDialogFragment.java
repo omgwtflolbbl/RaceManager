@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -78,7 +79,9 @@ public class ChangeSlotDialogFragment extends DialogFragment {
         tag = getArguments().getString(TAG_KEY);
         race = getArguments().getParcelable(RACE_KEY);
 
-        getDialog().setTitle(slot.getUsername());
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        TextView title = (TextView) view.findViewById(R.id.dialog_change_slot_title);
+        title.setText(slot.getUsername());
 
         count = (EditText) view.findViewById(R.id.dialog_change_slot_points);
         count.setText(Integer.toString(slot.getPoints()));

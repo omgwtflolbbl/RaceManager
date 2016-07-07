@@ -108,7 +108,7 @@ public class RaceScheduleCardFragment extends Fragment {
         ListView listView = (ListView) view.findViewById(R.id.race_schedule_heat_listview);
         roundAdapter3 = new RoundAdapter3(getActivity(), (ArrayList<Heat>) round.getHeats(), index, status, (RaceScheduleFragment) getParentFragment());
         listView.setAdapter(roundAdapter3);
-        listView.setPadding(0, 100, 0, 20);
+        //listView.setPadding(0, 100, 0, 20);
         listView.setClipToPadding(false);
 
         return view;

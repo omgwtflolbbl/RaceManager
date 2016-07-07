@@ -17,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <TextView
                 android:id="@+id/build_race_b_general_instructions"
@@ -32,7 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -231,7 +233,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -430,7 +433,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -629,7 +633,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -828,7 +833,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1027,7 +1033,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1226,7 +1233,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1425,7 +1433,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             cards:contentPadding="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1622,7 +1631,8 @@
         <android.support.v7.widget.CardView
             android:id="@+id/build_race_b_card_navigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            cards:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"

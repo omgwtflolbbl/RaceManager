@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:divider="@null">
+        android:divider="@null"
+        android:paddingTop="50dp"
+        android:paddingBottom="8dp">
 
     </ListView>
 
@@ -18,68 +20,22 @@
         android:id="@+id/race_schedule_round_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="34dp"
         card:cardCornerRadius="15dp"
         card:cardPreventCornerOverlap="false"
         card:cardBackgroundColor="@color/red"
+        card:cardUseCompatPadding="true"
         card:cardElevation="4dp">
 
         <TextView
             android:id="@+id/race_schedule_round_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="26sp"
+            android:textSize="26dp"
             android:textColor="@color/white"/>
 
     </android.support.v7.widget.CardView>
 
 </RelativeLayout>
-
-<!--<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollview_test"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true"
-    android:background="@color/magenta">
-
-    <android.support.v7.widget.CardView
-    android:id="@+id/race_schedule_round_card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    card:cardCornerRadius="15dp"
-    card:cardBackgroundColor="@color/green">
-
-        <android.support.v7.widget.GridLayout
-            android:id="@+id/race_schedule_round_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card:columnCount="3"
-            android:background="@color/orange">
-
-        </android.support.v7.widget.GridLayout>
-
-    </android.support.v7.widget.CardView>
-
-
-</android.support.v4.widget.NestedScrollView>-->
-<!--<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/race_schedule_round_card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    card:cardCornerRadius="15dp"
-    card:cardBackgroundColor="@color/green">
-
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/race_schedule_round_grid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card:columnCount="3"
-        android:background="@color/orange">
-
-    </android.support.v7.widget.GridLayout>
-
-</android.support.v7.widget.CardView>-->
