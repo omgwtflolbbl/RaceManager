@@ -161,11 +161,11 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, StatusService.class);
                 this.stopService(intent);
                 return true;
-            case R.id.action_settings:
+            /*case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SettingsFragment())
                         .addToBackStack(null)
-                        .commit();
+                        .commit();*/
             default:
                 return super.onOptionsItemSelected(item);
         }
