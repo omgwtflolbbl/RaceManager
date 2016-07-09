@@ -3,6 +3,7 @@ package com.example.peter.racemanager.services;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.activities.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StatusService extends Service {
 
@@ -143,13 +146,34 @@ public class StatusService extends Service {
         // Builds a notification and sends it to be viewed.
         // TODO: Open RaceManager from notification press
         public void sendNotification(String status, String racing, String spotter, String onDeck) {
+            String statusText;
+            if (status.charAt(0) == 'N') {
+                statusText = "The race is still setting up";
+            }
+            else if (status.charAt(0) == 'W') {
+                statusText = String.format(Locale.US, "Preparing for round %d, heat %d", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
+            }
+            else if (status.charAt(0) == 'R') {
+                statusText = String.format(Locale.US, "Round %d, heat %d is in the air!", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
+            }
+            else if (status.charAt(0) == 'T') {
+                statusText = "";
+            }
+            else {
+                statusText = "The race is over!";
+            }
             racing = racing.replace(username, String.format("<b>%s</b>", username));
             spotter = spotter.replace(username, String.format("<b>%s</b>", username));
             onDeck = onDeck.replace(username, String.format("<b>%s</b>", username));
-            String notificationText = String.format("<b>Status</b>: %s<br><b>Racing</b>: %s<br><b>Spotting</b>: %s<br><b>On Deck</b>: %s", status, racing, spotter, onDeck);
+            String notificationText = String.format("<b>Status</b>: %s<br><b>Racing</b>: %s<br><b>Spotting</b>: %s<br><b>On Deck</b>: %s", statusText, racing, spotter, onDeck);
+
+            Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
             Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentIntent(contentIntent)
                     .setContentTitle("RACE MANAGER UPDATE")
-                    .setContentText(String.format("Status: %s (Pull down)", status))
+                    .setContentText(String.format("Status: %s (Pull down)", statusText))
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setSmallIcon(R.drawable.ic_flight_takeoff_white_24dp)

@@ -452,7 +452,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void startTimer(long targetTime) {
         if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-            countdownRunnable = new CountdownRunnable(textView, targetTime, Long.MAX_VALUE);
+            countdownRunnable = new CountdownRunnable(textView, targetTime, -1);
             handler.post(countdownRunnable);
         }
     }
