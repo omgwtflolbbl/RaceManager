@@ -1,90 +1,127 @@
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <RelativeLayout
-        android:id="@+id/login_loadingPanel"
+        android:id="@+id/login_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/overlay"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"/>
 
+        <RelativeLayout
+            android:id="@+id/login_loadingPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/overlay"
+            android:visibility="gone">
+
+            <android.support.v4.widget.ContentLoadingProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".activities.LoginActivity">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:src="@drawable/racesync_logo"/>
+
+            <TextView
+                android:id="@+id/login_guide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Please login using MultiGP credentials."/>
+
+            <EditText
+                android:id="@+id/login_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@android:drawable/editbox_background_normal"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="8dp"
+                android:hint="Email" />
+
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:background="@android:drawable/editbox_background_normal"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="8dp"
+                android:hint="Password" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Accept Terms of Service "/>
+
+                <TextView
+                    android:id="@+id/login_tos_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(view)"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/login_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:text="Login" />
+
+            <Button
+                android:id="@+id/login_guest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:text="Sign in as a guest"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:textSize="12sp"
+                android:text="POWERED BY" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:src="@drawable/stacked_multigp_logo"/>
+
+        </LinearLayout>
     </RelativeLayout>
-
-    <LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context=".activities.LoginActivity">
-
-        <TextView
-            android:id="@+id/login_guide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Please login using MultiGP credentials."/>
-
-    <!--    <EditText
-            android:id="@+id/login_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:hint="Username" /> -->
-
-        <EditText
-            android:id="@+id/login_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:background="@android:drawable/editbox_background_normal"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:hint="Email" />
-
-        <EditText
-            android:id="@+id/login_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:background="@android:drawable/editbox_background_normal"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="18dp"
-            android:hint="Password" />
-
-        <Button
-            android:id="@+id/login_submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="Login" />
-
-        <Button
-            android:id="@+id/login_guest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="Sign in as a guest"/>
-
-    </LinearLayout>
-</RelativeLayout>
+</ScrollView>

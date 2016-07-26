@@ -3,13 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/MultiGPRed</item>
+        <item name="colorPrimaryDark">@color/MultiGPRedDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
+
+    <!--<style name="MyActionBar"parent="Theme.AppCompat.Light.">
+        <item name="android:background">@color/MultiGPRed</item>
+    </style>-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
