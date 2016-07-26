@@ -33,6 +33,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -121,12 +122,18 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         }
     }
 
+    // Locks the interface so that the user can't press anymore buttons or type into fields
     public void lockInterface() {
         loginButton.setEnabled(false);
         guestButton.setEnabled(false);
         busyLayout.setVisibility(View.VISIBLE);
+
+        // Hide any keyboards that were used
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null : getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
+    // Unlocks the interface in the event that the user failed to login and needs to put new info
     public void unlockInterface() {
         loginButton.setEnabled(true);
         guestButton.setEnabled(true);

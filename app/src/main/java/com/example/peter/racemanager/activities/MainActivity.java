@@ -44,8 +44,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener {
 
-    public final static String FLASK = "http://bfa0b580.ngrok.io";
-    //public final static String FLASK = "http://pesolve.asuscomm.com:5000";
+    public final static String FLASK = "https://racemanagerflask.herokuapp.com";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
