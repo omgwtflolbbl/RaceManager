@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.EventsFragment"
-    tools:showIn="@layout/activity_main">
+    tools:context=".fragments.EventsFragment">
 
     <TextView
         android:id="@+id/event_empty_text"

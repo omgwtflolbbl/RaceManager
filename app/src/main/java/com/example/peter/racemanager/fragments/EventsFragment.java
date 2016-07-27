@@ -196,6 +196,8 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
 
     public void startRefreshing() {
         refreshing = true;
+        TextView emptyText = (TextView) getView().findViewById(R.id.event_empty_text);
+        emptyText.setVisibility(View.GONE);
         ListView listView = (ListView) getView().findViewById(R.id.event_listview);
         listView.setVisibility(View.GONE);
         RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.loadingPanel);
