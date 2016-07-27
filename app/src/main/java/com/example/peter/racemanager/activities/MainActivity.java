@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         // Check if user is logged in. Otherwise, go to login screen.
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 Fragment fragment = getActiveFragment();
