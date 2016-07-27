@@ -5,10 +5,10 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/MultiGPRed</item>
         <item name="colorPrimaryDark">@color/MultiGPRedDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/MultiGPRed</item>
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="logo">@mipmap/lapsync_logo_white</item>
+        <item name="logo">@drawable/racesync_logo_white</item>
         <item name="android:displayOptions">showHome|useLogo</item>
     </style>
 
