@@ -53,5 +53,11 @@
     <color name="MultiGPRed">#8D181B</color>
     <color name="MultiGPRedDark">#600000</color>
     <color name="MultiGPBlue">#212B5E</color>
+    <color name="MultiGPGreen">#418218</color>
+    <color name="MultiGPOrange">#CB8729</color>
+    <color name="MultiGPBlack">#212121</color>
+    <color name="MultiGPGray">#757575</color>
+    <color name="MultiGPLightGray">#D2D2D2</color>
+    <color name="MultiGPBackgroundGray">#F9F9F9</color>
 
 </resources>

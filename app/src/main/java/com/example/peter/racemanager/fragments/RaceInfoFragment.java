@@ -136,11 +136,19 @@ public class RaceInfoFragment extends Fragment {
 
     public void updateBlockquote(String blockquote) {
         TextView blockquoteText = (TextView) getView().findViewById(R.id.race_info_blockquote);
-        blockquoteText.setText(Html.fromHtml(blockquote));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            blockquoteText.setText(Html.fromHtml(blockquote, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE));
+        } else {
+            blockquoteText.setText(Html.fromHtml(blockquote));
+        }
     }
 
     public void updateDescription(String description) {
         TextView descriptionText = (TextView) getView().findViewById(R.id.race_info_description);
-        descriptionText.setText(Html.fromHtml(description));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            descriptionText.setText(description);
+        } else {
+            descriptionText.setText(description);
+        }
     }
 }

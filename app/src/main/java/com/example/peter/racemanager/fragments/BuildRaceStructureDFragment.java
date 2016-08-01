@@ -250,7 +250,7 @@ public class BuildRaceStructureDFragment extends Fragment {
         ArrayList<Round> rounds = generateNewRoundStructure();
         ArrayList<Racer> racers = generateNewRacersList();
 
-        Race race = new Race(oldRace.getTitle(), oldRace.getSiteURL(), oldRace.getDate(), oldRace.getTime(), oldRace.getBlockquote(), oldRace.getDescription(), rounds, racers, oldRace.getAdmins(), "NS", oldRace.getTargetTime());
+        Race race = new Race(oldRace.getTitle(), oldRace.getSiteURL(), oldRace.getDate(), oldRace.getTime(), oldRace.getBlockquote(), oldRace.getDescription(), oldRace.getRaceImage(), rounds, racers, oldRace.getAdmins(), "NS", oldRace.getTargetTime());
 
         return race;
     }

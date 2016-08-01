@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/MultiGPRed</item>
         <item name="colorPrimaryDark">@color/MultiGPRedDark</item>
-        <item name="colorAccent">@color/MultiGPRed</item>
+        <item name="colorAccent">@color/MultiGPBlue</item>
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="logo">@drawable/racesync_logo_white</item>
@@ -24,6 +24,10 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="BlueButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:colorButtonNormal">@color/MultiGPBlue</item>
+    </style>
 
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>

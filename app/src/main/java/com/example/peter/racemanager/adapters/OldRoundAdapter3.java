@@ -1,57 +1,38 @@
 package com.example.peter.racemanager.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.SpannedString;
-import android.text.TextUtils;
-import android.text.style.AbsoluteSizeSpan;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.LoginActivity;
-import com.example.peter.racemanager.fragments.ChangeSlotDialogFragment;
 import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.models.Heat;
-import com.example.peter.racemanager.models.Slot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.TreeMap;
 
 /**
  * Created by Peter on 6/5/2016.
  */
-public class RoundAdapter3 extends ArrayAdapter<Heat> {
+public class OldRoundAdapter3 extends ArrayAdapter<Heat> {
     private int roundIndex;
     private int heatIndex;
     private onSlotSelectListener mListener;
     private String status;
 
-    public RoundAdapter3 (Context context, ArrayList<Heat> heats, int roundIndex, String status, onSlotSelectListener mListener) {
+    public OldRoundAdapter3(Context context, ArrayList<Heat> heats, int roundIndex, String status, onSlotSelectListener mListener) {
         super(context, 0, heats);
         this.roundIndex = roundIndex;
         this.status = status;
@@ -59,7 +40,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         this.heatIndex = -1;
     }
 
-    public RoundAdapter3 (Context context, ArrayList<Heat> heats, int roundIndex, int heatIndex, String status, onSlotSelectListener mListener) {
+    public OldRoundAdapter3(Context context, ArrayList<Heat> heats, int roundIndex, int heatIndex, String status, onSlotSelectListener mListener) {
         super(context, 0, heats);
         this.roundIndex = roundIndex;
         this.status = status;
@@ -141,38 +122,16 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         // Heat title
         final TextView heatText = new TextView(getContext());
         heatText.setTag(Integer.toString(position));
-        SpannableString roundSpan = new SpannableString(String.format("R%d", roundIndex + 1));
-        roundSpan.setSpan(new AbsoluteSizeSpan(16, true), 0, roundSpan.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        SpannableString heatSpan = new SpannableString(String.format("%d" , position + 1));
-        heatSpan.setSpan(new AbsoluteSizeSpan(32, true), 0, heatSpan.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        SpannedString heatMessage = (SpannedString) TextUtils.concat(roundSpan, "\n", heatSpan);
-        heatText.setText(heatMessage);
-        //heatText.setTextSize(32);
-        switch (color) {
-            case "blue":
-                heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPBlue));
-                break;
-            case "green":
-                heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGreen));
-                break;
-            case "orange":
-                heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPOrange));
-                break;
-            default:
-                heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGray));
-                break;
-        }
-        heatText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-        heatText.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+        heatText.setText(String.format(Locale.US, " %d ", position + 1));
+        heatText.setTextSize(32);
+        heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGray));
+        heatText.setGravity(Gravity.CENTER);
         heatText.setHeight(GridLayout.LayoutParams.WRAP_CONTENT);
         GridLayout.LayoutParams heatParams = new GridLayout.LayoutParams();
         heatParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/2);
         heatParams.columnSpec = GridLayout.spec(0);
         heatParams.setGravity(Gravity.FILL_VERTICAL);
-        int pad = dpToPx(4);
         heatText.setLayoutParams(heatParams);
-        heatText.setPadding(pad, pad, pad, 0);
-        
         gridLayout.addView(heatText);
 
         Iterator<String> slots = heat.getHeatMap().keySet().iterator();
@@ -187,7 +146,32 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             slotText.setTag(String.format("%d %d %s", roundIndex, position, slot));
             slotText.setText(String.format("%s\n%s (%d Pt.)", heat.getSlot(slot).getUsername(), heat.getSlot(slot).getFrequency(), heat.getSlot(slot).getPoints()));
             slotText.setWidth(0);
-            slotText.setGravity(Gravity.CENTER_HORIZONTAL);
+            slotText.setGravity(Gravity.CENTER);
+            if (j == 0) {
+                slotText.setBackgroundResource(pickColorTL(color));
+            }
+            else if (j == 1) {
+                slotText.setBackgroundResource(pickColorTR(color));
+            }
+            else if (j == heat.numSlots() - 2) {
+                if (j % 2 == 0) {
+                    slotText.setBackgroundResource(pickColorBL(color));
+                }
+                else {
+                    slotText.setBackgroundResource(pickColorBR(color));
+                }
+            }
+            else if (j == heat.numSlots() - 1) {
+                if (j % 2 == 0) {
+                    slotText.setBackgroundResource(pickColorBL(color));
+                }
+                else {
+                    slotText.setBackgroundResource(pickColorBR(color));
+                }
+            }
+            else {
+                slotText.setBackgroundResource(pickColor(color));
+            }
             slotText.setClickable(true);
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -228,14 +212,54 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         return view;
     }
 
-    private int dpToPx(int dp) {
-        Resources r = getContext().getResources();
-        int px = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                r.getDisplayMetrics()
-        );
-        return px;
+    private int pickColor(String color) {
+        switch (color) {
+            case "grey": return R.drawable.slot_text_grey;
+            case "blue": return R.drawable.slot_text_blue;
+            case "orange": return R.drawable.slot_text_orange;
+            case "green": return R.drawable.slot_text_green;
+            default: return R.drawable.slot_text_grey;
+        }
+    }
+
+    private int pickColorTL(String color) {
+        switch (color) {
+            case "grey": return R.drawable.slot_text_grey_tl;
+            case "blue": return R.drawable.slot_text_blue_tl;
+            case "orange": return R.drawable.slot_text_orange_tl;
+            case "green": return R.drawable.slot_text_green_tl;
+            default: return R.drawable.slot_text_grey_tl;
+        }
+    }
+
+    private int pickColorTR(String color) {
+        switch (color) {
+            case "grey": return R.drawable.slot_text_grey_tr;
+            case "blue": return R.drawable.slot_text_blue_tr;
+            case "orange": return R.drawable.slot_text_orange_tr;
+            case "green": return R.drawable.slot_text_green_tr;
+            default: return R.drawable.slot_text_grey_tr;
+        }
+    }
+
+    private int pickColorBL(String color) {
+        switch (color) {
+            case "grey": return R.drawable.slot_text_grey_bl;
+            case "blue": return R.drawable.slot_text_blue_bl;
+            case "orange": return R.drawable.slot_text_orange_bl;
+            case "green": return R.drawable.slot_text_green_bl;
+            default: return R.drawable.slot_text_grey_bl;
+        }
+    }
+
+    private int pickColorBR(String color) {
+        switch (color) {
+            case "grey": return R.drawable.slot_text_grey_br;
+            case "blue": return R.drawable.slot_text_blue_br;
+            case "orange": return R.drawable.slot_text_orange_br;
+            case "green": return R.drawable.slot_text_green_br;
+            default: return R.drawable.slot_text_grey_br;
+        }
     }
 
     public void setRoundIndex(int index) {
