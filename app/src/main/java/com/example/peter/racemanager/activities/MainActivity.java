@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity
 
         // Check if user is logged in. Otherwise, go to login screen.
         validateUser();
+
+        // Set up no sleep mode
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Set up broadcaster receiver so that we know when to we are getting important status updates
         LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));

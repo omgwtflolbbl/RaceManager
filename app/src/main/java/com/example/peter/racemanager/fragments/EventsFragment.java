@@ -250,7 +250,7 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
 
     public void emptyCheck() {
         TextView emptyText = (TextView) getView().findViewById(R.id.event_empty_text);
-        if (eventAdapter.getCount() == 0) {
+        if (eventAdapter.getCount() == 0 && eventAdapter2.getCount() == 0) {
             Log.i("EVENTS", "NO RACES FOUND");
             emptyText.setVisibility(View.VISIBLE);
         }

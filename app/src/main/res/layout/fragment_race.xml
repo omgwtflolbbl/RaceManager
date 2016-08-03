@@ -95,15 +95,19 @@
                         android:textSize="10dp"
                         android:text="FREQUENCY"/>
 
-                    <ImageView
-                        android:layout_width="24dp"
+                    <TextView
+                        android:id="@+id/race_icon_frequency"
+                        android:layout_width="72dp"
                         android:layout_height="24dp"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginRight="96dp"
-                        android:layout_marginEnd="96dp"
-                        android:src="@drawable/wifi"/>
+                        android:layout_marginRight="72dp"
+                        android:layout_marginEnd="72dp"
+                        android:gravity="center_horizontal"
+                        android:textSize="24dp"
+                        android:textColor="@color/MultiGPRed"
+                        android:text="@string/fa_wifi"/>
 
                     <View
                         android:layout_width="2px"
@@ -139,15 +143,17 @@
                         android:textSize="10dp"
                         android:text="PTS"/>
 
-                    <ImageView
-                        android:layout_width="24dp"
+                    <TextView
+                        android:id="@+id/race_icon_points"
+                        android:layout_width="72dp"
                         android:layout_height="24dp"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginRight="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:src="@color/MultiGPRed"/>
+                        android:gravity="center_horizontal"
+                        android:textSize="24dp"
+                        android:textColor="@color/MultiGPRed"
+                        android:text="@string/fa_trophy"/>
 
                 </RelativeLayout>
 
@@ -290,8 +296,6 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_weight="2"
-                            android:drawableRight="@drawable/forward_arrow"
-                            android:drawableEnd="@drawable/forward_arrow"
                             android:gravity="center"
                             android:backgroundTint="@color/MultiGPRed"
                             android:textColor="@color/white"
@@ -308,8 +312,6 @@
                         android:id="@+id/race_admin_jump_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/chat_bubble_square_gray"
-                        android:drawableRight="@drawable/circled_check"
                         android:layout_weight="1"
                         android:textColor="@color/MultiGPGray"
                         android:text="Change Heat"/>
@@ -319,11 +321,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableEnd="@drawable/import_cloud_gray"
-                        android:drawableRight="@drawable/circled_check"
                         android:gravity="center"
                         android:textColor="@color/MultiGPGray"
-                        android:text="Import Roster"/>
+                        android:text="Import Roster "/>
 
                 </LinearLayout>
 

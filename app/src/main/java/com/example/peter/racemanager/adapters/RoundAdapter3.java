@@ -19,6 +19,7 @@ import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -141,13 +142,13 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         // Heat title
         final TextView heatText = new TextView(getContext());
         heatText.setTag(Integer.toString(position));
-        SpannableString roundSpan = new SpannableString(String.format("R%d", roundIndex + 1));
+        SpannableString roundSpan = new SpannableString(String.format(Locale.US, "R%d", roundIndex + 1));
         roundSpan.setSpan(new AbsoluteSizeSpan(16, true), 0, roundSpan.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        SpannableString heatSpan = new SpannableString(String.format("%d" , position + 1));
+        SpannableString heatSpan = new SpannableString(String.format(Locale.US, "%d" , position + 1));
         heatSpan.setSpan(new AbsoluteSizeSpan(32, true), 0, heatSpan.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         SpannedString heatMessage = (SpannedString) TextUtils.concat(roundSpan, "\n", heatSpan);
+        heatText.setIncludeFontPadding(false);
         heatText.setText(heatMessage);
-        //heatText.setTextSize(32);
         switch (color) {
             case "blue":
                 heatText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPBlue));
@@ -166,14 +167,25 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         heatText.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
         heatText.setHeight(GridLayout.LayoutParams.WRAP_CONTENT);
         GridLayout.LayoutParams heatParams = new GridLayout.LayoutParams();
-        heatParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/2);
+        heatParams.setMargins(0, dpToPx(-6), 0, dpToPx(-6));
+        heatParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/3);
         heatParams.columnSpec = GridLayout.spec(0);
         heatParams.setGravity(Gravity.FILL_VERTICAL);
-        int pad = dpToPx(4);
+        int pad = dpToPx(3);
         heatText.setLayoutParams(heatParams);
         heatText.setPadding(pad, pad, pad, 0);
-        
         gridLayout.addView(heatText);
+
+        // Add in a "padding" for the slots
+        View separator = new View(getContext());separator.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+        GridLayout.LayoutParams separatorParams = new GridLayout.LayoutParams();
+        separatorParams.width = dpToPx(8);
+        separatorParams.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        separatorParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/3);
+        separatorParams.columnSpec = GridLayout.spec(1);
+        separatorParams.setGravity(Gravity.FILL_VERTICAL);
+        separator.setLayoutParams(separatorParams);
+        gridLayout.addView(separator);
 
         Iterator<String> slots = heat.getHeatMap().keySet().iterator();
         //Iterator<String> slots = heat.getKeys().iterator();
@@ -185,9 +197,34 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             String slot = slots.next();
             TextView slotText = new TextView(getContext());
             slotText.setTag(String.format("%d %d %s", roundIndex, position, slot));
-            slotText.setText(String.format("%s\n%s (%d Pt.)", heat.getSlot(slot).getUsername(), heat.getSlot(slot).getFrequency(), heat.getSlot(slot).getPoints()));
+
+            // Set up name
+            String name = heat.getSlot(slot).getUsername();
+            slotText.setText(name);
+            // Figure out if name needs to be truncated
+            slotText.setMaxLines(1);
+            if (slotText.getLineCount() > 1) {
+                // Name too long, get the index of the last visible character
+                int lastCharIndex = slotText.getLayout().getLineVisibleEnd(0);
+                // Get the truncated string
+                name = name.substring(0, lastCharIndex - 3) + "...";
+            }
+            SpannableString nameSpan = new SpannableString(name);
+            nameSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.MultiGPBlack)), 0, name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Set up frequency and point information
+            SpannableString infoSpan = new SpannableString(String.format(Locale.US, "%s - %dpts", heat.getSlot(slot).getFrequency(), heat.getSlot(slot).getPoints()));
+            infoSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.MultiGPGray)), 0, infoSpan.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            SpannedString slotMessage = (SpannedString) TextUtils.concat(nameSpan, "\n", infoSpan);
+            Log.i("INFO SPAN", slotMessage.toString());
+            slotText.setMaxLines(2);
+            slotText.setText(slotMessage);
+
             slotText.setWidth(0);
-            slotText.setGravity(Gravity.CENTER_HORIZONTAL);
+            slotText.setTextSize(11f);
+            slotText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+            int slotPadding = dpToPx(2);
+            slotText.setPadding(dpToPx(4), slotPadding, slotPadding, slotPadding);
             slotText.setClickable(true);
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -208,9 +245,13 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
                 }
             });
             GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();
-            slotTextParams.rowSpec = GridLayout.spec((j / 2));
-            slotTextParams.columnSpec = GridLayout.spec(j % 2 + 1, (float) 1);
+            slotTextParams.rowSpec = GridLayout.spec((j / 3));
+            slotTextParams.columnSpec = GridLayout.spec(j % 3 + 2, (float) 1);
             slotTextParams.setGravity(Gravity.FILL);
+            if (j % 3==0) {
+                slotTextParams.setMargins(0, 0, dpToPx(1), 0);
+            }
+            slotTextParams.setMargins(0, j > 2 ? dpToPx(1) : 0, j % 3 != 2 ? dpToPx(1) : 0, 0);
             slotText.setLayoutParams(slotTextParams);
             gridLayout.addView(slotText);
 
@@ -222,8 +263,16 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         String username = sharedPreferences.getString("username","AnonymousSpectator");
         if (!username.equals(LoginActivity.GUEST) && heat.findRacerInHeat(username) != null) {
             String racerLoc = String.format("%d %d %s", roundIndex, position, heat.findRacerInHeat(username));
-                view.findViewWithTag(racerLoc).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.pinkA200));
+                view.findViewWithTag(racerLoc).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPLightGray));
         }
+
+        /*View divider = new View(getContext());
+        divider.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPLightGray));
+        GridLayout.LayoutParams dividerParams = new GridLayout.LayoutParams();
+        dividerParams.width = 1;
+        dividerParams.height = GridLayout.LayoutParams.MATCH_PARENT;*/
+
+
 
         return view;
     }

@@ -1,7 +1,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -17,30 +17,62 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".fragments.RaceInfoFragment"
-            card_view:cardCornerRadius="8dp"
-            card_view:contentPadding="8dp"
-            card_view:cardUseCompatPadding="true">
+            card:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/race_info_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="130dp"
+                    android:maxHeight="150dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/MultiGPGray"/>
 
                 <TextView
                     android:id="@+id/race_info_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="22sp"
-                    android:gravity="center" />
+                    android:textSize="18sp"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingRight="@dimen/cardview_compat_inset_shadow"
+                    android:text="Regional Qualifier - 2B - Brevard Multirotor"/>
 
-                <View style="@style/Divider"/>
-
-                <TextView
-                    android:id="@+id/race_info_date"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center" />
+                    android:orientation="horizontal"
+                    android:paddingLeft="12dp">
+
+                    <ImageView
+                        android:layout_width="14sp"
+                        android:layout_height="14sp"
+                        android:src="@drawable/profile"/>
+
+                    <TextView
+                        android:id="@+id/race_info_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="May 15, 2016"/>
+
+                    <ImageView
+                        android:layout_width="14sp"
+                        android:layout_height="14sp"
+                        android:src="@drawable/profile"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                </LinearLayout>
 
                 <View style="@style/Divider"/>
 
@@ -59,9 +91,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:context=".fragments.RaceInfoFragment"
-            card_view:cardCornerRadius="8dp"
-            card_view:contentPadding="8dp"
-            card_view:cardUseCompatPadding="true">
+            card:cardCornerRadius="8dp"
+            card:contentPadding="8dp"
+            card:cardUseCompatPadding="true">
 
             <LinearLayout
             android:layout_width="match_parent"
