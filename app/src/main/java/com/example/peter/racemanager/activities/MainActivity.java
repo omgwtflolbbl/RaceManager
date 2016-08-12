@@ -37,6 +37,8 @@ import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Iconify.with(new FontAwesomeModule());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
@@ -344,8 +348,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     // BuildRaceStructureCFragment callbacks
-    public void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race) {
-        BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(racersInSlots, race);
+    public void BuildRaceCToD(int numSlots, List<List<Racer>> racersInSlots, Race race) {
+        BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(numSlots, racersInSlots, race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_D_FRAGMENT")

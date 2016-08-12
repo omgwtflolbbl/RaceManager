@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
@@ -27,6 +29,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.peter.racemanager.CustomTypefaceSpan;
 import com.example.peter.racemanager.FontManager;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.MainActivity;
@@ -35,6 +38,9 @@ import com.example.peter.racemanager.models.Heat;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+import com.joanzapata.iconify.widget.IconButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -72,6 +78,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     private TextView currentStatusText;
     private Button flowButton;
     private Button jumpButton;
+    private Button attendanceButton;
     private TextView racerName;
     private TextView racerFrequency;
     private TextView racerPoints;
@@ -107,6 +114,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             rotated = savedInstanceState.getBoolean(ROTATED_KEY);
         }
         setHasOptionsMenu(true);
+
+        Iconify.with(new FontAwesomeModule());
     }
 
     @Override
@@ -149,9 +158,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         Button raceRacersButton = (Button) view.findViewById(R.id.race_racers_button);
         raceRacersButton.setOnClickListener(this);
 
-        Button attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
-        attendanceButton.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));
-        attendanceButton.setText("Import Roster " + getResources().getString(R.string.fa_download));
+        attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
+        attendanceButton.setTransformationMethod(null);
+        attendanceButton.setText(Iconify.compute(attendanceButton.getContext(), getResources().getString(R.string.button_import_roster)));
         attendanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +169,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         });
 
         flowButton = (Button) view.findViewById(R.id.race_admin_flow_button);
-        flowButton.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));
+        flowButton.setTransformationMethod(null);
         flowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,14 +179,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         });
 
         jumpButton = (Button) view.findViewById(R.id.race_admin_jump_button);
-        jumpButton.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));
-        jumpButton.setText("Change Heat " + getResources().getString(R.string.fa_comment));
+        jumpButton.setTransformationMethod(null);
+        jumpButton.setText(Iconify.compute(jumpButton.getContext(), getResources().getString(R.string.button_change_heat)));
         jumpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showJumpHeatDialog();
             }
         });
+
 
         currentHeatView = (ListView) view.findViewById(R.id.race_current_heat);
         currentHeatList = new ArrayList<>();
@@ -335,20 +345,20 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         String status = race.getStatus();
 
         if (status.equals("NS")) {
-            flowButton.setText("Start Event " + getResources().getString(R.string.fa_chevron_right));
+            flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_start)));
         }
         else if (status.charAt(0) == 'W') {
-            flowButton.setText("Start Heat " + getResources().getString(R.string.fa_chevron_right));
+            flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_heat)));
         }
         else if (status.charAt(0) == 'R') {
             int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
             currentIndex = race.getNext(currentIndex);
             if (currentIndex[0] == -1 || currentIndex[1] == -1) {
                 // No more valid heats or roudns - we're done. Set to "finished"
-                flowButton.setText("End Event " + getResources().getString(R.string.fa_chevron_right));
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
             }
             else {
-                flowButton.setText("Prep Next " + getResources().getString(R.string.fa_chevron_right));
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
             }
         }
         else if (status.charAt(0) == 'T') {
@@ -356,14 +366,14 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             currentIndex = race.getNext(currentIndex);
             if (currentIndex[0] == -1 || currentIndex[1] == -1) {
                 // No more valid heats or roudns - we're done. Set to "finished"
-                flowButton.setText("End Event " + getResources().getString(R.string.fa_chevron_right));
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
             }
             else {
-                flowButton.setText("Prep Next " + getResources().getString(R.string.fa_chevron_right));
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
             }
         }
         else if (status.charAt(0) == 'F') {
-            flowButton.setText("Done");
+            flowButton.setText(getResources().getText(R.string.button_flow_done));
         }
     }
 

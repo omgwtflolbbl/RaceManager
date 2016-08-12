@@ -36,12 +36,14 @@ import java.util.List;
 public class BuildRaceStructureDFragment extends Fragment {
 
     private final static String RACE_KEY = "RACE_KEY";
+    private final static String NUM_KEY = "NUM_KEY";
     private final static String[] RACERS_IN_SLOTS_KEY = {"RACERS_A_KEY", "RACERS_B_KEY", "RACERS_C_KEY", "RACERS_D_KEY", "RACERS_E_KEY", "RACERS_F_KEY", "RACERS_G_KEY", "RACERS_H_KEY"};
     private final static String SHUFFLE_KEY = "SHUFFLE_KEY";
 
     private Race oldRace;
     private Race newRace;
     private List<List<Racer>> racersInSlots;
+    private int numSlots;
 
     // UI stuff
     EditText numRoundsText;
@@ -53,12 +55,13 @@ public class BuildRaceStructureDFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static BuildRaceStructureDFragment newInstance(List<List<Racer>> racersInSlots, Race race) {
+    public static BuildRaceStructureDFragment newInstance(int numSlots, List<List<Racer>> racersInSlots, Race race) {
         BuildRaceStructureDFragment fragment = new BuildRaceStructureDFragment();
         Bundle args = new Bundle();
         for (int i = 0; i < RACERS_IN_SLOTS_KEY.length; i++) {
             args.putParcelableArrayList(RACERS_IN_SLOTS_KEY[i], (ArrayList<Racer>) racersInSlots.get(i));
         }
+        args.putInt(NUM_KEY, numSlots);
         args.putParcelable(RACE_KEY, race);
         fragment.setArguments(args);
         return fragment;
@@ -74,6 +77,7 @@ public class BuildRaceStructureDFragment extends Fragment {
                 racersInSlots.add(racers);
             }
             oldRace = getArguments().getParcelable(RACE_KEY);
+            numSlots = getArguments().getInt(NUM_KEY);
         }
     }
 
@@ -165,7 +169,7 @@ public class BuildRaceStructureDFragment extends Fragment {
                 numSlots = i+1;
             }
         }
-
+        Log.i("HELP", Integer.toString(numSlots));
         return numSlots;
     }
 
@@ -195,7 +199,7 @@ public class BuildRaceStructureDFragment extends Fragment {
 
         int numRounds = Integer.parseInt(numRoundsText.getText().toString());
         int numHeats = calculateNumberOfHeats();
-        int numSlots = calculateNumberOfSlots();
+        //int numSlots = calculateNumberOfSlots();
 
         // If the structure will be shuffled only once for randomness, it should to be now
         if (getShuffleChoice() == 1) {

@@ -9,4 +9,8 @@
     <string name="fa_chevron_right">&#xf054;</string>
     <string name="fa_download">&#xf0ed;</string>
     <string name="fa_comment">&#xf075;</string>
+    <string name="fa_checked_circle">&#xf058;</string>
+    <string name="fa_crossed_circle">&#xf057;</string>
+    <string name="fa_chevron_up">&#xf077;</string>
+    <string name="fa_chevron_down">&#xf078;</string>
 </resources>

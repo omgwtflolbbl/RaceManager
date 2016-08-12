@@ -84,6 +84,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:outlineProvider="none"
                 android:text="Login" />
 
             <Button
@@ -92,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:stateListAnimator="@null"
                 android:text="Sign in as a guest"/>
 
             <TextView

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -37,6 +39,8 @@ import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
 import com.example.peter.racemanager.models.Heat;
 import com.example.peter.racemanager.models.Slot;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -168,7 +172,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         heatText.setHeight(GridLayout.LayoutParams.WRAP_CONTENT);
         GridLayout.LayoutParams heatParams = new GridLayout.LayoutParams();
         heatParams.setMargins(0, dpToPx(-6), 0, dpToPx(-6));
-        heatParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/3);
+        heatParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+2)/3);
         heatParams.columnSpec = GridLayout.spec(0);
         heatParams.setGravity(Gravity.FILL_VERTICAL);
         int pad = dpToPx(3);
@@ -181,7 +185,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         GridLayout.LayoutParams separatorParams = new GridLayout.LayoutParams();
         separatorParams.width = dpToPx(8);
         separatorParams.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        separatorParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+1)/3);
+        separatorParams.rowSpec = GridLayout.spec(0, (heat.numSlots()+2)/3);
         separatorParams.columnSpec = GridLayout.spec(1);
         separatorParams.setGravity(Gravity.FILL_VERTICAL);
         separator.setLayoutParams(separatorParams);
@@ -190,33 +194,31 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         Iterator<String> slots = heat.getHeatMap().keySet().iterator();
         //Iterator<String> slots = heat.getKeys().iterator();
 
+        Log.i("HEY", Integer.toString(dpToPx((int) calculateGridSpace(roundIndex + 1, position + 1))));
+        float gridWidth = calculateGridSpace(roundIndex + 1, position + 1);
+
         int j = 0;
+        Paint paint = new Paint();
+        paint.setTextSize(11f);
 
         // Create TextView for each slot
         while (slots.hasNext()) {
             String slot = slots.next();
-            TextView slotText = new TextView(getContext());
+            final TextView slotText = new TextView(getContext());
             slotText.setTag(String.format("%d %d %s", roundIndex, position, slot));
 
             // Set up name
             String name = heat.getSlot(slot).getUsername();
-            slotText.setText(name);
-            // Figure out if name needs to be truncated
-            slotText.setMaxLines(1);
-            if (slotText.getLineCount() > 1) {
-                // Name too long, get the index of the last visible character
-                int lastCharIndex = slotText.getLayout().getLineVisibleEnd(0);
-                // Get the truncated string
-                name = name.substring(0, lastCharIndex - 3) + "...";
-            }
+            name = truncateName(paint, name, gridWidth);
             SpannableString nameSpan = new SpannableString(name);
             nameSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.MultiGPBlack)), 0, name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             // Set up frequency and point information
             SpannableString infoSpan = new SpannableString(String.format(Locale.US, "%s - %dpts", heat.getSlot(slot).getFrequency(), heat.getSlot(slot).getPoints()));
-            infoSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.MultiGPGray)), 0, infoSpan.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            infoSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.MultiGPGray)), 0, infoSpan.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             SpannedString slotMessage = (SpannedString) TextUtils.concat(nameSpan, "\n", infoSpan);
-            Log.i("INFO SPAN", slotMessage.toString());
+
+            // Attach information
             slotText.setMaxLines(2);
             slotText.setText(slotMessage);
 
@@ -247,13 +249,24 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             GridLayout.LayoutParams slotTextParams = new GridLayout.LayoutParams();
             slotTextParams.rowSpec = GridLayout.spec((j / 3));
             slotTextParams.columnSpec = GridLayout.spec(j % 3 + 2, (float) 1);
-            slotTextParams.setGravity(Gravity.FILL);
-            if (j % 3==0) {
-                slotTextParams.setMargins(0, 0, dpToPx(1), 0);
-            }
             slotTextParams.setMargins(0, j > 2 ? dpToPx(1) : 0, j % 3 != 2 ? dpToPx(1) : 0, 0);
             slotText.setLayoutParams(slotTextParams);
             gridLayout.addView(slotText);
+
+            j++;
+        }
+
+        // Add background white to empty spaces
+        while ((j) % 3 != 0) {
+            TextView placeholder = new TextView(getContext());
+            placeholder.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+            GridLayout.LayoutParams placeholderParams = new GridLayout.LayoutParams();
+            placeholderParams.rowSpec = GridLayout.spec((j / 3));
+            placeholderParams.columnSpec = GridLayout.spec(j % 3 + 2, (float) 1);
+            placeholderParams.setGravity(Gravity.FILL);
+            placeholderParams.setMargins(0, j > 2 ? dpToPx(1) : 0, j % 3 != 2 ? dpToPx(1) : 0, 0);
+            placeholder.setLayoutParams(placeholderParams);
+            gridLayout.addView(placeholder);
 
             j++;
         }
@@ -285,6 +298,46 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
                 r.getDisplayMetrics()
         );
         return px;
+    }
+
+    // Calculate the width of a grid containing a slot (dp)
+    private float calculateGridSpace(int round, int heat) {
+        // Get screen dp width
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        // Create paint to try and figure out width of the left hand round/heat TextView
+        Paint paint = new Paint();
+        paint.setTextSize(16);
+        float roundWidth = paint.measureText(Integer.toString(round));
+        paint.setTextSize(32);
+        float heatWidth = paint.measureText(Integer.toString(heat));
+
+        float leftWidth = roundWidth > heatWidth ? roundWidth : heatWidth;
+
+        // Add up all known paddings and etc to get the space allotted for the three slots
+        float nonSlotWidth = 0;
+        if (mListener instanceof RaceFragment) {
+            nonSlotWidth = 8 + 2 + 5 + leftWidth + 5 + 8 + 1 + 1 + 8 + 2 + 8;
+        }
+        else if (mListener instanceof RaceScheduleFragment) {
+            nonSlotWidth = 18 + 2 + 5 + leftWidth + 5 + 8 + 1 + 1 + 8 + 2 + 18;
+        }
+
+        return ((dpWidth - nonSlotWidth) / 3) - 4;
+    }
+
+    // Cut the name down so that it fits into slot
+    private String truncateName(Paint paint, String name, float gridWidth) {
+        float nameWidth = paint.measureText(name);
+
+        // Trim down string until it should fit
+        while (nameWidth >= gridWidth) {
+            float ratio = gridWidth / nameWidth;
+            name = name.substring(0, ((int) (name.length() * ratio)) - 3) + "...";
+            nameWidth = paint.measureText(name);
+        }
+        return name;
     }
 
     public void setRoundIndex(int index) {

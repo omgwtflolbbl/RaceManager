@@ -1,8 +1,6 @@
 package com.example.peter.racemanager.adapters;
 
 import android.content.Context;
-import android.support.annotation.Dimension;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,6 @@ import android.widget.TextView;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.RacerNameComparator;
 import com.example.peter.racemanager.RacerPointComparator;
-import com.example.peter.racemanager.UnitUtils;
-import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.squareup.picasso.Picasso;
 
@@ -23,11 +19,11 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 6/8/2016.
  */
-public class RacerListAdapter extends ArrayAdapter<Racer> {
+public class RacerInfoListAdapter extends ArrayAdapter<Racer> {
 
     private String sort;
 
-    public RacerListAdapter (Context context, ArrayList<Racer> racers) {
+    public RacerInfoListAdapter(Context context, ArrayList<Racer> racers) {
         super(context, 0, racers);
         sort = "name";
     }
@@ -38,27 +34,19 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         Racer racer = getItem(position);
         // Check if the existing view is being used, otherwise inflate the view
         if (view == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.racer_list_label, parent, false);
+            view = LayoutInflater.from(getContext()).inflate(R.layout.racer_info_list_label, parent, false);
         }
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.race_racers_photo);
+        ImageView imageView = (ImageView) view.findViewById(R.id.race_info_racers_photo);
         Picasso.with(getContext())
                 .load(racer.getRacerPhoto())
-                //.resize(UnitUtils.dpToPx(getContext(), 75), UnitUtils.dpToPx(getContext(), 75))
-                //.centerInside()
                 .fit()
                 .centerInside()
                 .placeholder(R.drawable.profile)
                 .into(imageView);
 
-        TextView usernameText = (TextView) view.findViewById(R.id.race_racers_username);
+        TextView usernameText = (TextView) view.findViewById(R.id.race_info_racers_username);
         usernameText.setText(racer.getUsername());
-
-        TextView frequencyText = (TextView) view.findViewById(R.id.race_racers_frequency);
-        frequencyText.setText(racer.getFrequency());
-
-        TextView pointsText = (TextView) view.findViewById(R.id.race_racers_points);
-        pointsText.setText(Integer.toString(racer.getPoints()) + " Pt.");
 
         return view;
     }

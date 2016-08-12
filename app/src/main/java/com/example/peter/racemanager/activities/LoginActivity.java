@@ -48,6 +48,8 @@ import android.widget.TextView;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.TOSDialogFragment;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,6 +96,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Iconify.with(new FontAwesomeModule());
     }
 
     @Override

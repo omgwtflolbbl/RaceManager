@@ -19,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.peter.racemanager.ListUtils;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.RaceDateComparator;
 import com.example.peter.racemanager.adapters.EventAdapter;
@@ -193,7 +194,7 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
     }
 
     // Utility/helper class for sizing multiple listviews in a single container
-    public static class ListUtils {
+    /*public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {
             ListAdapter mListAdapter = mListView.getAdapter();
             if (mListAdapter == null) {
@@ -212,7 +213,7 @@ public class EventsFragment extends Fragment implements AddRaceDialogFragment.Ad
             mListView.setLayoutParams(params);
             mListView.requestLayout();
         }
-    }
+    }*/
 
     public interface OnEventSelectedListener {
         void onEventSelected(Race race);
