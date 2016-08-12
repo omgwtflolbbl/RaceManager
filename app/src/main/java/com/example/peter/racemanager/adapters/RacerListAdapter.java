@@ -1,6 +1,7 @@
 package com.example.peter.racemanager.adapters;
 
 import android.content.Context;
+import android.support.annotation.Dimension;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,10 @@ import android.widget.TextView;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.RacerNameComparator;
 import com.example.peter.racemanager.RacerPointComparator;
+import com.example.peter.racemanager.UnitUtils;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -39,6 +42,14 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         }
 
         ImageView imageView = (ImageView) view.findViewById(R.id.race_racers_photo);
+        Picasso.with(getContext())
+                .load(racer.getRacerPhoto())
+                //.resize(UnitUtils.dpToPx(getContext(), 75), UnitUtils.dpToPx(getContext(), 75))
+                //.centerInside()
+                .fit()
+                .centerInside()
+                .placeholder(R.drawable.profile)
+                .into(imageView);
 
         TextView usernameText = (TextView) view.findViewById(R.id.race_racers_username);
         usernameText.setText(racer.getUsername());

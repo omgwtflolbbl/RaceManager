@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fa_wifi">&#xf1eb;</string>
+    <string name="fa_calendar">&#xf073;</string>
+    <string name="fa_clock">&#xf017;</string>
+    <string name="fa_location">&#xf041;</string>
+    <string name="fa_trophy">&#xf091;</string>
+    <string name="fa_flag">&#xf11e;</string>
+    <string name="fa_chevron_right">&#xf054;</string>
+    <string name="fa_download">&#xf0ed;</string>
+    <string name="fa_comment">&#xf075;</string>
+    <string name="fa_checked_circle">&#xf058;</string>
+    <string name="fa_crossed_circle">&#xf057;</string>
+    <string name="fa_chevron_up">&#xf077;</string>
+    <string name="fa_chevron_down">&#xf078;</string>
+</resources>

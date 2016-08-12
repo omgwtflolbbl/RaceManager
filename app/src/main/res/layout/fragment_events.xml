@@ -1,37 +1,86 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/event_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".fragments.EventsFragment"
-    tools:showIn="@layout/activity_main">
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/event_empty_text"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/overlaylight"
-        android:textSize="22sp"
-        android:text="@string/no_events"/>
+        android:id="@+id/event_layout"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".fragments.EventsFragment">
 
-    <ListView
-        android:id="@+id/event_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:scrollbars="none"
-        android:divider="@null"
-        android:clipToPadding="false">
-    </ListView>
+            <TextView
+                android:id="@+id/event_empty_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@color/overlaylight"
+                android:textSize="22sp"
+                android:text="@string/no_events"/>
+
+            <TextView
+                android:id="@+id/event_header_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textColor="@color/MultiGPGray"
+                android:textSize="13sp"
+                android:text="Upcoming Races Around Me"/>
+
+            <ListView
+                android:id="@+id/event_listview_upcoming"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:scrollbars="none"
+                android:divider="@drawable/list_divider"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1px"
+                android:clipToPadding="false">
+            </ListView>
+
+            <TextView
+                android:id="@+id/event_header_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textColor="@color/MultiGPGray"
+                android:textSize="13sp"
+                android:text="Completed Races"/>
+
+            <ListView
+                android:id="@+id/event_listview_completed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:scrollbars="none"
+                android:divider="@drawable/list_divider"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1px"
+                android:clipToPadding="false">
+            </ListView>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/loadingPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="gone" >
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -40,4 +89,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</FrameLayout>

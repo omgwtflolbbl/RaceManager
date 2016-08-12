@@ -27,6 +27,7 @@ public class Race implements Parcelable {
     private String time;
     private String blockquote;
     private String description;
+    private String raceImage;
     private String raceId = "";
     private ArrayList<Round> rounds;
     private ArrayList<Racer> racers;
@@ -38,13 +39,14 @@ public class Race implements Parcelable {
 
     public Race(){}
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, String raceImage, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
         this.time = time;
         this.blockquote = blockquote;
         this.description = description;
+        this.raceImage = raceImage;
         this.racers = racers;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
@@ -53,13 +55,14 @@ public class Race implements Parcelable {
         this.targetTime = targetTime;
     }
 
-    public Race(String title, String siteURL, String date, String time, String blockquote, String description, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime, String raceId) {
+    public Race(String title, String siteURL, String date, String time, String blockquote, String description, String raceImage, ArrayList<Round> rounds, ArrayList<Racer> racers, ArrayList<String> admins, String status, Long targetTime, String raceId) {
         this.title = title;
         this.siteURL = siteURL;
         this.date = date;
         this.time = time;
         this.blockquote = blockquote;
         this.description = description;
+        this.raceImage = raceImage;
         this.setDateAndTime(date, time);
         this.rounds = rounds;
         this.racers = racers;
@@ -80,6 +83,7 @@ public class Race implements Parcelable {
             race.setDateAndTime(race.date, race.time);
             race.blockquote = json.getString("blockquote");
             race.description = json.getString("description");
+            race.raceImage = json.getString("chapterImage");
             race.siteURL = json.getString("eventURL");
 
             // Round information
@@ -151,6 +155,7 @@ public class Race implements Parcelable {
             json.put("blockquote", getBlockquote());
             json.put("description", getDescription());
             json.put("eventURL", getSiteURL());
+            json.put("chapterImage", getRaceImage());
 
             JSONObject statusJson = new JSONObject();
             statusJson.put("ondeck", "None");
@@ -277,6 +282,10 @@ public class Race implements Parcelable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getRaceImage() {
+        return raceImage;
     }
 
     public Date getDateAndTime() {

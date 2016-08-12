@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    tools:context="com.example.peter.racemanager.fragments.TOSDialogFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:text="Terms of Service"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@android:color/holo_blue_light" />
+
+    <TextView
+        android:id="@+id/tos_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:maxLines="12"
+        android:scrollbars="vertical"/>
+
+    <TextView
+        android:id="@+id/tos_ok"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:gravity="right"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="18sp"
+        android:text="OK"/>
+
+</LinearLayout>

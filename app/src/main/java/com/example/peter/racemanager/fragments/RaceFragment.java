@@ -2,18 +2,22 @@ package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,10 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.peter.racemanager.CustomTypefaceSpan;
+import com.example.peter.racemanager.FontManager;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.MainActivity;
 import com.example.peter.racemanager.adapters.RoundAdapter3;
@@ -32,11 +38,16 @@ import com.example.peter.racemanager.models.Heat;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+import com.joanzapata.iconify.widget.IconButton;
+import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -56,22 +67,27 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     private OnRaceListener mListener;
     private final static Handler handler = new Handler();
     private static CountdownRunnable countdownRunnable;
+    private static CountdownRunnable countdownRunnable2;
     private Boolean rotated = false;
     private List<Heat> currentHeatList;
     private List<Heat> spotterHeatList;
     private List<Heat> ondeckHeatList;
 
     // UI stuff
+    private CircleImageView racerImage;
     private TextView currentStatusText;
     private Button flowButton;
     private Button jumpButton;
-    private Button adminsButton;
-    private TextView racerWelcome;
+    private Button attendanceButton;
+    private TextView racerName;
     private TextView racerFrequency;
     private TextView racerPoints;
+    private TextView iconFrequency;
+    private TextView iconPoints;
     private ListView currentHeatView;
     private ListView spotterHeatView;
     private ListView ondeckHeatView;
+    private RelativeLayout statusBar;
 
     // Text to Speech
     private static TextToSpeech textToSpeech;
@@ -98,6 +114,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             rotated = savedInstanceState.getBoolean(ROTATED_KEY);
         }
         setHasOptionsMenu(true);
+
+        Iconify.with(new FontAwesomeModule());
     }
 
     @Override
@@ -113,11 +131,23 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_race, container, false);
 
-        racerWelcome = (TextView) view.findViewById(R.id.race_racer_welcome);
+        // Set up fontawesome
+        //Typeface iconFont = FontManager.getTypeface(getContext(), FontManager.FONTAWESOME);
+        //FontManager.markAsIconContainer(view.findViewById(R.id.race_card_racer), iconFont);
+
+        racerImage = (CircleImageView) view.findViewById(R.id.race_racer_image);
+        racerName = (TextView) view.findViewById(R.id.race_racer_name);
         racerFrequency = (TextView) view.findViewById(R.id.race_racer_frequency);
-        racerPoints = (TextView) view.findViewById(R.id.race_racers_points);
+        racerPoints = (TextView) view.findViewById(R.id.race_racer_points);
+
+        // Set up icons in top bar
+        iconFrequency = (TextView) view.findViewById(R.id.race_icon_frequency);
+        iconFrequency.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));
+        iconPoints = (TextView) view.findViewById(R.id.race_icon_points);
+        iconPoints.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));
 
         currentStatusText = (TextView) view.findViewById(R.id.race_current_status_text);
+        statusBar = (RelativeLayout) view.findViewById(R.id.race_status_bar);
 
         Button raceBuilderButton = (Button) view.findViewById(R.id.race_builder_button);
         raceBuilderButton.setOnClickListener(this);
@@ -128,7 +158,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         Button raceRacersButton = (Button) view.findViewById(R.id.race_racers_button);
         raceRacersButton.setOnClickListener(this);
 
-        Button attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
+        attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
+        attendanceButton.setTransformationMethod(null);
+        attendanceButton.setText(Iconify.compute(attendanceButton.getContext(), getResources().getString(R.string.button_import_roster)));
         attendanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,6 +169,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         });
 
         flowButton = (Button) view.findViewById(R.id.race_admin_flow_button);
+        flowButton.setTransformationMethod(null);
         flowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +179,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         });
 
         jumpButton = (Button) view.findViewById(R.id.race_admin_jump_button);
+        jumpButton.setTransformationMethod(null);
+        jumpButton.setText(Iconify.compute(jumpButton.getContext(), getResources().getString(R.string.button_change_heat)));
         jumpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,13 +188,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             }
         });
 
-        adminsButton = (Button) view.findViewById(R.id.race_admin_admins_button);
-        adminsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         currentHeatView = (ListView) view.findViewById(R.id.race_current_heat);
         currentHeatList = new ArrayList<>();
@@ -283,24 +311,32 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void setCurrentStatusText() {
         String status = race.getStatus();
         if (status.equals("NS")) {
-            currentStatusText.setText("Current status: The race is still being set up");
-            currentStatusText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lightblueinner));
-        }
-        else if (status.charAt(0) == 'W') {
-            currentStatusText.setText(String.format(Locale.US, "Current Status: Round %d Heat %d is getting ready", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1));
-            currentStatusText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.orangeA100));
-        }
-        else if (status.charAt(0) == 'R') {
-            currentStatusText.setText(String.format(Locale.US, "Current Status: Round %d Heat %d is racing!", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1));
-            currentStatusText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.greenA100));
-        }
-        else if (status.charAt(0) == 'T') {
-            currentStatusText.setText(String.format(Locale.US, "Current status: Round %d Heat %d is tallying results", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1));
-            currentStatusText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.redA100));
+            currentStatusText.setText("The race is still being set up");
+            statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPBlue));
         }
         else if (status.charAt(0) == 'F') {
-            currentStatusText.setText("Current status: The race is finished!");
-            currentStatusText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bluegrey100));
+            currentStatusText.setText("The race is finished!");
+            statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGray));
+        }
+        else {
+            String statusVar = String.format(Locale.US, "Round %d - Heat %d", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
+            SpannableString statusSpan = new SpannableString(statusVar);
+            statusSpan.setSpan(new UnderlineSpan(), 0, statusVar.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (status.charAt(0) == 'W') {
+                SpannedString statusText = (SpannedString) TextUtils.concat(statusSpan, " is Prepping");
+                currentStatusText.setText(statusText);
+                statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPOrange));
+            }
+            else if (status.charAt(0) == 'R') {
+                SpannedString statusText = (SpannedString) TextUtils.concat(statusSpan, " is Racing");
+                currentStatusText.setText(statusText);
+                statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGreen));
+            }
+            else if (status.charAt(0) == 'T') {
+                currentStatusText.setText(String.format(Locale.US, "Round %d - Heat %d is tallying results", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1));
+                statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.redA100));
+            }
+
         }
     }
 
@@ -309,20 +345,20 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         String status = race.getStatus();
 
         if (status.equals("NS")) {
-            flowButton.setText("Start Event");
+            flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_start)));
         }
         else if (status.charAt(0) == 'W') {
-            flowButton.setText("Start Heat");
+            flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_heat)));
         }
         else if (status.charAt(0) == 'R') {
             int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
             currentIndex = race.getNext(currentIndex);
             if (currentIndex[0] == -1 || currentIndex[1] == -1) {
                 // No more valid heats or roudns - we're done. Set to "finished"
-                flowButton.setText("End Event");
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
             }
             else {
-                flowButton.setText("Prep Next");
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
             }
         }
         else if (status.charAt(0) == 'T') {
@@ -330,28 +366,44 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             currentIndex = race.getNext(currentIndex);
             if (currentIndex[0] == -1 || currentIndex[1] == -1) {
                 // No more valid heats or roudns - we're done. Set to "finished"
-                flowButton.setText("End Event");
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
             }
             else {
-                flowButton.setText("Prep Next");
+                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
             }
         }
         else if (status.charAt(0) == 'F') {
-            flowButton.setText("Done");
+            flowButton.setText(getResources().getText(R.string.button_flow_done));
         }
     }
 
     public void setRacerText() {
         if (checkRacerPermissions()) {
+            // Setup pilot information
             String username = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("username", null);
             race.calculatePoints();
             for (Racer racer : race.getRacers()) {
                 if (racer.getUsername().equals(username)) {
-                    racerWelcome.setText(String.format(Locale.US, "Welcome, %s!", username));
-                    racerFrequency.setText(String.format(Locale.US, "Your assigned frequency is %s", racer.getFrequency()));
-                    racerPoints.setText(String.format(Locale.US, "You currently have %d points", racer.getPoints()));
+                    Picasso.with(getContext())
+                            .load(racer.getRacerPhoto())
+                            .error(R.drawable.profile)
+                            .noFade()
+                            .into(racerImage);
+                    racerName.setText(username);
+                    racerFrequency.setText(racer.getFrequency());
+                    racerPoints.setText(Integer.toString(racer.getPoints()));
                 }
             }
+        }
+        else {
+            // Setup guest view
+            Picasso.with(getContext())
+                    .load(R.drawable.profile)
+                    .noFade()
+                    .into(racerImage);
+            racerName.setText("Guest");
+            racerFrequency.setText("-");
+            racerPoints.setText("-");
         }
     }
 
@@ -451,9 +503,12 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     // For starting the timer with a synced target time
     public void startTimer(long targetTime) {
         if (getView() != null) {
-            TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-            countdownRunnable = new CountdownRunnable(textView, targetTime, -1);
+            TextView adminTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_admin);
+            countdownRunnable = new CountdownRunnable(adminTicker, targetTime, -1);
+            TextView smallTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_pilot);
+            countdownRunnable2 = new CountdownRunnable(smallTicker, targetTime, -1);
             handler.post(countdownRunnable);
+            handler.post(countdownRunnable2);
         }
     }
 
@@ -461,8 +516,10 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         handler.removeCallbacksAndMessages(null);
         Log.i("HANDLER CALLED", "STOP THAT SHIT");
         if (getView() != null) {
-            TextView textView = (TextView) getView().findViewById(R.id.race_timer_ticker);
-            textView.setText("00:00:000");
+            TextView adminTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_admin);
+            adminTicker.setText("00:00:000");
+            TextView smallTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_pilot);
+            smallTicker.setText("00:00:000");
         }
     }
 
@@ -673,12 +730,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                     }
                     else {
                         getView().findViewById(R.id.race_card_admin).setVisibility(View.GONE);
-                    }
-                    if (checkRacerPermissions()) {
-                        getView().findViewById(R.id.race_card_racer).setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        getView().findViewById(R.id.race_card_racer).setVisibility(View.GONE);
                     }
                 }
             });

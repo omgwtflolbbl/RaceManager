@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
@@ -36,6 +37,8 @@ import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,8 +47,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener {
 
-    public final static String FLASK = "http://bfa0b580.ngrok.io";
-    //public final static String FLASK = "http://pesolve.asuscomm.com:5000";
+    public final static String FLASK = "https://racemanagerflask.herokuapp.com";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -58,12 +60,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Iconify.with(new FontAwesomeModule());
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         // Check if user is logged in. Otherwise, go to login screen.
         validateUser();
+
+        // Set up no sleep mode
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Set up broadcaster receiver so that we know when to we are getting important status updates
         LocalBroadcastManager.getInstance(this).registerReceiver(statusReceiver, new IntentFilter("RaceManager-Update-Info"));
@@ -134,6 +142,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 Fragment fragment = getActiveFragment();
@@ -339,8 +348,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     // BuildRaceStructureCFragment callbacks
-    public void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race) {
-        BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(racersInSlots, race);
+    public void BuildRaceCToD(int numSlots, List<List<Racer>> racersInSlots, Race race) {
+        BuildRaceStructureDFragment fragment = BuildRaceStructureDFragment.newInstance(numSlots, racersInSlots, race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.fragment_container, fragment, "BUILD_RACE_STRUCTURE_D_FRAGMENT")

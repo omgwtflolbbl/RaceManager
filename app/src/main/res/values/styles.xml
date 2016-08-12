@@ -3,13 +3,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="colorPrimary">@color/MultiGPRed</item>
+        <item name="colorPrimaryDark">@color/MultiGPRedDark</item>
+        <item name="colorAccent">@color/MultiGPBlue</item>
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="logo">@drawable/racesync_logo_white</item>
+        <item name="android:displayOptions">showHome|useLogo</item>
     </style>
+
+    <!--<style name="MyActionBar"parent="Theme.AppCompat.Light.">
+        <item name="android:background">@color/MultiGPRed</item>
+    </style>-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -19,6 +24,22 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="RedAccent" parent="ThemeOverlay.AppCompat" >
+        <item name="colorAccent">@color/MultiGPRed</item>
+    </style>
+
+    <style name="BlueAccent" parent="ThemeOverlay.AppCompat" >
+        <item name="colorAccent">@color/MultiGPBlue</item>
+    </style>
+
+    <style name="GreenAccent" parent="ThemeOverlay.AppCompat" >
+        <item name="colorAccent">@color/MultiGPGreen</item>
+    </style>
+
+    <style name="GrayAccent" parent="ThemeOverlay.AppCompat" >
+        <item name="colorAccent">@color/MultiGPLightGray</item>
+    </style>
 
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>

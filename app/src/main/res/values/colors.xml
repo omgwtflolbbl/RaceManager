@@ -50,5 +50,14 @@
     <color name="overlay">#80000000</color>
     <color name="overlaylight">#40000000</color>
 
+    <color name="MultiGPRed">#8D191c</color>
+    <color name="MultiGPRedDark">#600000</color>
+    <color name="MultiGPBlue">#212A5E</color>
+    <color name="MultiGPGreen">#028114</color>
+    <color name="MultiGPOrange">#CC8610</color>
+    <color name="MultiGPBlack">#212121</color>
+    <color name="MultiGPGray">#757575</color>
+    <color name="MultiGPLightGray">#D2D2D2</color>
+    <color name="MultiGPBackgroundGray">#F9F9F9</color>
 
 </resources>

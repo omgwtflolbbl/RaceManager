@@ -432,10 +432,10 @@ public class BuildRaceStructureCFragment extends Fragment implements AddRacerFre
     }
 
     public void onContinue() {
-        mListener.BuildRaceCToD(slots, race);
+        mListener.BuildRaceCToD(numSlots(), slots, race);
     }
 
     public interface OnFragmentInteractionListener {
-        void BuildRaceCToD(List<List<Racer>> racersInSlots, Race race);
+        void BuildRaceCToD(int numSlots, List<List<Racer>> racersInSlots, Race race);
     }
 }

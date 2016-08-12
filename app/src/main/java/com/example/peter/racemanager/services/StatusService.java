@@ -172,7 +172,7 @@ public class StatusService extends Service {
 
             Notification notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentIntent(contentIntent)
-                    .setContentTitle("RACE MANAGER UPDATE")
+                    .setContentTitle("RACESYNC UPDATE")
                     .setContentText(String.format("Status: %s (Pull down)", statusText))
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_SOUND)

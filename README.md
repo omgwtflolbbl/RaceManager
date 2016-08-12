@@ -1,4 +1,6 @@
 # RaceManager
+This branch is for working on changes with MultiGP.
+
 This project has a few goals:
 
 -Build a scraper for MultiGP to pull information about races and racers
