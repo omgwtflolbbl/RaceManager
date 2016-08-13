@@ -45,6 +45,10 @@
     <string name="button_checkin">Check In %1$s</string>
     <string name="button_checkout">Check Out %1$s</string>
 
+    <string name="tab_hangar">{fa-circle 24sp}\nMy Hangar</string>
+    <string name="tab_race">{fa-flag-checkered 24sp}\nRace</string>
+    <string name="tab_results">{fa-trophy 24sp}\nResults</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_events">You don\'t seem to have added any events yet. Try adding some events from the taskbar!</string>

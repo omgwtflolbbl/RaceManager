@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -176,7 +177,8 @@ public class StatusService extends Service {
                     .setContentText(String.format("Status: %s (Pull down)", statusText))
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_SOUND)
-                    .setSmallIcon(R.drawable.ic_flight_takeoff_white_24dp)
+                    .setSmallIcon(R.drawable.checkered_logo_white)
+                    .setColor(ContextCompat.getColor(getApplicationContext(), R.color.MultiGPRed))
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(Html.fromHtml(notificationText)))
                     .build();
 

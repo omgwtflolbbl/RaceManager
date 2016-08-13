@@ -540,6 +540,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         }
 
         public void run() {
+            Log.i("SNTP TEST", Long.toString(TaskFragment.SntpOffset));
             currentTime = targetTime - System.currentTimeMillis() - TaskFragment.SntpOffset;
             final String text = String.format("%02d:%02d:%03d", (currentTime / 60000) % 60, (currentTime / 1000) % 60, currentTime % 1000);
             if (currentTime > 0 ) {

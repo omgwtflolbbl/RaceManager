@@ -150,7 +150,7 @@ public class RaceRacersFragment extends Fragment {
             rotated = true;
         }
 
-        outState.putBoolean(ROTATED_KEY, rotated);
+        //outState.putBoolean(ROTATED_KEY, rotated);
     }
 
     public void onButtonPressed(Race race) {

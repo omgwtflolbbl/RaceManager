@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.example.peter.racemanager.adapters.OverviewViewpagerAdapter;
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureCFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureDFragment;
 import com.example.peter.racemanager.fragments.EventsFragment;
 import com.example.peter.racemanager.R;
+import com.example.peter.racemanager.fragments.HangarFragment;
+import com.example.peter.racemanager.fragments.OverviewFragment;
 import com.example.peter.racemanager.fragments.RaceFragment;
 import com.example.peter.racemanager.fragments.RaceInfoFragment;
 import com.example.peter.racemanager.fragments.RaceRacersFragment;
@@ -45,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener {
+        implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener, OverviewFragment.OnFragmentInteractionListener, HangarFragment.OnFragmentInteractionListener {
 
     public final static String FLASK = "https://racemanagerflask.herokuapp.com";
 
@@ -145,20 +149,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                Fragment fragment = getActiveFragment();
-
-                if (fragment instanceof EventsFragment) {
-                    refreshEventsFragment((EventsFragment) fragment);
-                }
-                else if (fragment instanceof RaceScheduleFragment) {
-                    refreshRaceScheduleFragment(((RaceScheduleFragment) fragment).getRace());
-                }
-                else if (fragment instanceof RaceFragment) {
-                    refreshRaceFragment(((RaceFragment) fragment).getRace());
-                }
-                else {
-                    Log.i("FRAGMENTNAME", fragment.getClass().toString());
-                }
+                startUpdating();
                 return true;
             case R.id.action_logout:
                 logout();
@@ -195,6 +186,7 @@ public class MainActivity extends AppCompatActivity
 
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            Log.i("IT'S NULL", "He said");
             return null;
         }
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
@@ -216,6 +208,20 @@ public class MainActivity extends AppCompatActivity
         }
         else if (fragment instanceof RaceRacersFragment) {
             Log.i("FRAGMENTNAME", fragment.getClass().toString());
+        }
+        else if (fragment instanceof OverviewFragment) {
+            ViewPager viewPager = ((OverviewFragment) fragment).getViewPager();
+            Fragment subFragment = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+            if (subFragment instanceof HangarFragment) {
+                Log.i("Hangar", "Fragment");
+            }
+            else if (subFragment instanceof RaceFragment) {
+                Log.i("Race frag", "Race frag");
+                refreshRaceFragment(((RaceFragment) subFragment).getRace());
+            }
+            else if (subFragment instanceof RaceRacersFragment) {
+                Log.i("Racers", "frag");
+            }
         }
         else {
             //Log.i("FRAGMENTNAME", fragment.getClass().toString());
@@ -251,11 +257,13 @@ public class MainActivity extends AppCompatActivity
 
     // EventsFragment callbacks
     public void onEventSelected(Race race) {
-        RaceFragment raceFragment = RaceFragment.newInstance(race);
+        //RaceFragment raceFragment = RaceFragment.newInstance(race);
+        OverviewFragment overviewFragment = OverviewFragment.newInstance(race);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                .replace(R.id.fragment_container, raceFragment, "RACE_FRAGMENT")
-                .addToBackStack("RACE_FRAGMENT")
+                //.replace(R.id.fragment_container, raceFragment, "RACE_FRAGMENT")
+                .replace(R.id.fragment_container, overviewFragment, "OVERVIEW_FRAGMENT")
+                .addToBackStack("OVERVIEW_FRAGMENT")
                 .commit();
 
         // Start service
@@ -429,6 +437,18 @@ public class MainActivity extends AppCompatActivity
     public void UpdateRace(final Race race) {
         if (getActiveFragment() instanceof  RaceFragment) {
             final RaceFragment raceFragment = (RaceFragment) getActiveFragment();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    raceFragment.setRace(race);
+                    raceFragment.checkRaceStatus();
+                    raceFragment.onChangedViewPermissions();
+                }
+            });
+        }
+        else if (getActiveFragment() instanceof OverviewFragment) {
+            ViewPager viewPager = ((OverviewFragment) getActiveFragment()).getViewPager();
+            final RaceFragment raceFragment = (RaceFragment) viewPager.getAdapter().instantiateItem(viewPager, 1);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

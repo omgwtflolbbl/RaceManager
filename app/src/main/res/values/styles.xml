@@ -41,6 +41,12 @@
         <item name="colorAccent">@color/MultiGPLightGray</item>
     </style>
 
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/MultiGPRed</item>
+        <item name="tabSelectedTextColor">@color/MultiGPRed</item>
+        <item name="tabBackground">@drawable/tab_background</item>
+    </style>
+
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>

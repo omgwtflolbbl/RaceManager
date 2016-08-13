@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/race_racers_sort_points"
@@ -51,15 +52,14 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:background="@color/grey200"
-        android:layout_above="@id/race_racers_sort"/>
+        android:layout_above="@id/race_racers_sort"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/race_racers_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_above="@id/race_racers_line">
-
-    </ListView>
+        android:scrollbars="none"/>
+        <!--android:layout_above="@id/race_racers_line"/>-->
 
 </RelativeLayout>
