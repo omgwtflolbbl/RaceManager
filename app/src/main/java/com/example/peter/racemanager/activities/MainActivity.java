@@ -186,7 +186,6 @@ public class MainActivity extends AppCompatActivity
 
     public Fragment getActiveFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            Log.i("IT'S NULL", "He said");
             return null;
         }
         String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
@@ -210,6 +209,8 @@ public class MainActivity extends AppCompatActivity
             Log.i("FRAGMENTNAME", fragment.getClass().toString());
         }
         else if (fragment instanceof OverviewFragment) {
+            refreshRaceFragment(((OverviewFragment) fragment).getRace());
+            /*
             ViewPager viewPager = ((OverviewFragment) fragment).getViewPager();
             Fragment subFragment = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
             if (subFragment instanceof HangarFragment) {
@@ -221,10 +222,10 @@ public class MainActivity extends AppCompatActivity
             }
             else if (subFragment instanceof RaceRacersFragment) {
                 Log.i("Racers", "frag");
-            }
+            }*/
         }
         else {
-            //Log.i("FRAGMENTNAME", fragment.getClass().toString());
+            Log.i("FRAGMENTNAME", fragment.getClass().toString());
         }
     }
 
@@ -455,6 +456,13 @@ public class MainActivity extends AppCompatActivity
                     raceFragment.setRace(race);
                     raceFragment.checkRaceStatus();
                     raceFragment.onChangedViewPermissions();
+                }
+            });
+            final RaceRacersFragment raceRacersFragment = (RaceRacersFragment) viewPager.getAdapter().instantiateItem(viewPager, 2);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    raceRacersFragment.updateRace(race);
                 }
             });
         }

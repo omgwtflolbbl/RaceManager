@@ -42,7 +42,7 @@
     </style>
 
     <style name="TabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/MultiGPRed</item>
+        <item name="tabIndicatorColor">@android:color/transparent</item>
         <item name="tabSelectedTextColor">@color/MultiGPRed</item>
         <item name="tabBackground">@drawable/tab_background</item>
     </style>

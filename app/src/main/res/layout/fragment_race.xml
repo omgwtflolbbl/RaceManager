@@ -355,15 +355,42 @@
 
             </android.support.v7.widget.CardView>
 
+            <TextView
+                android:id="@+id/race_last_heat_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="12sp"
+                android:text="Last Heat"/>
+
             <ListView
                 android:id="@+id/race_current_heat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <TextView
+                android:id="@+id/race_current_heat_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="12sp"
+                android:text="Current Heat"/>
+
             <ListView
                 android:id="@+id/race_spotter_heat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/race_next_heat_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:textSize="12sp"
+                android:text="Next Heat"/>
 
             <ListView
                 android:id="@+id/race_ondeck_heat"

@@ -169,7 +169,7 @@ public class BuildRaceStructureDFragment extends Fragment {
                 numSlots = i+1;
             }
         }
-        Log.i("HELP", Integer.toString(numSlots));
+
         return numSlots;
     }
 

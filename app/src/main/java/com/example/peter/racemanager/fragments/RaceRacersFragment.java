@@ -111,12 +111,10 @@ public class RaceRacersFragment extends Fragment {
         ArrayList<Racer> racers = getArguments().getParcelableArrayList(RACERS_KEY);
 
         if (racers != null) {
-            Log.i("RACE_RACERS_FRAGMENT", getArguments().toString());
             racerListAdapter.clear();
             racerListAdapter.addAll(racers);
         }
         else {
-            Log.i("RACE_RACERS_FRAGMENT", race.getRacers().get(0).getUsername() + race.getRacers().get(0).getFrequency());
             race.calculatePoints();
             racerListAdapter.addAll(race.getRacers());
         }
@@ -149,14 +147,12 @@ public class RaceRacersFragment extends Fragment {
         if (getActivity().isChangingConfigurations()) {
             rotated = true;
         }
-
-        //outState.putBoolean(ROTATED_KEY, rotated);
     }
 
-    public void onButtonPressed(Race race) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(race);
-        }
+    public void updateRace(Race race) {
+        this.race = race;
+        racerListAdapter.clear();
+        racerListAdapter.addAll(race.getRacers());
     }
 
     @Override

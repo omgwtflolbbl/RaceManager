@@ -74,6 +74,7 @@ public class RacerListAdapter extends ArrayAdapter<Racer> {
         else if (sort.equals("points")) {
             this.sort(new RacerPointComparator());
         }*/
+        this.sort(new RacerNameComparator());
         this.sort(new RacerPointComparator());
         //this.setNotifyOnChange(true);
         super.notifyDataSetChanged();

@@ -161,7 +161,7 @@
 
                     <Button
                         android:id="@+id/race_info_button_join"
-                        android:theme="@style/GreenAccent"
+                        android:theme="@style/RedAccent"
                         style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -175,8 +175,10 @@
                         style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
+                        android:gravity="center"
                         android:text="Resign Race"/>
 
                 </RelativeLayout>

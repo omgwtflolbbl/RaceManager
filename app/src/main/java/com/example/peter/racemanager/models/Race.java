@@ -242,6 +242,39 @@ public class Race implements Parcelable {
         return next;
     }
 
+    public int[] getPrevious(int[] current) {
+        // First check if the "current" is even valid and return invalid if not
+        if (current[0] == -1 || current[1] == -1) {
+            return new int[] {-1, -1};
+        }
+
+        int cRound = current[0];
+        int cHeat = current[1];
+        int[] last = new int[2];
+
+        // Check if current round was the first heat (if so there was no previous heat)
+        if (cRound == 0 && cHeat == 0) {
+            // This is the first heat - return invalid
+            return new int[] {-1, -1};
+        }
+        // There was a previous heat
+        else {
+            // Check if this was the first heat of the round
+            if (cHeat == 0) {
+                // It was the first heat, so we need to get the last heat of the previous round
+                last[0] = cRound - 1;
+                last[1] = rounds.get(cRound - 1).length() - 1;
+            }
+            else {
+                // There was a previous heat in this round
+                last[0] = cRound;
+                last[1] = cHeat - 1;
+            }
+        }
+
+        return last;
+    }
+
     // Calculate all the point totals and update accordingly. In the future only the admin will need
     // to call this, but for now just call it anytime it is actually necessary to use total point
     // values.

@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="34dp"
-        card:cardCornerRadius="15dp"
         card:cardPreventCornerOverlap="false"
         card:cardBackgroundColor="@color/red"
         card:cardUseCompatPadding="true"

@@ -30,8 +30,6 @@ public class OkHttpHandler {
     }
 
     public void getEvents(String URL) {
-        Log.i("LOGTAG", "WOOHOO");
-        Log.i("LOGTAG", URL);
         Request request = new Request.Builder()
                 .url(URL)
                 .build();
@@ -61,11 +59,8 @@ public class OkHttpHandler {
                     Iterator<String> iter = json.keys();
                     while (iter.hasNext()) {
                         String eventId = iter.next();
-                        Log.i("LOGTAG2", eventId);
                         String title = json.getJSONObject(eventId).getString("title");
-                        Log.i("LOGTAG3", title);
                         result = result + "{\"" + eventId + "\": \"" + title + "\"}\n";
-                        Log.i("LOGTAG4", result);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

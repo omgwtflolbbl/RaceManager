@@ -3,7 +3,6 @@ package com.example.peter.racemanager.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -13,8 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
@@ -29,7 +26,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.peter.racemanager.CustomTypefaceSpan;
 import com.example.peter.racemanager.FontManager;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.MainActivity;
@@ -40,7 +36,6 @@ import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
-import com.joanzapata.iconify.widget.IconButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -69,9 +64,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     private static CountdownRunnable countdownRunnable;
     private static CountdownRunnable countdownRunnable2;
     private Boolean rotated = false;
+    private List<Heat> lastHeatList;
     private List<Heat> currentHeatList;
-    private List<Heat> spotterHeatList;
-    private List<Heat> ondeckHeatList;
+    private List<Heat> nextHeatList;
 
     // UI stuff
     private CircleImageView racerImage;
@@ -84,9 +79,12 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     private TextView racerPoints;
     private TextView iconFrequency;
     private TextView iconPoints;
+    private TextView lastHeatText;
+    private ListView lastHeatView;
+    private TextView currentHeatText;
     private ListView currentHeatView;
-    private ListView spotterHeatView;
-    private ListView ondeckHeatView;
+    private TextView nextHeatText;
+    private ListView nextHeatView;
     private RelativeLayout statusBar;
 
     // Text to Speech
@@ -189,14 +187,17 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         });
 
 
-        currentHeatView = (ListView) view.findViewById(R.id.race_current_heat);
+        lastHeatText = (TextView) view.findViewById(R.id.race_last_heat_text);
+        lastHeatView = (ListView) view.findViewById(R.id.race_current_heat);
+        lastHeatList = new ArrayList<>();
+
+        currentHeatText = (TextView) view.findViewById(R.id.race_current_heat_text);
+        currentHeatView = (ListView) view.findViewById(R.id.race_spotter_heat);
         currentHeatList = new ArrayList<>();
 
-        spotterHeatView = (ListView) view.findViewById(R.id.race_spotter_heat);
-        spotterHeatList = new ArrayList<>();
-
-        ondeckHeatView = (ListView) view.findViewById(R.id.race_ondeck_heat);
-        ondeckHeatList = new ArrayList<>();
+        nextHeatText = (TextView) view.findViewById(R.id.race_next_heat_text);
+        nextHeatView = (ListView) view.findViewById(R.id.race_ondeck_heat);
+        nextHeatList = new ArrayList<>();
 
         prepareHeatViews();
 
@@ -514,7 +515,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
     public void stopTimer() {
         handler.removeCallbacksAndMessages(null);
-        Log.i("HANDLER CALLED", "STOP THAT SHIT");
         if (getView() != null) {
             TextView adminTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_admin);
             adminTicker.setText("00:00:000");
@@ -540,8 +540,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         }
 
         public void run() {
-            Log.i("SNTP TEST", Long.toString(TaskFragment.SntpOffset));
-            currentTime = targetTime - System.currentTimeMillis() - TaskFragment.SntpOffset;
+            currentTime = targetTime - System.currentTimeMillis() - (TaskFragment.SntpOffset == null? 0 : TaskFragment.SntpOffset);
             final String text = String.format("%02d:%02d:%03d", (currentTime / 60000) % 60, (currentTime / 1000) % 60, currentTime % 1000);
             if (currentTime > 0 ) {
                 if (getActivity() != null) {
@@ -557,9 +556,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
                     // Timer readouts/alerts
                     for (long checkpoint : checkpoints) {
-                        if (previousTime > checkpoint && currentTime <= checkpoint && ((MainActivity) getActivity()).getActiveFragment() instanceof RaceFragment) {
+                        if (previousTime > checkpoint && currentTime <= checkpoint && (((MainActivity) getActivity()).getActiveFragment() instanceof OverviewFragment)) {
                             // Start vibrating until up to 5 seconds past the target time
-                            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                            Vibrator v = (Vibrator) getParentFragment().getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                             v.vibrate(500);
 
                             // Build string for verbal warning
@@ -613,71 +612,85 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         String status = race.getStatus();
 
         if (status.equals("NS") || status.equals("F")) {
+            lastHeatView.setVisibility(View.GONE);
+            lastHeatText.setVisibility(View.GONE);
             currentHeatView.setVisibility(View.GONE);
-            spotterHeatView.setVisibility(View.GONE);
-            ondeckHeatView.setVisibility(View.GONE);
+            currentHeatText.setVisibility(View.GONE);
+            nextHeatView.setVisibility(View.GONE);
+            nextHeatText.setVisibility(View.GONE);
         }
         else {
             int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            currentHeatView.setVisibility(View.VISIBLE);
-            currentHeatList.clear();
-            currentHeatList.add(race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]));
-            RoundAdapter3 currentHeatAdapter;
-            if (currentHeatView.getAdapter() == null) {
-                System.out.println("current adapter created");
-                currentHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) currentHeatList, currentIndex[0], currentIndex[1], status, this);
-                currentHeatView.setAdapter(currentHeatAdapter);
-            }
-            else {
-                currentHeatAdapter = (RoundAdapter3) currentHeatView.getAdapter();
-                currentHeatAdapter.setRoundIndex(currentIndex[0]);
-                currentHeatAdapter.setHeatIndex(currentIndex[1]);
-                currentHeatAdapter.setStatus(status);
-                currentHeatAdapter.notifyDataSetChanged();
-            }
+            int[] lastIndex = race.getPrevious(currentIndex);
+            int[] nextIndex = race.getNext(currentIndex);
 
-            int[] spotterIndex = race.getNext(currentIndex);
-            if (!(spotterIndex[0] == -1 || spotterIndex[1] == -1)) {
-                spotterHeatView.setVisibility(View.VISIBLE);
-                spotterHeatList.clear();
-                spotterHeatList.add(race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]));
-                RoundAdapter3 spotterHeatAdapter;
-                if (spotterHeatView.getAdapter() == null) {
-                    System.out.println("spotter adapter created");
-                    spotterHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) spotterHeatList, spotterIndex[0], spotterIndex[1], String.format(Locale.US, "W %d %d", spotterIndex[0], spotterIndex[1]), this);
-                    spotterHeatView.setAdapter(spotterHeatAdapter);
+            if (!(lastIndex[0] == -1 || lastIndex[1] == -1)) {
+                lastHeatView.setVisibility(View.VISIBLE);
+                lastHeatText.setVisibility(View.VISIBLE);
+                lastHeatList.clear();
+                lastHeatList.add(race.getRounds().get(lastIndex[0]).getHeat(lastIndex[1]));
+                RoundAdapter3 lastHeatAdapter;
+                if (lastHeatView.getAdapter() == null) {
+                    System.out.println("current adapter created");
+                    lastHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) lastHeatList, lastIndex[0], lastIndex[1], status, this);
+                    lastHeatView.setAdapter(lastHeatAdapter);
                 } else {
-                    spotterHeatAdapter = (RoundAdapter3) spotterHeatView.getAdapter();
-                    spotterHeatAdapter.setRoundIndex(spotterIndex[0]);
-                    spotterHeatAdapter.setHeatIndex(spotterIndex[1]);
-                    spotterHeatAdapter.setStatus(status);
-                    spotterHeatAdapter.notifyDataSetChanged();
+                    lastHeatAdapter = (RoundAdapter3) lastHeatView.getAdapter();
+                    lastHeatAdapter.setRoundIndex(lastIndex[0]);
+                    lastHeatAdapter.setHeatIndex(lastIndex[1]);
+                    lastHeatAdapter.setStatus(status);
+                    lastHeatAdapter.notifyDataSetChanged();
                 }
             }
             else {
-                spotterHeatView.setVisibility(View.GONE);
+                lastHeatView.setVisibility(View.GONE);
+                lastHeatText.setVisibility(View.GONE);
             }
 
-            int[] onDeckIndex = race.getNext(spotterIndex);
-            if (!(onDeckIndex[0] == -1 || onDeckIndex[1] == -1)) {
-                ondeckHeatView.setVisibility(View.VISIBLE);
-                ondeckHeatList.clear();
-                ondeckHeatList.add(race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]));
-                RoundAdapter3 ondeckHeatAdapter;
-                if (ondeckHeatView.getAdapter() == null) {
-                    System.out.println("ondeckadapter created");
-                    ondeckHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) ondeckHeatList, onDeckIndex[0], onDeckIndex[1], String.format(Locale.US, "W %d %d", onDeckIndex[0], onDeckIndex[1]), this);
-                    ondeckHeatView.setAdapter(ondeckHeatAdapter);
+            if (!(currentIndex[0] == -1 || currentIndex[1] == -1)) {
+                currentHeatView.setVisibility(View.VISIBLE);
+                currentHeatText.setVisibility(View.VISIBLE);
+                currentHeatList.clear();
+                currentHeatList.add(race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]));
+                RoundAdapter3 currentHeatAdapter;
+                if (currentHeatView.getAdapter() == null) {
+                    System.out.println("spotter adapter created");
+                    currentHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) currentHeatList, currentIndex[0], currentIndex[1], status, this);
+                    currentHeatView.setAdapter(currentHeatAdapter);
                 } else {
-                    ondeckHeatAdapter = (RoundAdapter3) ondeckHeatView.getAdapter();
-                    ondeckHeatAdapter.setRoundIndex(onDeckIndex[0]);
-                    ondeckHeatAdapter.setHeatIndex(onDeckIndex[1]);
+                    currentHeatAdapter = (RoundAdapter3) currentHeatView.getAdapter();
+                    currentHeatAdapter.setRoundIndex(currentIndex[0]);
+                    currentHeatAdapter.setHeatIndex(currentIndex[1]);
+                    currentHeatAdapter.setStatus(status);
+                    currentHeatAdapter.notifyDataSetChanged();
+                }
+            }
+            else {
+                currentHeatView.setVisibility(View.GONE);
+                currentHeatText.setVisibility(View.GONE);
+            }
+
+            if (!(nextIndex[0] == -1 || nextIndex[1] == -1)) {
+                nextHeatView.setVisibility(View.VISIBLE);
+                nextHeatText.setVisibility(View.VISIBLE);
+                nextHeatList.clear();
+                nextHeatList.add(race.getRounds().get(nextIndex[0]).getHeat(nextIndex[1]));
+                RoundAdapter3 ondeckHeatAdapter;
+                if (nextHeatView.getAdapter() == null) {
+                    System.out.println("ondeckadapter created");
+                    ondeckHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) nextHeatList, nextIndex[0], nextIndex[1], String.format(Locale.US, "W %d %d", nextIndex[0], nextIndex[1]), this);
+                    nextHeatView.setAdapter(ondeckHeatAdapter);
+                } else {
+                    ondeckHeatAdapter = (RoundAdapter3) nextHeatView.getAdapter();
+                    ondeckHeatAdapter.setRoundIndex(nextIndex[0]);
+                    ondeckHeatAdapter.setHeatIndex(nextIndex[1]);
                     ondeckHeatAdapter.setStatus(status);
                     ondeckHeatAdapter.notifyDataSetChanged();
                 }
             }
             else {
-                ondeckHeatView.setVisibility(View.GONE);
+                nextHeatView.setVisibility(View.GONE);
+                nextHeatText.setVisibility(View.GONE);
             }
         }
     }
@@ -686,7 +699,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void setBasicCardSpacing() {
         if (getView() != null) {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) getView().findViewById(R.id.race_card_basic).getLayoutParams();
-            if (currentHeatView.getVisibility() == View.GONE && spotterHeatView.getVisibility() == View.GONE && ondeckHeatView.getVisibility() == View.GONE) {
+            if (lastHeatView.getVisibility() == View.GONE && currentHeatView.getVisibility() == View.GONE && nextHeatView.getVisibility() == View.GONE) {
                 params.topMargin = 0;
             }
             else {

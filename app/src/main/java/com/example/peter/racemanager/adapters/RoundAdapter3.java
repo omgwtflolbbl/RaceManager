@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -192,9 +193,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         gridLayout.addView(separator);
 
         Iterator<String> slots = heat.getHeatMap().keySet().iterator();
-        //Iterator<String> slots = heat.getKeys().iterator();
 
-        Log.i("HEY", Integer.toString(dpToPx((int) calculateGridSpace(roundIndex + 1, position + 1))));
         float gridWidth = calculateGridSpace(roundIndex + 1, position + 1);
 
         int j = 0;
@@ -224,10 +223,25 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
 
             slotText.setWidth(0);
             slotText.setTextSize(11f);
-            slotText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
-            int slotPadding = dpToPx(2);
-            slotText.setPadding(dpToPx(4), slotPadding, slotPadding, slotPadding);
+
+            // Ripple background?
+            //slotText.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+            slotText.setBackgroundResource(R.drawable.ripple_background);
+
+            slotText.setAllCaps(false);
+            slotText.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+
+            // Set padding for individual slot views
+            if (heat.getHeatMap().size() <= 3) {
+                slotText.setPadding(dpToPx(4), dpToPx(12), dpToPx(2), dpToPx(12));
+            }
+            else {
+                int slotPadding = dpToPx(2);
+                slotText.setPadding(dpToPx(4), slotPadding, slotPadding, slotPadding);
+            }
+
             slotText.setClickable(true);
+            slotText.setIncludeFontPadding(false);
             slotText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -278,14 +292,6 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             String racerLoc = String.format("%d %d %s", roundIndex, position, heat.findRacerInHeat(username));
                 view.findViewWithTag(racerLoc).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPLightGray));
         }
-
-        /*View divider = new View(getContext());
-        divider.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPLightGray));
-        GridLayout.LayoutParams dividerParams = new GridLayout.LayoutParams();
-        dividerParams.width = 1;
-        dividerParams.height = GridLayout.LayoutParams.MATCH_PARENT;*/
-
-
 
         return view;
     }

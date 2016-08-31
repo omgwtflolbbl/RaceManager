@@ -37,15 +37,15 @@
     <string name="button_flow_finish">END EVENT {fa-chevron-right}</string>
     <string name="button_flow_done">DONE</string>
 
-    <string name="button_change_heat">CHANGE HEAT {fa-comment baseline}</string>
+    <string name="button_change_heat">CHANGE HEAT {fa-comment 13sp baseline}</string>
     <string name="button_import_roster">IMPORT ROSTER {fa-cloud-download baseline}</string>
 
-    <string name="button_join">\u0020JOIN RACE {fa-check-circle}\u0020</string>
-    <string name="button_resign">\u0020RESIGN {fa-times-circle}\u0020</string>
+    <string name="button_join">\u0020JOIN RACE {fa-check-circle 11sp baseline}\u0020</string>
+    <string name="button_resign">\u0020RESIGN {fa-times-circle 11sp baseline}\u0020</string>
     <string name="button_checkin">Check In %1$s</string>
     <string name="button_checkout">Check Out %1$s</string>
 
-    <string name="tab_hangar">{fa-circle 24sp}\nMy Hangar</string>
+    <string name="tab_hangar">{fa-plane 24sp}\nMy Hangar</string>
     <string name="tab_race">{fa-flag-checkered 24sp}\nRace</string>
     <string name="tab_results">{fa-trophy 24sp}\nResults</string>
 
