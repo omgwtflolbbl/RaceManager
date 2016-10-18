@@ -56,6 +56,7 @@ public class RaceRacersFragment extends Fragment {
         if (savedInstanceState != null) {
             rotated = getArguments().getBoolean(ROTATED_KEY);
         }
+        racerListAdapter = new RacerListAdapter(getActivity(), new ArrayList<Racer>());
         setHasOptionsMenu(true);
     }
 
@@ -72,7 +73,6 @@ public class RaceRacersFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_race_racers, container, false);
 
         ListView listView = (ListView) view.findViewById(R.id.race_racers_listview);
-        racerListAdapter = new RacerListAdapter(getActivity(), new ArrayList<Racer>());
         listView.setAdapter(racerListAdapter);
 
         // On click, get the race from that position and open a dialog box?
@@ -150,7 +150,9 @@ public class RaceRacersFragment extends Fragment {
     }
 
     public void updateRace(Race race) {
-        this.race = race;
+        if (racerListAdapter == null) {
+            racerListAdapter = new RacerListAdapter(getActivity(), new ArrayList<Racer>());
+        }
         racerListAdapter.clear();
         racerListAdapter.addAll(race.getRacers());
     }

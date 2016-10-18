@@ -31,6 +31,14 @@
         <item>Array Item Three</item>
     </string-array>
 
+    <string name="menu_refresh">{fa-refresh}</string>
+    <string name="menu_sound_off">{fa-volume-off}</string>
+    <string name="menu_sound_on">{fa-volume-up}</string>
+
+    <string name="name_guest">Guest</string>
+    <string name="status_not_started">The race is still being set up</string>
+    <string name="status_finished">The race is finished</string>
+
     <string name="button_flow_start">START EVENT {fa-chevron-right}</string>
     <string name="button_flow_prep">PREP NEXT {fa-chevron-right}</string>
     <string name="button_flow_heat">START HEAT {fa-chevron-right}</string>
@@ -45,9 +53,13 @@
     <string name="button_checkin">Check In %1$s</string>
     <string name="button_checkout">Check Out %1$s</string>
 
-    <string name="tab_hangar">{fa-plane 24sp}\nMy Hangar</string>
+    <string name="tab_info">{fa-info-circle 24sp}\nInfo</string>
+    <string name="tab_hangar">{fa-plane 24sp}\nHangar</string>
     <string name="tab_race">{fa-flag-checkered 24sp}\nRace</string>
     <string name="tab_results">{fa-trophy 24sp}\nResults</string>
+
+    <string name="error_permission_title">Error: Unauthorized</string>
+    <string name="error_permission_body">Your account doesn\'t have permission to do that.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

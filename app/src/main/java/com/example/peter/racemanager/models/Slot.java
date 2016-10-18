@@ -2,6 +2,12 @@ package com.example.peter.racemanager.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Peter on 6/4/2016.
@@ -9,6 +15,7 @@ import android.os.Parcelable;
 public class Slot implements Parcelable {
     private String username;
     private String frequency;
+    private Racer racer;
     private int points;
 
     public Slot() {
@@ -35,6 +42,45 @@ public class Slot implements Parcelable {
         this.points = points;
     }
 
+    public Slot(JSONObject json, ArrayList<Racer> racers) {
+        setFromJSON(json, racers);
+    }
+
+    public boolean setFromJSON(JSONObject json, ArrayList<Racer> racers) {
+        try {
+            // Check if this slot is actually supposed to have anyone
+            if (json.isNull("raceEntryId")) {
+                racer = new Racer();
+                username = "EMPTY SLOT";
+                frequency = !json.isNull("frequency") ? json.getString("frequency") : "UNDEFINED";
+                points = 0;
+            }
+            else {
+                // Pull the racer from the racers array and associate it with this slot
+                int racingId = json.getInt("raceEntryId");
+                for (int i = 0, size = racers.size(); i < size; i++) {
+                    if (racers.get(i).getRacingId() == racingId) {
+                        racer = racers.get(i);
+                        username = racer.getUsername();
+                        frequency = !json.isNull("frequency") ? json.getString("frequency") : frequency;
+                        points = !json.isNull("score") ? json.getInt("score") : points;
+                        break;
+                    }
+                }
+            }
+            return true;
+        } catch (JSONException e) {
+            try {
+                Log.d("json slot", json.toString(4));
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
     public String getUsername() {
         return username;
     }
@@ -45,6 +91,10 @@ public class Slot implements Parcelable {
 
     public int getPoints() {
         return points;
+    }
+
+    public Racer getRacer() {
+        return racer;
     }
 
     public void setUsername(String username) {
@@ -59,6 +109,10 @@ public class Slot implements Parcelable {
         this.points = points;
     }
 
+    public void setRacer(Racer racer) {
+        this.racer = racer;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -68,16 +122,18 @@ public class Slot implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.username);
         dest.writeString(this.frequency);
+        dest.writeParcelable(this.racer, flags);
         dest.writeInt(this.points);
     }
 
     protected Slot(Parcel in) {
         this.username = in.readString();
         this.frequency = in.readString();
+        this.racer = in.readParcelable(Racer.class.getClassLoader());
         this.points = in.readInt();
     }
 
-    public static final Parcelable.Creator<Slot> CREATOR = new Parcelable.Creator<Slot>() {
+    public static final Creator<Slot> CREATOR = new Creator<Slot>() {
         @Override
         public Slot createFromParcel(Parcel source) {
             return new Slot(source);

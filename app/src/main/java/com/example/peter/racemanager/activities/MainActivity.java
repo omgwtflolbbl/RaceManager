@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.peter.racemanager.adapters.OverviewViewpagerAdapter;
 import com.example.peter.racemanager.fragments.BuildRaceStructureAFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureBFragment;
 import com.example.peter.racemanager.fragments.BuildRaceStructureCFragment;
@@ -34,14 +33,15 @@ import com.example.peter.racemanager.fragments.RaceInfoFragment;
 import com.example.peter.racemanager.fragments.RaceRacersFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleCardFragment;
 import com.example.peter.racemanager.fragments.RaceScheduleFragment;
-import com.example.peter.racemanager.fragments.SettingsFragment;
 import com.example.peter.racemanager.fragments.TaskFragment;
 import com.example.peter.racemanager.models.AddFrequencySlot;
 import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Slot;
 import com.example.peter.racemanager.services.StatusService;
+import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import java.io.IOException;
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         implements EventsFragment.OnEventSelectedListener, RaceFragment.OnRaceListener, RaceInfoFragment.OnRaceInfoListener, RaceScheduleFragment.OnFragmentInteractionListener, TaskFragment.TaskCallbacks, RaceScheduleCardFragment.OnRaceScheduleCardFragmentListener, RaceRacersFragment.OnFragmentInteractionListener, BuildRaceStructureAFragment.OnFragmentInteractionListener, BuildRaceStructureBFragment.OnFragmentInteractionListener, BuildRaceStructureCFragment.OnFragmentInteractionListener, BuildRaceStructureDFragment.OnFragmentInteractionListener, OverviewFragment.OnFragmentInteractionListener, HangarFragment.OnFragmentInteractionListener {
 
     public final static String FLASK = "https://racemanagerflask.herokuapp.com";
+    public final static String ROOT = "http://www.multigp.com/multigpwebservice";
+    public final static String API = "dSSU56VK4cfUaYwwFCCb6680LCRMFpwCl4DZ8wl75jvyWPpVyaEUjh52q1rtavdB";
 
     private TaskFragment taskFragment;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
@@ -123,8 +125,10 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
 
+        editor.remove("sessionId");
         editor.remove("username");
-        editor.remove("token");
+        editor.remove("pilotId");
+        editor.remove("authorization");
         editor.apply();
         sendToLogin();
     }
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.action_refresh).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_refresh).colorRes(R.color.white).actionBarSize());
         return true;
     }
 
@@ -200,7 +205,7 @@ public class MainActivity extends AppCompatActivity
             refreshEventsFragment((EventsFragment) fragment);
         }
         else if (fragment instanceof RaceScheduleFragment) {
-            refreshRaceScheduleFragment(((RaceScheduleFragment) fragment).getRace());
+            refreshRaceFragment(((RaceScheduleFragment) fragment).getRace());
         }
         else if (fragment instanceof RaceFragment) {
             refreshRaceFragment(((RaceFragment) fragment).getRace());
@@ -210,19 +215,6 @@ public class MainActivity extends AppCompatActivity
         }
         else if (fragment instanceof OverviewFragment) {
             refreshRaceFragment(((OverviewFragment) fragment).getRace());
-            /*
-            ViewPager viewPager = ((OverviewFragment) fragment).getViewPager();
-            Fragment subFragment = (Fragment) viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
-            if (subFragment instanceof HangarFragment) {
-                Log.i("Hangar", "Fragment");
-            }
-            else if (subFragment instanceof RaceFragment) {
-                Log.i("Race frag", "Race frag");
-                refreshRaceFragment(((RaceFragment) subFragment).getRace());
-            }
-            else if (subFragment instanceof RaceRacersFragment) {
-                Log.i("Racers", "frag");
-            }*/
         }
         else {
             Log.i("FRAGMENTNAME", fragment.getClass().toString());
@@ -230,30 +222,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshEventsFragment(EventsFragment fragment) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = sharedPreferences.getString("username", ".");
-        String URL = "";
-        if (username.equals(LoginActivity.GUEST)) {
-            // Need to go through guests
-            username = sharedPreferences.getString("token", ".");
-            URL = String.format("%s/guests/%s/events", FLASK, username);
-        }
-        else {
-            // Need to go through users
-            URL = String.format("%s/users/%s/events", FLASK, username);
-        }
+        String URL = String.format("%s/race/list", ROOT);
         taskFragment.getEvents(URL);
         fragment.startRefreshing();
     }
 
     public void refreshRaceFragment(Race race) {
-        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
-        taskFragment.getUpdatedRace(URL);
+        taskFragment.requestFirebaseData(race);
+        taskFragment.requestRaceData(race);
     }
 
     public void refreshRaceScheduleFragment(Race race) {
-        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
-        taskFragment.getUpdatedRaceSchedule(URL);
+        taskFragment.requestRaceData(race);
     }
 
     // EventsFragment callbacks
@@ -267,9 +247,9 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack("OVERVIEW_FRAGMENT")
                 .commit();
 
-        // Start service
-        String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getSiteURL().split(".com/")[1]);
-        taskFragment.startServiceProcess(URL);
+        // TODO: FIX Start service
+        //String URL = String.format("%s/getEventIdFromURL/%s", FLASK, race.getRaceURL().split(".com/")[1]);
+        //taskFragment.startServiceProcess(URL);
     }
 
     public void addNewEvent(String inputURL) {
@@ -282,6 +262,7 @@ public class MainActivity extends AppCompatActivity
     // RaceFragment callbacks
     public void onRaceButton(View view, Race race) {
         switch (view.getId()) {
+            /*TODO: remove
             case R.id.race_builder_button:
                 BuildRaceStructureAFragment buildRaceStructureAFragment = BuildRaceStructureAFragment.newInstance(0, true, true, false, false, false, false, true, race);
                 getSupportFragmentManager().beginTransaction()
@@ -298,6 +279,14 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("RACE_INFO_FRAGMENT")
                     .commit();
                 break;
+            case R.id.race_racers_button:
+                RaceRacersFragment raceRacersFragment = RaceRacersFragment.newInstance(race);
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                        .replace(R.id.fragment_container, raceRacersFragment, "RACE_RACERS_FRAGMENT")
+                        .addToBackStack("RACE_RACERS_FRAGMENT")
+                        .commit();
+                break;*/
             case R.id.race_schedule_button:
                 RaceScheduleFragment raceScheduleFragment = RaceScheduleFragment.newInstance(race);
                 getSupportFragmentManager().beginTransaction()
@@ -306,33 +295,20 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("RACE_SCHEDULE_FRAGMENT")
                     .commit();
                 break;
-            case R.id.race_racers_button:
-                RaceRacersFragment raceRacersFragment = RaceRacersFragment.newInstance(race);
-                getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                    .replace(R.id.fragment_container, raceRacersFragment, "RACE_RACERS_FRAGMENT")
-                    .addToBackStack("RACE_RACERS_FRAGMENT")
-                    .commit();
-                break;
             default:
                 Log.i("RACE_FRAGMENT", "Unknown button pressed");
                 break;
         }
     }
 
-    public void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTimer) {
-        String URL = String.format("%s/update/race/status/%s", FLASK, race.getSiteURL().split(".com/")[1]);
-        try {
-            taskFragment.updateDatabaseRaceStatus(URL, status, racers, spotters, onDeck, targetTimer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onSendStatusUpdate(Race race, int round, int heat) {
+        taskFragment.setCurrentHeat(race, round, heat);
 
     }
 
     public void getUpdatedAttendance(Race race) {
         String requestURL = String.format("%s/update/race/attendance/multigp", FLASK);
-        String inputURL = race.getSiteURL();
+        String inputURL = race.getRaceURL();
         taskFragment.getUpdatedAttendance(requestURL, inputURL);
     }
 
@@ -369,7 +345,7 @@ public class MainActivity extends AppCompatActivity
     // BuildRaceStructureDFragment callbacks
     public void onFinishWizard(Race race) {
         taskFragment.test();
-        String URL = String.format("%s/rebuild/race/%s", FLASK, race.getSiteURL().split(".com/")[1]);
+        String URL = String.format("%s/rebuild/race/%s", FLASK, race.getRaceURL().split(".com/")[1]);
         taskFragment.sendRebuiltRace(URL, race);
 
         // Exit the wizard completely
@@ -391,8 +367,7 @@ public class MainActivity extends AppCompatActivity
 
     // RaceScheduleCardFragment callbacks
     public void onUpdateSlotOnServer(Race race, Slot slot, String tag) {
-        String URL = String.format("%s/update/race/structure/%s", FLASK, race.getSiteURL().split(".com/")[1]);
-        taskFragment.updateDatabaseRaceSlot(URL, slot, tag);
+        taskFragment.sendSlotUpdate(race, slot, tag);
     }
 
     // TaskFragment callbacks
@@ -402,7 +377,7 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     EventsFragment eventsFragment = (EventsFragment) getSupportFragmentManager().findFragmentByTag("EVENTS_FRAGMENT");
                     eventsFragment.clearEventAdapter();
-                    eventsFragment.repopulateEventAdapter(races);
+                    eventsFragment.updateEventAdapter(races);
                     eventsFragment.finishRefreshing();
                 }
             });
@@ -431,17 +406,17 @@ public class MainActivity extends AppCompatActivity
     public void UpdateRaceSchedule(Race race) {
         if (getActiveFragment() instanceof RaceScheduleFragment) {
             RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) getActiveFragment();
-            raceScheduleFragment.updateRoundAdapter(race);
+            raceScheduleFragment.updateRoundAdapter();
         }
     }
 
     public void UpdateRace(final Race race) {
-        if (getActiveFragment() instanceof  RaceFragment) {
+        if (getActiveFragment() instanceof RaceFragment) {
             final RaceFragment raceFragment = (RaceFragment) getActiveFragment();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    raceFragment.setRace(race);
+                    //raceFragment.setRace(race);
                     raceFragment.checkRaceStatus();
                     raceFragment.onChangedViewPermissions();
                 }
@@ -449,16 +424,16 @@ public class MainActivity extends AppCompatActivity
         }
         else if (getActiveFragment() instanceof OverviewFragment) {
             ViewPager viewPager = ((OverviewFragment) getActiveFragment()).getViewPager();
-            final RaceFragment raceFragment = (RaceFragment) viewPager.getAdapter().instantiateItem(viewPager, 1);
+            final RaceFragment raceFragment = (RaceFragment) viewPager.getAdapter().instantiateItem(viewPager, 2);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    raceFragment.setRace(race);
+                    //raceFragment.setRace(race);
                     raceFragment.checkRaceStatus();
                     raceFragment.onChangedViewPermissions();
                 }
             });
-            final RaceRacersFragment raceRacersFragment = (RaceRacersFragment) viewPager.getAdapter().instantiateItem(viewPager, 2);
+            final RaceRacersFragment raceRacersFragment = (RaceRacersFragment) viewPager.getAdapter().instantiateItem(viewPager, 3);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -466,7 +441,30 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+        else if (getActiveFragment() instanceof RaceScheduleFragment) {
+            RaceScheduleFragment raceScheduleFragment = (RaceScheduleFragment) getActiveFragment();
+            raceScheduleFragment.updateRoundAdapter();
+        }
     }
 
+    public void showPermissionError() {
+        if (getActiveFragment() instanceof OverviewFragment) {
+            ViewPager viewPager = ((OverviewFragment) getActiveFragment()).getViewPager();
+            final RaceFragment raceFragment = (RaceFragment) viewPager.getAdapter().instantiateItem(viewPager, 2);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    raceFragment.showPermissionError();
+                }
+            });
+        }
+        else if (getActiveFragment() instanceof  RaceScheduleFragment) {
+            ((RaceScheduleFragment) getActiveFragment()).showPermissionError();
+        }
+    }
 
+    // Refresh time from SNTP
+    public void resyncTime() {
+        taskFragment.setSntpOffset();
+    }
 }

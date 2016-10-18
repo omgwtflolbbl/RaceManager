@@ -108,15 +108,26 @@ public class RaceInfoFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_race_info, container, false);
 
         // TODO: Set up image of location
-        String lat = "29.812784";
-        String lng = "-95.704570";
-        String mapUrl = "http://maps.google.com/maps/api/staticmap?center=" + lat + "," + lng + "&zoom=15&size=600x200&sensor=false&markers=" + lat + "," + lng;
-        imageMap = (ImageView) view.findViewById(R.id.race_info_map);
-        Picasso.with(getContext())
-                .load(mapUrl)
-                .fit()
-                .centerCrop()
-                .into(imageMap);
+        if (race.getLatitude() != -99999 && race.getLongitude() != -99999) {
+            String mapUrl = "http://maps.google.com/maps/api/staticmap?center=" + race.getLatitude() + "," + race.getLongitude() + "&zoom=15&size=600x200&sensor=false&markers=" + race.getLatitude() + "," + race.getLongitude();
+            imageMap = (ImageView) view.findViewById(R.id.race_info_map);
+            Picasso.with(getContext())
+                    .load(mapUrl)
+                    .fit()
+                    .centerCrop()
+                    .into(imageMap);
+            imageMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri uri = Uri.parse("geo:"+race.getLatitude()+","+race.getLongitude()+"?q="+race.getLatitude()+","+race.getLongitude()+"("+race.getTitle().replace(" ", "+")+")");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
+                }
+            });
+        }
 
         // Set up fontawesome for icons
         iconDate = (TextView) view.findViewById(R.id.race_info_icon_date);
@@ -137,14 +148,40 @@ public class RaceInfoFragment extends Fragment {
         viewTime.setText(race.getTime());
 
         viewLocation = (TextView) view.findViewById(R.id.race_info_location);
-        //TODO: Fix this once data actually contains location
-        viewLocation.setText("Someplace, Earth");
+        String location = "";
+        if (race.getCity() != null && !race.getCity().isEmpty()) {
+            location += race.getCity();
+            if (race.getState() != null && !race.getState().isEmpty()) {
+                location += ", " + race.getState();
+            }
+            else if (race.getCountry() != null && !race.getCountry().isEmpty()) {
+                location += ", " + race.getCountry();
+            }
+        }
+        else if (race.getState() != null && !race.getState().isEmpty()) {
+            location += race.getState();
+            if (race.getCountry() != null && !race.getCountry().isEmpty()) {
+                location += ", " + race.getCountry();
+            }
+        }
+        else if (race.getCountry() != null && !race.getCountry().isEmpty()) {
+            location = race.getCountry();
+        }
+        if (!location.isEmpty()) {
+            iconLocation.setVisibility(View.VISIBLE);
+            viewLocation.setVisibility(View.VISIBLE);
+            viewLocation.setText(location);
+        }
+        else {
+            iconLocation.setVisibility(View.GONE);
+            viewLocation.setVisibility(View.GONE);
+        }
 
         viewBlockquote = (TextView) view.findViewById(R.id.race_info_blockquote);
         viewBlockquote.setText(race.getBlockquote());
 
         viewDescription = (TextView) view.findViewById(R.id.race_info_description);
-        viewDescription.setText(race.getDescription());
+        viewDescription.setText(Html.fromHtml(race.getDescription()));
 
         buttonToggle = (Button) view.findViewById(R.id.race_info_toggle_description);
         buttonToggle.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME));

@@ -84,6 +84,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
         }
         else {
             view = LayoutInflater.from(getContext()).inflate(R.layout.heat_card, parent, false);
+            Log.d("Adapter", "not actually reusing");
         }
 
         if (heatIndex != -1) {
@@ -327,7 +328,7 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
             nonSlotWidth = 8 + 2 + 5 + leftWidth + 5 + 8 + 1 + 1 + 8 + 2 + 8;
         }
         else if (mListener instanceof RaceScheduleFragment) {
-            nonSlotWidth = 18 + 2 + 5 + leftWidth + 5 + 8 + 1 + 1 + 8 + 2 + 18;
+            nonSlotWidth = 19 + 2 + 5 + leftWidth + 5 + 8 + 1 + 1 + 8 + 2 + 19;
         }
 
         return ((dpWidth - nonSlotWidth) / 3) - 4;
@@ -337,6 +338,9 @@ public class RoundAdapter3 extends ArrayAdapter<Heat> {
     private String truncateName(Paint paint, String name, float gridWidth) {
         float nameWidth = paint.measureText(name);
 
+        //Log.d("name", name);
+        //Log.d("width", Float.toString(nameWidth));
+        //Log.d("gridwidth", Float.toString(gridWidth));
         // Trim down string until it should fit
         while (nameWidth >= gridWidth) {
             float ratio = gridWidth / nameWidth;

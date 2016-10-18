@@ -1,30 +1,29 @@
 package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.SntpClient;
 import com.example.peter.racemanager.activities.MainActivity;
 import com.example.peter.racemanager.models.Race;
-import com.example.peter.racemanager.models.Racer;
-import com.example.peter.racemanager.models.Round;
 import com.example.peter.racemanager.models.Slot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -56,6 +55,7 @@ public class TaskFragment extends Fragment {
         void UpdateRaceSchedule(Race race);
         void UpdateRace(Race race);
         void startUpdating();
+        void showPermissionError();
     }
 
     private OkHttpClient client;
@@ -80,7 +80,6 @@ public class TaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Log.i("We're Here","Woot?");
         client = new OkHttpClient();
         setSntpOffset();
     }
@@ -107,14 +106,14 @@ public class TaskFragment extends Fragment {
             @Override
             public void run() {
                 SntpClient sntpClient = new SntpClient();
-                Log.i("Trying SNTP stuff", "Probably gonna fail");
+                Log.i("SNTP", "Initiate");
                 if (sntpClient.requestTime("0.us.pool.ntp.org", 30000)) {
                     Long sntpTime = sntpClient.getNtpTime();
                     SntpOffset = sntpTime-System.currentTimeMillis();
-                    Log.i("GOT SNTP TIME", "IT WAS GLORIOUS");
+                    Log.i("SNTP", "Success");
                 }
                 else  {
-                    Log.i("SNTP FAILURE?", "WHO KNOWS MANG");
+                    Log.i("SNTP", "Failure");
                 }
             }
         };
@@ -123,11 +122,34 @@ public class TaskFragment extends Fragment {
     }
 
     public void getEvents(String URL) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+        final int pilotId = sharedPreferences.getInt("pilotId", 0);
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            JSONObject data = new JSONObject();
+            JSONObject joined = new JSONObject();
+            joined.put("pilotId", pilotId);
+            data.put("joined", joined);
+            object.put("data", data);
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Login", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
         Request request = new Request.Builder()
                 .url(URL)
+                .post(body)
                 .build();
 
-
+        // Send request
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -149,12 +171,9 @@ public class TaskFragment extends Fragment {
                 */
                 try {
                     JSONObject json = new JSONObject(response.body().string());
-                    Iterator<String> iter = json.keys();
-                    while (iter.hasNext()) {
-                        String raceId = iter.next();
-                        JSONObject raceJson = json.getJSONObject(raceId);
-                        Race race = Race.fromJson(raceJson);
-                        races.add(race);
+                    JSONArray data = json.getJSONArray("data");
+                    for (int i = 0, size = data.length(); i < size; i++) {
+                        races.add(new Race(data.getJSONObject(i), pilotId));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -172,10 +191,6 @@ public class TaskFragment extends Fragment {
 
     public void getUpdatedRaceSchedule(String URL) {
         getEventIDFromURL(URL, "RACE_SCHEDULE");
-    }
-
-    public void getUpdatedRace(String URL) {
-        getEventIDFromURL(URL, "RACE");
     }
 
     public void getEventIDFromURL(String URL, final String method) {
@@ -214,19 +229,37 @@ public class TaskFragment extends Fragment {
             case "SERVICE": mListener.StartStatusService(eventId);
                 break;
             case "RACE_SCHEDULE": String URL = String.format("%s/events/%s", MainActivity.FLASK, eventId);
-                getUpdatedRaceData(URL, "RACE_SCHEDULE");
+                requestRaceData(URL, "RACE_SCHEDULE");
                 break;
             case "RACE": String URL2 = String.format("%s/events/%s", MainActivity.FLASK, eventId);
-                getUpdatedRaceData(URL2, "RACE");
+                requestRaceData(URL2, "RACE");
                 break;
             default: Log.i("WHAT THE HECK MAN", "YOU CRAZY");
                 break;
         }
     }
 
-    public void getUpdatedRaceData(String URL, final String method) {
+    public void requestRaceData(String URL, final String method) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+        final int pilotId = sharedPreferences.getInt("pilotId", 0);
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Login", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
         Request request = new Request.Builder()
                 .url(URL)
+                .post(body)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -244,7 +277,7 @@ public class TaskFragment extends Fragment {
 
                 try {
                     JSONObject json = new JSONObject(response.body().string());
-                    race = Race.fromJson(json);
+                    race.setFromJSON(json, pilotId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } finally {
@@ -253,6 +286,76 @@ public class TaskFragment extends Fragment {
                 sendRace(race, method);
             }
         });
+    }
+
+    public void requestRaceData(final Race race) {
+        // Build URL
+        String URL = String.format(Locale.US, "%s/race/view?id=%d", MainActivity.ROOT, race.getId());
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+        final int pilotId = sharedPreferences.getInt("pilotId", 0);
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Login", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                try {
+                    JSONObject json = new JSONObject(response.body().string());
+                    race.setFromJSON(json.getJSONObject("data"), pilotId);
+                    mListener.UpdateRace(race);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    response.close();
+                }
+            }
+        });
+    }
+
+    public void requestFirebaseData(final Race race) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference(String.format("/id/%d", race.getId()));
+
+        mDatabase.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()) {
+                            race.setTargetTime(Long.parseLong(dataSnapshot.child("targetTime").getValue().toString()));
+                            //mListener.UpdateRace(race);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w("Cancelled", "getUser:onCancelled", databaseError.toException());
+                    }
+                });
     }
 
     public void sendRace(Race race, String method){
@@ -265,14 +368,32 @@ public class TaskFragment extends Fragment {
         }
     }
 
-    public void updateDatabaseRaceStatus(String URL, String status, String racers, String spotters, String onDeck, Long targetTimer) throws IOException {
-        RequestBody body = new FormBody.Builder()
-                .add("status", status)
-                .add("racing", racers)
-                .add("spotting", spotters)
-                .add("ondeck", onDeck)
-                .add("time", Long.toString(targetTimer))
-                .build();
+    // Todo: set up timer stuff too
+    public void setCurrentHeat(final Race race, final int round, final int heat) {
+        //Build URL
+        String URL = String.format(Locale.US, "%s/race/startHeat?id=%d", MainActivity.ROOT, race.getId());
+
+        Log.d("heatset","here");
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            JSONObject data = new JSONObject();
+            data.put("cycle", round + 1);
+            data.put("heat", heat + 1);
+            object.put("data", data);
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Login", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
         Request request = new Request.Builder()
                 .url(URL)
                 .post(body)
@@ -287,35 +408,19 @@ public class TaskFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-                response.close();
-            }
-        });
-    }
-
-    public void updateDatabaseRaceSlot(String URL, Slot slot, String tag) {
-        String[] splitTag = tag.split(" ");
-        RequestBody body = new FormBody.Builder()
-                .add("round", splitTag[0])
-                .add("heat", splitTag[1])
-                .add("slotKey", splitTag[2])
-                .add("username", slot.getUsername())
-                .add("frequency", slot.getFrequency())
-                .add("points", Integer.toString(slot.getPoints()))
-                .build();
-        Request request = new Request.Builder()
-                .url(URL)
-                .post(body)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.i("THE CALL", "IT FAILED");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                if (response.body().string().contains("\"status\":false")) {
+                    mListener.showPermissionError();
+                }
+                else {
+                    if (race.getTargetTime() == 1) {
+                        race.setCurrentRound(round);
+                        race.setCurrentHeat(heat);
+                        sendFlaskUpdate(race, race.getRound(race.getCurrentRound()).getHeat(race.getCurrentHeat()).getAllRacers(), race.getRound(race.getNext()[0]).getHeat(race.getNext()[1]).getAllRacers());
+                    }
+                    else {
+                        sendFlaskUpdate(race, "", "");
+                    }
+                }
                 response.close();
             }
         });
@@ -442,6 +547,170 @@ public class TaskFragment extends Fragment {
 
                 response.close();
                 mListener.startUpdating();
+            }
+        });
+    }
+
+    public void sendSlotUpdate(final Race race, Slot slot, String tag) {
+        // Build URL string
+        String URL = String.format(Locale.US, "%s/race/assignSlot?id=%d&cycle=%s&heat=%s&slot=%s", MainActivity.ROOT, race.getId(), Integer.parseInt(tag.split(" ")[0]) + 1, Integer.parseInt(tag.split(" ")[1]) + 1, Integer.parseInt(tag.split(" ")[2]) + 1);
+
+        Log.d("Update slot", URL);
+        Log.d("Slot", Integer.toString(slot.getRacer().getPilotId()));
+
+        // Get session
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            JSONObject data = new JSONObject();
+            data.put("pilotId", slot.getRacer().getPilotId());
+            data.put("score", slot.getPoints());
+            object.put("data", data);
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Slot update", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                if (!response.isSuccessful()) {
+                    if (response.code() == 403) {
+                        // This user does not have permission to do this, throw back error message
+                        mListener.showPermissionError();
+                    }
+                    else {
+                        throw new IOException("Unexpected code " + response);
+                    }
+                }
+                else {
+                    sendFlaskUpdate(race, "", "");
+                }
+                Log.d("Response", response.body().string());
+
+                response.body().close();
+                response.close();
+            }
+        });
+    }
+
+    // Sends update to flask server to notify stuff
+    public void sendFlaskUpdate(Race race, String current, String next) {
+        // Build URL string
+        String URL = String.format(Locale.US, "%s/event/update", MainActivity.FLASK);
+
+        Log.d("Flask", "Update sent");
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            object.put("id", race.getId());
+            object.put("targetTime", race.getTargetTime());
+            object.put("current", current);
+            object.put("next", next);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Slot update", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                if (!response.isSuccessful()) {
+                    if (response.code() == 403) {
+                        // This user does not have permission to do this, throw back error message
+                        mListener.showPermissionError();
+                    }
+                    else {
+                        throw new IOException("Unexpected code " + response);
+                    }
+                }
+
+                Log.d("Response", response.body().string());
+
+                response.body().close();
+                response.close();
+            }
+        });
+    }
+
+    public void resignRace(Race race) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sessionId = sharedPreferences.getString("sessionId", "");
+
+        // Build URL string
+        String URL = String.format(Locale.US, "%s/race/resign?id=%d", MainActivity.FLASK, race.getId());
+
+        // Build body
+        String json = "";
+        try {
+            JSONObject object = new JSONObject();
+            object.put("apiKey", MainActivity.API);
+            object.put("sessionId", sessionId);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Slot update", "Failed to create json string to post");
+        }
+        RequestBody body = RequestBody.create(JSON, json);
+
+        // Build request
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("THE CALL", "IT FAILED");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                if (response.body().string().contains("false"))
+                Log.d("Response", response.body().string());
+
+                response.body().close();
+                response.close();
             }
         });
     }

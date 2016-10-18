@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,7 +78,7 @@ public class EventAdapter extends ArrayAdapter<Race> {
             raceDescription.setText(race.getBlockquote());
         }
         else {
-            raceDescription.setText(race.getDescription().replaceFirst("////n", "").trim());
+            raceDescription.setText(Html.fromHtml(race.getDescription().replaceFirst("////n", "").trim()));
         }
 
         // TODO: Decide on scrolling behavior of text
@@ -97,7 +98,12 @@ public class EventAdapter extends ArrayAdapter<Race> {
         }
         // If not, then put empty circle
         if (!joined) {
-            statusImage.setImageResource(R.drawable.circle_empty);
+            if (race.getStatus().equals("Open")) {
+                statusImage.setImageResource(R.drawable.circle_empty);
+            }
+            else {
+                statusImage.setImageResource(R.drawable.circle_crossed);
+            }
         }
 
         // TODO: Set onclick listener to go to new page

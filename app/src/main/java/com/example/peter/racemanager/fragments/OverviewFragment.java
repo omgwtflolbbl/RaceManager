@@ -99,7 +99,7 @@ public class OverviewFragment extends Fragment {
         });
 
         // Set up default view to be race view
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(2);
 
         return view;
     }

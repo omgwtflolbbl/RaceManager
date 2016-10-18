@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.activities.MainActivity;
+import com.example.peter.racemanager.models.Race;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +36,7 @@ public class StatusService extends Service {
     NotificationManager notificationManager;
     private ArrayList<ServiceRunnable> runnables;
     private ArrayList<Thread> threads;
+    private String username;
 
     public StatusService() {
     }
@@ -43,19 +46,24 @@ public class StatusService extends Service {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         threads = new ArrayList<>();
         runnables = new ArrayList<>();
+        username = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "");
         Log.i("SERVICEINFORMATION", "SERVICE IS BEING CREATED");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String eventId = intent.getStringExtra("EVENT_ID");
-        String username = intent.getStringExtra("USERNAME");
-        ServiceRunnable runnable = new ServiceRunnable(eventId, username);
-        Thread thread = new Thread(runnable);
-        runnables.add(runnable);
-        threads.add(thread);
-        thread.start();
-
+        int eventId = intent.getIntExtra("EVENT_ID", -1);
+        Race race = intent.getParcelableExtra("Race");
+        if (checkId(eventId) == -1) {
+            ServiceRunnable runnable = new ServiceRunnable(race, username);
+            Thread thread = new Thread(runnable);
+            runnables.add(runnable);
+            threads.add(thread);
+            thread.start();
+        }
+        for (int i = 0, size = runnables.size(); i < size; i++) {
+            Log.d("Service Runnables", Integer.toString(runnables.get(i).getId()));
+        }
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -66,32 +74,37 @@ public class StatusService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i("SERVICEINFORMATION", "SERVICE IS BEING DESTROYED");
         for (int i = 0; i < threads.size(); i++) {
             runnables.get(i).stopListeners();
             threads.get(i).interrupt();
         }
+        runnables.clear();
+        threads.clear();
         super.onDestroy();
     }
 
     // Runnable will listen for changes and send notifications/trigger updates as needed
     private class ServiceRunnable implements Runnable {
         private DatabaseReference mDatabase;
-        private String eventId;
+        private Race race;
         private String username;
         private Boolean stopped;
 
-        public ServiceRunnable(String eventId, String username) {
-            this.eventId = eventId;
+        public ServiceRunnable(Race race, String username) {
+            this.race = race;
             this.username = username;
             this.stopped = false;
-            mDatabase = FirebaseDatabase.getInstance().getReference(String.format("events/%s", eventId));
+            mDatabase = FirebaseDatabase.getInstance().getReference(String.format("/id/%d", race.getId()));
+        }
+
+        public int getId() {
+            return race.getId();
         }
 
         public void run() {
             // Listens for changes to a specific race's status so that users can automatically know
             // what stage of the race we're at
-            mDatabase.child("status").addValueEventListener(new ValueEventListener() {
+            mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // For removal
@@ -100,12 +113,17 @@ public class StatusService extends Service {
                     }
                     // Sends notification and begins update process
                     else {
-                        String status = (String) dataSnapshot.child("status").getValue();
-                        String racing = (String) dataSnapshot.child("racing").getValue();
-                        String spotter = (String) dataSnapshot.child("spotting").getValue();
-                        String onDeck = (String) dataSnapshot.child("ondeck").getValue();
+                        Log.d("Service notice", String.format("%d changed", race.getId()));
+                        System.out.println(dataSnapshot.toString());
+                        System.out.println(dataSnapshot.hasChildren());
+                        if (dataSnapshot.hasChildren()) {
+                            race.setTargetTime(Long.parseLong(dataSnapshot.child("targetTime").getValue().toString()));
+                            String current = dataSnapshot.child("current").getValue().toString();
+                            String next = dataSnapshot.child("next").getValue().toString();
+                            sendNotification(current, next);
+                        }
 
-                        sendNotification(status, racing, spotter, onDeck);
+                        //sendNotification(status, racing, spotter, onDeck);
                         startAutomaticUpdate();
                     }
                 }
@@ -144,45 +162,40 @@ public class StatusService extends Service {
             });
         }
 
-        // Builds a notification and sends it to be viewed.
-        // TODO: Open RaceManager from notification press
-        public void sendNotification(String status, String racing, String spotter, String onDeck) {
-            String statusText;
-            if (status.charAt(0) == 'N') {
-                statusText = "The race is still setting up";
-            }
-            else if (status.charAt(0) == 'W') {
-                statusText = String.format(Locale.US, "Preparing for round %d, heat %d", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
-            }
-            else if (status.charAt(0) == 'R') {
-                statusText = String.format(Locale.US, "Round %d, heat %d is in the air!", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
-            }
-            else if (status.charAt(0) == 'T') {
-                statusText = "";
-            }
-            else {
-                statusText = "The race is over!";
-            }
-            racing = racing.replace(username, String.format("<b>%s</b>", username));
-            spotter = spotter.replace(username, String.format("<b>%s</b>", username));
-            onDeck = onDeck.replace(username, String.format("<b>%s</b>", username));
-            String notificationText = String.format("<b>Status</b>: %s<br><b>Racing</b>: %s<br><b>Spotting</b>: %s<br><b>On Deck</b>: %s", statusText, racing, spotter, onDeck);
+        public void sendNotification(String current, String next) {
+            if (!current.equals("")) {
+                String nTitle = "";
+                String nMessage = "";
+                for (String racer: next.split(",")) {
+                    if (racer.equals(username)) {
+                        nTitle = "It's almost your turn!";
+                        nMessage = username + ", you are flying after this heat! Prepare your quad and be ready to spot if necessary!";
+                    }
+                }
+                for (String racer : current.split(",")) {
+                    if (racer.equals(username)) {
+                        nTitle = "Time to race!";
+                        nMessage = username + ", it's your turn to fly! Bring your quad up to the starting line and ensure you have a spotter!";
+                    }
+                }
+                if (!nMessage.equals("")) {
+                    Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-            Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                            .setContentIntent(contentIntent)
+                            .setContentTitle(nTitle)
+                            .setContentText(nMessage)
+                            .setWhen(System.currentTimeMillis())
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setSmallIcon(R.drawable.checkered_logo_white)
+                            .setColor(ContextCompat.getColor(getApplicationContext(), R.color.MultiGPRed))
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(nMessage))
+                            .build();
 
-            Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentIntent(contentIntent)
-                    .setContentTitle("RACESYNC UPDATE")
-                    .setContentText(String.format("Status: %s (Pull down)", statusText))
-                    .setWhen(System.currentTimeMillis())
-                    .setDefaults(Notification.DEFAULT_SOUND)
-                    .setSmallIcon(R.drawable.checkered_logo_white)
-                    .setColor(ContextCompat.getColor(getApplicationContext(), R.color.MultiGPRed))
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(Html.fromHtml(notificationText)))
-                    .build();
-
-            notificationManager.notify(NOTIFICATION_ID, notification);
+                    notificationManager.notify(NOTIFICATION_ID, notification);
+                }
+            }
         }
 
         // For removal
@@ -197,5 +210,35 @@ public class StatusService extends Service {
         Log.i("SERVICEINFORMATION", "BROADCASTING");
         Intent intent = new Intent("RaceManager-Update-Info");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    // Checks to see if an event is already being listened to
+    private int checkId(int eventId) {
+        int index = -1;
+        for (int i = 0, size = runnables.size(); i < size; i++) {
+            if (runnables.get(i).getId() == eventId) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    // Removes a specific runnable
+    public void removeId(int eventId) {
+        int i = checkId(eventId);
+        runnables.get(i).stopListeners();
+        runnables.remove(i);
+        threads.get(i).interrupt();
+        threads.remove(i);
+    }
+
+    // Clears all events and runnables
+    public void removeAll() {
+        for (int i = 0, size = runnables.size(); i < size; i++) {
+            runnables.get(i).stopListeners();
+            runnables.remove(i);
+            threads.get(i).interrupt();
+            threads.remove(i);
+        }
     }
 }

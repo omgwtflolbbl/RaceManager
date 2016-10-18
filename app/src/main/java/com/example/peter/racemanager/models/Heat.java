@@ -3,9 +3,11 @@ package com.example.peter.racemanager.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +37,24 @@ public class Heat implements Parcelable {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Heat(JSONObject json, ArrayList<Racer> racers) {
+        setFromJSON(json, racers);
+    }
+
+    public boolean setFromJSON(JSONObject json, ArrayList<Racer> racers) {
+        try {
+            JSONArray entries = json.getJSONArray("entries");
+            heatMap = new TreeMap<>();
+            for (int i = 0, size = entries.length(); i < size; i++) {
+                heatMap.put(Integer.toString(i), new Slot(entries.getJSONObject(i), racers));
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -108,11 +128,11 @@ public class Heat implements Parcelable {
         while (slots.hasNext()) {
             String slotKey = slots.next();
             if (!getSlot(slotKey).getUsername().equals("EMPTY SLOT")) {
-                racers = racers + ", " + getSlot(slotKey).getUsername();
+                racers = racers + "," + getSlot(slotKey).getUsername();
             }
         }
         if (!racers.equals("")) {
-            racers = racers.substring(2);
+            racers = racers.substring(1);
         }
         return racers;
     }

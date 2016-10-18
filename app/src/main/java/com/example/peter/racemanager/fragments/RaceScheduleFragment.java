@@ -2,32 +2,21 @@ package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.peter.racemanager.R;
-import com.example.peter.racemanager.ScheduleViewPager;
-import com.example.peter.racemanager.adapters.RoundAdapter;
 import com.example.peter.racemanager.adapters.RoundAdapter2;
 import com.example.peter.racemanager.adapters.RoundAdapter3;
 import com.example.peter.racemanager.models.Race;
-import com.example.peter.racemanager.models.Round;
 import com.example.peter.racemanager.models.Slot;
-
-import java.util.ArrayList;
 
 
 /**
@@ -85,7 +74,7 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.schedule_viewpager);
-        roundAdapter2 = new RoundAdapter2(getChildFragmentManager(), race.getRounds(), race.getStatus());
+        roundAdapter2 = new RoundAdapter2(getChildFragmentManager(), race);
         viewPager.setAdapter(roundAdapter2);
         viewPager.setPageMargin(12);
 
@@ -99,7 +88,7 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         viewPager.getLayoutParams().height = ViewPager.LayoutParams.WRAP_CONTENT;
 
         if (!rotated) {
-            mListener.refreshRaceScheduleFragment(race);
+            mListener.refreshRaceFragment(race);
         }
         else {
             rotated = false;
@@ -118,7 +107,7 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
 
     public void onButtonPressed(Race race) {
         if (mListener != null) {
-            mListener.refreshRaceScheduleFragment(race);
+            mListener.refreshRaceFragment(race);
         }
     }
 
@@ -140,7 +129,7 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
     }
 
     public interface OnFragmentInteractionListener {
-        void refreshRaceScheduleFragment(Race race);
+        void refreshRaceFragment(Race race);
         void onUpdateSlotOnServer(Race race, Slot slot, String tag);
     }
 
@@ -148,11 +137,10 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         return race;
     }
 
-    public void updateRoundAdapter(final Race race) {
-        this.race = race;
+    public void updateRoundAdapter() {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                roundAdapter2.update(race.getRounds(), race.getStatus());
+                roundAdapter2.update();
             }
         });
     }
@@ -171,7 +159,12 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
                 slot.setUsername("EMPTY SLOT");
             }
             else {
-                slot.setUsername(newUser);
+                for (int i = 0, size = race.getRacers().size(); i < size; i++) {
+                    if (race.getRacers().get(i).getUsername().equals(newUser)) {
+                        slot.setRacer(race.getRacers().get(i));
+                        slot.setPoints(points);
+                    }
+                }
             }
         }
         else {
@@ -181,19 +174,20 @@ public class RaceScheduleFragment extends Fragment implements ChangeSlotDialogFr
         mListener.onUpdateSlotOnServer(race, slot, tag);
     }
 
+    // If the user performed a forbidden action
+    public void showPermissionError() {
+        FragmentManager fm = getChildFragmentManager();
+        PermissionErrorDialogFragment dialog = new PermissionErrorDialogFragment();
+        dialog.show(fm, "permission_error");
+    }
+
     // Check what this user can actually see. Probably need to break this up into two parts so that
     // one part checks it, and the other actually does something based on that (in case I need to
     // check permissions elsewhere like if a user can open a dialog or something).
     public Boolean checkPermissions() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String username = sharedPreferences.getString("username", null);
-        if (race.getAdmins().contains(username)) {
-            // YER A WIZARD HARRY
-            return true;
-        }
-        else {
-            // FILTHY COMMONER
-            return false;
-        }
+        String authorization = sharedPreferences.getString("authorization", "user");
+        //TODO: return authorization.equals("Administrator");
+        return true;
     }
 }

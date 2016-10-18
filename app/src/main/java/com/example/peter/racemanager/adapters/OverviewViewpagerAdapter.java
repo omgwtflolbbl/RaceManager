@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.peter.racemanager.R;
 import com.example.peter.racemanager.fragments.HangarFragment;
 import com.example.peter.racemanager.fragments.RaceFragment;
+import com.example.peter.racemanager.fragments.RaceInfoFragment;
 import com.example.peter.racemanager.fragments.RaceRacersFragment;
 import com.example.peter.racemanager.models.Race;
 import com.joanzapata.iconify.Iconify;
@@ -19,7 +20,7 @@ import com.joanzapata.iconify.Iconify;
  * Created by peterlee on 8/12/16.
  */
 public class OverviewViewpagerAdapter extends FragmentPagerAdapter {
-    private static int NUM_ITEMS = 3;
+    private static int NUM_ITEMS = 4;
     private Race race;
     private Context context;
 
@@ -39,11 +40,13 @@ public class OverviewViewpagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0: // Fragment # 0 - This will show FirstFragment
+            case 0:
+                return RaceInfoFragment.newInstance(race);
+            case 1: // Fragment # 0 - This will show FirstFragment
                 return HangarFragment.newInstance("hello", "Page # 1");
-            case 1: // Fragment # 0 - This will show FirstFragment different title
+            case 2: // Fragment # 0 - This will show FirstFragment different title
                 return RaceFragment.newInstance(race);
-            case 2: // Fragment # 1 - This will show SecondFragment
+            case 3: // Fragment # 1 - This will show SecondFragment
                 return RaceRacersFragment.newInstance(race);
             default:
                 return null;
@@ -55,10 +58,12 @@ public class OverviewViewpagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return Iconify.compute(context, context.getResources().getString(R.string.tab_hangar));
+                return Iconify.compute(context, context.getResources().getString(R.string.tab_info));
             case 1:
-                return Iconify.compute(context, context.getResources().getString(R.string.tab_race));
+                return Iconify.compute(context, context.getResources().getString(R.string.tab_hangar));
             case 2:
+                return Iconify.compute(context, context.getResources().getString(R.string.tab_race));
+            case 3:
                 return Iconify.compute(context, context.getResources().getString(R.string.tab_results));
             default:
                 return "???";
@@ -71,12 +76,15 @@ public class OverviewViewpagerAdapter extends FragmentPagerAdapter {
         textView.setTransformationMethod(null);
         switch (position) {
             case 0:
-                textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_hangar)));
+                textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_info)));
                 break;
             case 1:
-                textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_race)));
+                textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_hangar)));
                 break;
             case 2:
+                textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_race)));
+                break;
+            case 3:
                 textView.setText(Iconify.compute(context, context.getResources().getString(R.string.tab_results)));
                 break;
             default:

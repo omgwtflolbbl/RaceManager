@@ -3,26 +3,27 @@ package com.example.peter.racemanager.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Peter on 6/1/2016.
  */
 public class Racer implements Parcelable {
     private String username;
+    private String pilotName;
+    private int racingId;
+    private int pilotId;
+    private int aircraftId;
     private String racerUrl;
     private String racerPhoto;
     private String droneName;
-    private String droneURL;
+    private String scannableId;
     private String frequency;
     private int points;
 
     public Racer() {
-        this.username = "EMPTY SLOT";
-        this.racerUrl = "-";
-        this.racerPhoto = "-";
-        this.droneName = "-";
-        this.droneURL = "-";
-        this.frequency = "-";
-        this.points = 0;
+
     }
 
     public Racer(String username, String racerUrl, String racerPhoto, String droneName, String droneURL, String frequency) {
@@ -30,7 +31,6 @@ public class Racer implements Parcelable {
         this.racerUrl = racerUrl;
         this.racerPhoto = racerPhoto;
         this.droneName = droneName;
-        this.droneURL = droneURL;
         this.frequency = frequency;
         this.points = 0;
     }
@@ -40,9 +40,39 @@ public class Racer implements Parcelable {
         this.racerUrl = racerUrl;
         this.racerPhoto = racerPhoto;
         this.droneName = droneName;
-        this.droneURL = droneURL;
         this.frequency = frequency;
         this.points = points;
+    }
+
+    public Racer(JSONObject json) {
+        setFromJSON(json);
+    }
+
+    public boolean setFromJSON(JSONObject json) {
+        try {
+            if (json.getString("userName").contains("\"")) {
+                String[] string = json.getString("userName").split("\"");
+                username = string[1];
+                pilotName = string[0].trim() + " " + string[string.length - 1].trim();
+            }
+            else {
+                username = json.getString("userName");
+                pilotName = json.getString("pilotName");
+            }
+            racingId = json.getInt("id");
+            pilotId = json.getInt("pilotId");
+            aircraftId = !json.isNull("aircraftId") ? json.getInt("aircraftId") : aircraftId;
+            racerUrl = !json.isNull("racerURL") ? json.getString("racerURL") : racerUrl;
+            racerPhoto = !json.isNull("profilePictureUrl") ? json.getString("profilePictureUrl") : racerPhoto;
+            droneName = !json.isNull("aircraftName") ? json.getString("aircraftName") : droneName;
+            scannableId = !json.isNull("scannableId") ? json.getString("scannableId") : scannableId;
+            frequency = !json.isNull("frequency") ? json.getString("frequency") : frequency;
+            points = !json.isNull("score") ? json.getInt("score") : 0;
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void setPoints(int points) {
@@ -57,6 +87,22 @@ public class Racer implements Parcelable {
         return username;
     }
 
+    public String getPilotName() {
+        return pilotName;
+    }
+
+    public int getRacingId() {
+        return racingId;
+    }
+
+    public int getPilotId() {
+        return pilotId;
+    }
+
+    public int getAircraftId() {
+        return aircraftId;
+    }
+
     public String getRacerUrl() {
         return racerUrl;
     }
@@ -69,8 +115,13 @@ public class Racer implements Parcelable {
         return droneName;
     }
 
+    // TODO: REMOVE THIS
     public String getdroneURL() {
-        return droneURL;
+        return "";
+    }
+
+    public String getScannableId() {
+        return scannableId;
     }
 
     public String getFrequency() {
@@ -89,20 +140,28 @@ public class Racer implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.username);
+        dest.writeString(this.pilotName);
+        dest.writeInt(this.racingId);
+        dest.writeInt(this.pilotId);
+        dest.writeInt(this.aircraftId);
         dest.writeString(this.racerUrl);
         dest.writeString(this.racerPhoto);
         dest.writeString(this.droneName);
-        dest.writeString(this.droneURL);
+        dest.writeString(this.scannableId);
         dest.writeString(this.frequency);
         dest.writeInt(this.points);
     }
 
     protected Racer(Parcel in) {
         this.username = in.readString();
+        this.pilotName = in.readString();
+        this.racingId = in.readInt();
+        this.pilotId = in.readInt();
+        this.aircraftId = in.readInt();
         this.racerUrl = in.readString();
         this.racerPhoto = in.readString();
         this.droneName = in.readString();
-        this.droneURL = in.readString();
+        this.scannableId = in.readString();
         this.frequency = in.readString();
         this.points = in.readInt();
     }

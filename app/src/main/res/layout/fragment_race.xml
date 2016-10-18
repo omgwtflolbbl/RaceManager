@@ -335,6 +335,7 @@
 
                     </LinearLayout>
 
+                    <!--
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -349,7 +350,7 @@
                             android:textColor="@color/MultiGPGray"
                             android:text="Rebuild Race"/>
 
-                    </LinearLayout>
+                    </LinearLayout>-->
 
                 </LinearLayout>
 
@@ -417,6 +418,7 @@
                         android:stateListAnimator="@null"
                         android:text="@string/race_schedule_button" />
 
+                    <!--
                     <Button
                         android:id="@+id/race_info_button"
                         android:layout_width="match_parent"
@@ -429,7 +431,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:stateListAnimator="@null"
-                        android:text="@string/race_racers_button" />
+                        android:text="@string/race_racers_button" />-->
 
                 </LinearLayout>
 

@@ -1,10 +1,8 @@
 package com.example.peter.racemanager.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +16,6 @@ import com.example.peter.racemanager.models.Race;
 import com.example.peter.racemanager.models.Racer;
 import com.example.peter.racemanager.models.Round;
 import com.example.peter.racemanager.models.Slot;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -254,7 +250,7 @@ public class BuildRaceStructureDFragment extends Fragment {
         ArrayList<Round> rounds = generateNewRoundStructure();
         ArrayList<Racer> racers = generateNewRacersList();
 
-        Race race = new Race(oldRace.getTitle(), oldRace.getSiteURL(), oldRace.getDate(), oldRace.getTime(), oldRace.getBlockquote(), oldRace.getDescription(), oldRace.getRaceImage(), rounds, racers, oldRace.getAdmins(), "NS", oldRace.getTargetTime());
+        Race race = new Race(oldRace.getTitle(), oldRace.getRaceURL(), oldRace.getDate(), oldRace.getTime(), oldRace.getBlockquote(), oldRace.getDescription(), oldRace.getRaceImage(), rounds, racers, oldRace.getAdmins(), "NS", oldRace.getTargetTime());
 
         return race;
     }

@@ -4,7 +4,7 @@
     tools:context=".activities.MainActivity">
     <item
         android:id="@+id/action_refresh"
-        android:title="Refresh"
+        android:title="@string/menu_refresh"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_logout"

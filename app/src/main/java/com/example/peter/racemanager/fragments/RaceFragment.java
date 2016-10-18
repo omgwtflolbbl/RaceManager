@@ -38,6 +38,7 @@ import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.squareup.picasso.Picasso;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -114,6 +115,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         setHasOptionsMenu(true);
 
         Iconify.with(new FontAwesomeModule());
+
+        textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                textToSpeech.setLanguage(Locale.US);
+                textToSpeech.setSpeechRate((float) .9);
+            }
+        });
+
     }
 
     @Override
@@ -129,10 +139,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_race, container, false);
 
-        // Set up fontawesome
-        //Typeface iconFont = FontManager.getTypeface(getContext(), FontManager.FONTAWESOME);
-        //FontManager.markAsIconContainer(view.findViewById(R.id.race_card_racer), iconFont);
-
         racerImage = (CircleImageView) view.findViewById(R.id.race_racer_image);
         racerName = (TextView) view.findViewById(R.id.race_racer_name);
         racerFrequency = (TextView) view.findViewById(R.id.race_racer_frequency);
@@ -147,14 +153,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         currentStatusText = (TextView) view.findViewById(R.id.race_current_status_text);
         statusBar = (RelativeLayout) view.findViewById(R.id.race_status_bar);
 
-        Button raceBuilderButton = (Button) view.findViewById(R.id.race_builder_button);
-        raceBuilderButton.setOnClickListener(this);
-        Button raceInfoButton = (Button) view.findViewById(R.id.race_info_button);
-        raceInfoButton.setOnClickListener(this);
         Button raceScheduleButton = (Button) view.findViewById(R.id.race_schedule_button);
         raceScheduleButton.setOnClickListener(this);
-        Button raceRacersButton = (Button) view.findViewById(R.id.race_racers_button);
-        raceRacersButton.setOnClickListener(this);
 
         attendanceButton = (Button) view.findViewById(R.id.race_attendance_button);
         attendanceButton.setTransformationMethod(null);
@@ -207,14 +207,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     @Override
     public void onStart() {
         super.onStart();
-
-        textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                textToSpeech.setLanguage(Locale.US);
-                textToSpeech.setSpeechRate((float) .9);
-            }
-        });
 
         stopTimer();
 
@@ -280,10 +272,11 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
     public interface OnRaceListener {
         void onRaceButton(View view, Race race);
-        void onSendStatusUpdate(Race race, String status, String racers, String spotters, String onDeck, Long targetTime);
+        void onSendStatusUpdate(Race race, int round, int heat);
         void onUpdateSlotOnServer(Race race, Slot slot, String tag);
         void refreshRaceFragment(Race race);
         void getUpdatedAttendance(Race race);
+        void resyncTime();
     }
 
     public Race getRace() {
@@ -295,7 +288,8 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     }
 
     public void checkRaceStatus() {
-        if (race.getStatus().split(" ")[0].equals("R")) {
+        if (race.getCurrentState().equals("R")) {
+            stopTimer();
             startTimer(race.getTargetTime());
         }
         else {
@@ -310,32 +304,27 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
     // Controls the status displayed on top of countdown widget
     public void setCurrentStatusText() {
-        String status = race.getStatus();
-        if (status.equals("NS")) {
-            currentStatusText.setText("The race is still being set up");
+        if (race.getCurrentState().equals("NS")) {
+            currentStatusText.setText(R.string.status_not_started);
             statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPBlue));
         }
-        else if (status.charAt(0) == 'F') {
-            currentStatusText.setText("The race is finished!");
+        else if (race.getCurrentState().equals("F")) {
+            currentStatusText.setText(R.string.status_finished);
             statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGray));
         }
         else {
-            String statusVar = String.format(Locale.US, "Round %d - Heat %d", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1);
+            String statusVar = String.format(Locale.US, "Round %d - Heat %d", race.getCurrentRound() + 1, race.getCurrentHeat() + 1);
             SpannableString statusSpan = new SpannableString(statusVar);
             statusSpan.setSpan(new UnderlineSpan(), 0, statusVar.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-            if (status.charAt(0) == 'W') {
+            if (race.getCurrentState().equals("W")) {
                 SpannedString statusText = (SpannedString) TextUtils.concat(statusSpan, " is Prepping");
                 currentStatusText.setText(statusText);
                 statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPOrange));
             }
-            else if (status.charAt(0) == 'R') {
+            else  {
                 SpannedString statusText = (SpannedString) TextUtils.concat(statusSpan, " is Racing");
                 currentStatusText.setText(statusText);
                 statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.MultiGPGreen));
-            }
-            else if (status.charAt(0) == 'T') {
-                currentStatusText.setText(String.format(Locale.US, "Round %d - Heat %d is tallying results", Integer.parseInt(status.split(" ")[1]) + 1, Integer.parseInt(status.split(" ")[2]) + 1));
-                statusBar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.redA100));
             }
 
         }
@@ -343,38 +332,25 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
     // Manages the flow button for admins
     public void setFlowButtonText() {
-        String status = race.getStatus();
 
-        if (status.equals("NS")) {
+        if (race.getCurrentState().equals("NS")) {
             flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_start)));
         }
-        else if (status.charAt(0) == 'W') {
+        else if (race.getCurrentState().equals("F")) {
+            flowButton.setText(getResources().getText(R.string.button_flow_done));
+        }
+        else if (race.getCurrentState().equals("W")) {
             flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_heat)));
         }
-        else if (status.charAt(0) == 'R') {
-            int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            currentIndex = race.getNext(currentIndex);
-            if (currentIndex[0] == -1 || currentIndex[1] == -1) {
-                // No more valid heats or roudns - we're done. Set to "finished"
+        else {
+            int[] nextIndex = race.getNext();
+            if (nextIndex[0] == -1 || nextIndex[1] == -1) {
+                // No more valid heats or rounds - we're done. Set to "finished"
                 flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
             }
             else {
                 flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
             }
-        }
-        else if (status.charAt(0) == 'T') {
-            int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            currentIndex = race.getNext(currentIndex);
-            if (currentIndex[0] == -1 || currentIndex[1] == -1) {
-                // No more valid heats or roudns - we're done. Set to "finished"
-                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_finish)));
-            }
-            else {
-                flowButton.setText(Iconify.compute(flowButton.getContext(), getResources().getString(R.string.button_flow_prep)));
-            }
-        }
-        else if (status.charAt(0) == 'F') {
-            flowButton.setText(getResources().getText(R.string.button_flow_done));
         }
     }
 
@@ -385,13 +361,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             race.calculatePoints();
             for (Racer racer : race.getRacers()) {
                 if (racer.getUsername().equals(username)) {
-                    Picasso.with(getContext())
-                            .load(racer.getRacerPhoto())
-                            .error(R.drawable.profile)
-                            .noFade()
-                            .into(racerImage);
+                    if (racer.getRacerPhoto() != null) {
+                        Picasso.with(getContext())
+                                .load(racer.getRacerPhoto())
+                                .error(R.drawable.profile)
+                                .noFade()
+                                .into(racerImage);
+                    }
                     racerName.setText(username);
-                    racerFrequency.setText(racer.getFrequency());
+                    racerFrequency.setText(racer.getFrequency() != null ? racer.getFrequency() : "-");
                     racerPoints.setText(Integer.toString(racer.getPoints()));
                 }
             }
@@ -402,7 +380,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                     .load(R.drawable.profile)
                     .noFade()
                     .into(racerImage);
-            racerName.setText("Guest");
+            racerName.setText(R.string.name_guest);
             racerFrequency.setText("-");
             racerPoints.setText("-");
         }
@@ -419,84 +397,92 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void onFinishJumpHeatDialog(String newState) {
         int[] currentIndex = new int[] {Integer.parseInt(newState.split(" ")[1]), Integer.parseInt(newState.split(" ")[2])};
         String racers = currentIndex[0] == -1 || currentIndex[1] == -1 ? "N/A" : race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
-        int[] spotterIndex = race.getNext(currentIndex);
+        int[] spotterIndex = race.getNext();
         String spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" :  race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
-        int[] onDeckIndex = race.getNext(spotterIndex);
+        int[] onDeckIndex = race.getNext();
         String onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" :  race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
 
-        // Figure out the target time based on the text input
-        // Add 15 seconds worth to value just for buffer's sake
-        Long targetTime = System.currentTimeMillis() + TaskFragment.SntpOffset;
-        mListener.onSendStatusUpdate(race, newState, racers, spotters, onDeck, targetTime);
+        race.setTargetTime(1);
+        mListener.onSendStatusUpdate(race, currentIndex[0], currentIndex[1]);
     }
 
     // Use this as a "send new status to Firebase" button. Figure out who is racing, spotting,
     // on deck, etc. and build a JSON string. Then send it in a callback to MainActivity which will
     // then be able to send it to TaskFragment for updating server/Firebase.
     private void onTimerButton() {
-        EditText editText = (EditText) getView().findViewById(R.id.race_time_input);
-        String status = race.getStatus();
+        if (getView() != null) {
+            EditText editText = (EditText) getView().findViewById(R.id.race_time_input);
 
-        // Logic to figure out which heats are relevant
-        // TODO: All of the if statements can obviously be refactored into another single method
-        int[] currentIndex = new int[2];
-        int[] spotterIndex = new int[2];
-        int[] onDeckIndex = new int[2];
-        String state = "NS";
-        String racers = "";
-        String spotters = "";
-        String onDeck = "";
-        if (status.equals("NS")) {
-            // Race "not started", get information from the very start and set "waiting" status
-            // Current racers
-            currentIndex = new int[] {0, 0};
-            racers = currentIndex[0] == -1 || currentIndex[1] == -1 ? "N/A" : race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
-            spotterIndex = race.getNext(currentIndex);
-            spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" :  race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
-            onDeckIndex = race.getNext(spotterIndex);
-            onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" :  race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
-            state = String.format("W %d %d", currentIndex[0], currentIndex[1]);
-        }
-        else if (status.charAt(0) == 'W') {
-            // Race was in "waiting" status, set it to "racing" status. We should not need to do anything but change the state.
-            currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            racers = currentIndex[0] == -1 || currentIndex[1] == -1 ? "N/A" : race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
-            spotterIndex = race.getNext(currentIndex);
-            spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" :  race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
-            onDeckIndex = race.getNext(spotterIndex);
-            onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" :  race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
-            state = String.format("R %d %d", currentIndex[0], currentIndex[1]);
-        }
-        else if (status.charAt(0) == 'R') {
-            // Race is finished. We should now move to the next "waiting" status if there are more heats, or to "finished"
-            // Get the current index and see if next is valid or not
-            currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            currentIndex = race.getNext(currentIndex);
-            if (currentIndex[0] == -1 || currentIndex[1] == -1) {
-                // No more valid heats or roudns - we're done. Set to "finished"
-                state = "F";
-            }
-            else {
-                // Otherwise, we still have more stuff to do, go to next "waiting" phase
-                racers = race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
-                spotterIndex = race.getNext(currentIndex);
-                spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" :  race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
-                onDeckIndex = race.getNext(spotterIndex);
-                onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" :  race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
-                state = String.format("W %d %d", currentIndex[0], currentIndex[1]);
-            }
-        }
+            // Logic to figure out which heats are relevant
+            // TODO: All of the if statements can obviously be refactored into another single method
+            int[] currentIndex = new int[2];
+            int[] spotterIndex = new int[2];
+            int[] onDeckIndex = new int[2];
+            String state = "NS";
+            String racers = "";
+            String spotters = "";
+            String onDeck = "";
+            switch (race.getCurrentState()) {
+                case "NS":
+                    // Race "not started", get information from the very start and set "waiting" status
+                    // Current racers
+                    currentIndex = new int[]{0, 0};
+                    racers = currentIndex[0] == -1 || currentIndex[1] == -1 ? "N/A" : race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
+                    spotterIndex = race.getNext();
+                    spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" : race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
+                    onDeckIndex = race.getNext();
+                    onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" : race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
 
-        // If the race is not already finished, start process for sending update to Firebase
-        if (!status.equals("F")) {
-            // Figure out the target time based on the text input
-            // Add 15 seconds worth to value just for buffer's sake
-            Long targetTime = System.currentTimeMillis() + TaskFragment.SntpOffset + Long.parseLong(editText.getText().toString()) * 1000 + 5000;
-            if (state.charAt(0) == 'R') {
-                stopTimer();
-                startTimer(targetTime);
+                    race.setCurrentState("W");
+                    race.setTargetTime(1);
+                    stopTimer();
+                    mListener.onSendStatusUpdate(race, currentIndex[0], currentIndex[1]);
+                    break;
+
+                case "W":
+                    // Race was in "waiting" status, set it to "racing" status. We should not need to do anything but change the state.
+                    currentIndex = new int[]{race.getCurrentRound(), race.getCurrentHeat()};
+                    racers = currentIndex[0] == -1 || currentIndex[1] == -1 ? "N/A" : race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
+                    spotterIndex = race.getNext();
+                    spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" : race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
+                    onDeckIndex = race.getNext();
+                    onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" : race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
+
+                    race.setCurrentState("R");
+                    long targetTime = System.currentTimeMillis() + TaskFragment.SntpOffset + Long.parseLong(editText.getText().toString()) * 1000 + 5000;
+                    race.setTargetTime(targetTime);
+                    stopTimer();
+                    startTimer(targetTime);
+                    mListener.onSendStatusUpdate(race, currentIndex[0], currentIndex[1]);
+                    break;
+
+                case "F":
+                    break;
+
+                default:
+                    // Heat is finished. We should now move to the next "waiting" status if there are more heats, or to "finished"
+                    // Get the current index and see if next is valid or not
+                    currentIndex = race.getNext();
+                    if (currentIndex[0] == -1 || currentIndex[1] == -1) {
+                        // No more valid heats or roudns - we're done. Set to "finished"
+                        race.setCurrentState("F");
+                        race.setTargetTime(-1);
+                        stopTimer();
+                    } else {
+                        // Otherwise, we still have more stuff to do, go to next "waiting" phase
+                        racers = race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]).getAllRacers();
+                        spotterIndex = race.getNext();
+                        spotters = spotterIndex[0] == -1 || spotterIndex[1] == -1 ? "N/A" : race.getRounds().get(spotterIndex[0]).getHeat(spotterIndex[1]).getAllRacers();
+                        onDeckIndex = race.getNext();
+                        onDeck = onDeckIndex[0] == -1 || onDeckIndex[1] == -1 ? "N/A" : race.getRounds().get(onDeckIndex[0]).getHeat(onDeckIndex[1]).getAllRacers();
+
+                        race.setCurrentState("W");
+                        race.setTargetTime(1);
+                        stopTimer();
+                    }
+                    mListener.onSendStatusUpdate(race, currentIndex[0], currentIndex[1]);
+                    break;
             }
-            mListener.onSendStatusUpdate(race, state, racers, spotters, onDeck, targetTime);
         }
     }
 
@@ -505,9 +491,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     public void startTimer(long targetTime) {
         if (getView() != null) {
             TextView adminTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_admin);
-            countdownRunnable = new CountdownRunnable(adminTicker, targetTime, -1);
+            countdownRunnable = new CountdownRunnable(adminTicker, targetTime, -1, true);
             TextView smallTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_pilot);
-            countdownRunnable2 = new CountdownRunnable(smallTicker, targetTime, -1);
+            countdownRunnable2 = new CountdownRunnable(smallTicker, targetTime, -1, false);
             handler.post(countdownRunnable);
             handler.post(countdownRunnable2);
         }
@@ -515,7 +501,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
     public void stopTimer() {
         handler.removeCallbacksAndMessages(null);
-        if (getView() != null) {
+        if (getView() != null && !race.getCurrentState().equals("R")) {
             TextView adminTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_admin);
             adminTicker.setText("00:00:000");
             TextView smallTicker = (TextView) getView().findViewById(R.id.race_timer_ticker_pilot);
@@ -530,13 +516,15 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         final private long targetTime;
         private long previousTime;
         private long currentTime;
+        private boolean update;
 
         private final long[] checkpoints = {1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000, 270000, 300000};
 
-        public CountdownRunnable(TextView textView, long targetTime, long previousTime) {
+        public CountdownRunnable(TextView textView, long targetTime, long previousTime, boolean update) {
             this.textView = textView;
             this.targetTime = targetTime;
             this.previousTime = previousTime;
+            this.update = update;
         }
 
         public void run() {
@@ -556,7 +544,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
 
                     // Timer readouts/alerts
                     for (long checkpoint : checkpoints) {
-                        if (previousTime > checkpoint && currentTime <= checkpoint && (((MainActivity) getActivity()).getActiveFragment() instanceof OverviewFragment)) {
+                        if (update && previousTime > checkpoint && currentTime <= checkpoint && (((MainActivity) getActivity()).getActiveFragment() instanceof OverviewFragment)) {
                             // Start vibrating until up to 5 seconds past the target time
                             Vibrator v = (Vibrator) getParentFragment().getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                             v.vibrate(500);
@@ -583,6 +571,11 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                             }
 
                             textToSpeech.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+
+                            if (checkpoint % 30000 == 0 || checkpoint == 15000) {
+                                Log.d("CP", Long.toString(checkpoint));
+                                ((MainActivity) getActivity()).resyncTime();
+                            }
                         }
                     }
                     previousTime = currentTime;
@@ -609,9 +602,10 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     }
 
     public void prepareHeatViews() {
-        String status = race.getStatus();
+        String status = race.getCurrentState() + " " + race.getCurrentRound() + " " + race.getCurrentHeat();
+        Log.d("current status", status);
 
-        if (status.equals("NS") || status.equals("F")) {
+        if (race.getCurrentState().equals("NS") || race.getCurrentState().equals("F")) {
             lastHeatView.setVisibility(View.GONE);
             lastHeatText.setVisibility(View.GONE);
             currentHeatView.setVisibility(View.GONE);
@@ -620,9 +614,9 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
             nextHeatText.setVisibility(View.GONE);
         }
         else {
-            int[] currentIndex = new int[] {Integer.parseInt(status.split(" ")[1]), Integer.parseInt(status.split(" ")[2])};
-            int[] lastIndex = race.getPrevious(currentIndex);
-            int[] nextIndex = race.getNext(currentIndex);
+            int[] currentIndex = race.getCurrent();
+            int[] lastIndex = race.getPrevious();
+            int[] nextIndex = race.getNext();
 
             if (!(lastIndex[0] == -1 || lastIndex[1] == -1)) {
                 lastHeatView.setVisibility(View.VISIBLE);
@@ -631,7 +625,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                 lastHeatList.add(race.getRounds().get(lastIndex[0]).getHeat(lastIndex[1]));
                 RoundAdapter3 lastHeatAdapter;
                 if (lastHeatView.getAdapter() == null) {
-                    System.out.println("current adapter created");
                     lastHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) lastHeatList, lastIndex[0], lastIndex[1], status, this);
                     lastHeatView.setAdapter(lastHeatAdapter);
                 } else {
@@ -654,7 +647,6 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                 currentHeatList.add(race.getRounds().get(currentIndex[0]).getHeat(currentIndex[1]));
                 RoundAdapter3 currentHeatAdapter;
                 if (currentHeatView.getAdapter() == null) {
-                    System.out.println("spotter adapter created");
                     currentHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) currentHeatList, currentIndex[0], currentIndex[1], status, this);
                     currentHeatView.setAdapter(currentHeatAdapter);
                 } else {
@@ -677,8 +669,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                 nextHeatList.add(race.getRounds().get(nextIndex[0]).getHeat(nextIndex[1]));
                 RoundAdapter3 ondeckHeatAdapter;
                 if (nextHeatView.getAdapter() == null) {
-                    System.out.println("ondeckadapter created");
-                    ondeckHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) nextHeatList, nextIndex[0], nextIndex[1], String.format(Locale.US, "W %d %d", nextIndex[0], nextIndex[1]), this);
+                    ondeckHeatAdapter = new RoundAdapter3(getContext(), (ArrayList<Heat>) nextHeatList, nextIndex[0], nextIndex[1], status, this);
                     nextHeatView.setAdapter(ondeckHeatAdapter);
                 } else {
                     ondeckHeatAdapter = (RoundAdapter3) nextHeatView.getAdapter();
@@ -713,7 +704,7 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         FragmentManager fm = getChildFragmentManager();
         String[] tag = view.getTag().toString().split(" ");
         ChangeSlotDialogFragment dialog = ChangeSlotDialogFragment.newInstance(race.getRounds().get(Integer.parseInt(tag[0])).getHeat(Integer.parseInt(tag[1])).getSlot(tag[2]), view.getTag().toString(), race);
-        dialog.show(fm, "some_unknown_text");
+        dialog.show(fm, "change slot dialog");
     }
 
     // On dialog finish
@@ -723,7 +714,12 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
                 slot.setUsername("EMPTY SLOT");
             }
             else {
-                slot.setUsername(newUser);
+                for (int i = 0, size = race.getRacers().size(); i < size; i++) {
+                    if (race.getRacers().get(i).getUsername().equals(newUser)) {
+                        slot.setRacer(race.getRacers().get(i));
+                        slot.setPoints(points);
+                    }
+                }
             }
         }
         else {
@@ -731,6 +727,13 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
         }
 
         mListener.onUpdateSlotOnServer(race, slot, tag);
+    }
+
+    // If the user performed a forbidden action
+    public void showPermissionError() {
+        FragmentManager fm = getChildFragmentManager();
+        PermissionErrorDialogFragment dialog = new PermissionErrorDialogFragment();
+        dialog.show(fm, "permission_error");
     }
 
     // Decide change what can be seen
@@ -755,14 +758,16 @@ public class RaceFragment extends Fragment implements View.OnClickListener, Jump
     // check permissions elsewhere like if a user can open a dialog or something).
     public Boolean checkAdminPermissions() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String username = sharedPreferences.getString("username", null);
-        return race.getAdmins().contains(username);
+        String authorization = sharedPreferences.getString("authorization", "user");
+        //return authorization.equals("Administrator");
+        return true;
     }
 
     public Boolean checkRacerPermissions() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         String username = sharedPreferences.getString("username", null);
         boolean racing = false;
+        Log.d("null", race.toString());
         for (Racer racer : race.getRacers()) {
             if (username.equals(racer.getUsername())) {
                 racing = true;

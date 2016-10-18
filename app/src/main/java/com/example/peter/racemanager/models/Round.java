@@ -5,7 +5,9 @@ import android.os.Parcelable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +48,41 @@ public class Round implements Parcelable {
         return rounds;
     }
 
+    public Round(JSONArray heats, ArrayList<Racer> racers) {
+        setFromJSON(heats, racers);
+    }
+
+
+    public boolean setFromJSON(JSONArray heats, ArrayList<Racer> racers) {
+        try {
+            if (this.heats == null) {
+                this.heats = new ArrayList<Heat>();
+            }
+            this.heats.clear();
+            for (int i = 0, size = heats.length(); i < size; i++) {
+                this.heats.add(new Heat(heats.getJSONObject(i), racers));
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Round> fromJSONToRoundList(JSONArray json, ArrayList<Racer> racers) {
+        List<Round> rounds = new ArrayList<Round>();
+        try {
+            for (int i = 0, size = json.length(); i < size; i++) {
+                rounds.add(new Round(json.getJSONObject(i).getJSONArray("heats"), racers));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return rounds;
+    }
+
     public Heat getHeat(int index) {
-        return heats.get(index);
+        return index != -1 && heats.size() > index ? heats.get(index) : new Heat();
     }
 
     public List<Heat> getHeats() {

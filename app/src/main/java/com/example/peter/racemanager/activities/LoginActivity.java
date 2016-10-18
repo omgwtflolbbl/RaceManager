@@ -61,6 +61,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -76,6 +77,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
     public final static String GUEST = "AnonymousSpectator159753";
+    private final static MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -199,12 +201,21 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
     public void verifyUser(String email, String password) {
-        String URL = String.format("%s/verify", MainActivity.FLASK);
+        String URL = String.format("%s/user/login", MainActivity.ROOT);
+
+        String json = "";
+        // Build JSON string
+        try {
+            JSONObject object = new JSONObject();
+            object.put("apiKey", MainActivity.API);
+            object.put("username", email);
+            object.put("password", password);
+            json = object.toString();
+        } catch (JSONException e) {
+            Log.d("Login", "Failed to create json string to post");
+        }
         OkHttpClient client = new OkHttpClient();
-        RequestBody body = new FormBody.Builder()
-                .add("email", email)
-                .add("password", password)
-                .build();
+        RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(URL)
                 .post(body)
@@ -214,6 +225,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             public void onFailure(Call call, IOException e) {
                 Log.i("THE CALL", "IT FAILED");
                 e.printStackTrace();
+                onLoginInvalid();
             }
 
             @Override
@@ -222,18 +234,16 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
                 try {
                     JSONObject json = new JSONObject(response.body().string());
-                    if (json.getString("result").equals("success")) {
+                    if (json.getInt("status") == 1) {
                         // This user information is valid
-                        onLoginSuccessful(json.getString("username"));
+                        String sessionId = json.getString("sessionId");
+                        int pilotId = json.getJSONObject("data").getInt("id");
+                        String username = json.getJSONObject("data").getString("userName");
+                        String authorization = json.getJSONObject("data").getString("authType");
+                        onLoginSuccessful(sessionId, pilotId, username, authorization);
                     }
                     else {
-                        // Sucks to be you
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                onLoginInvalid();
-                            }
-                        });
+                        onLoginInvalid();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -245,9 +255,11 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
     // Successful login - set SharedPreferences and go to MainActivity
-    public void onLoginSuccessful(String username) {
+    public void onLoginSuccessful(String sessionId, int pilotId, String username, String authorization) {
+        editor.putString("sessionId", sessionId);
+        editor.putInt("pilotId", pilotId);
         editor.putString("username", username);
-        editor.putString("token", username);
+        editor.putString("authorization", authorization);
         editor.commit();
         goToMain();
     }
@@ -268,16 +280,22 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     // Failed login - warn user of failure
     public void onLoginInvalid() {
-        // Re-enable everything
-        unlockInterface();
+        // Sucks to be you
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Re-enable everything
+                unlockInterface();
 
-        // Change the header to a warning
-        header.setText("Login failed. Please try again.");
-        header.setTextColor(Color.RED);
+                // Change the header to a warning
+                header.setText("Login failed. Please try again.");
+                header.setTextColor(Color.RED);
 
-        // Shake and Bake
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        layout.startAnimation(shake);
+                // Shake and Bake
+                Animation shake = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.shake);
+                layout.startAnimation(shake);
+            }
+        });
     }
 
     // Send a request to server to create a new guest ID and get that ID back

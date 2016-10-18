@@ -31,17 +31,16 @@ import com.example.peter.racemanager.models.Slot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  */
 public class RaceScheduleCardFragment extends Fragment {
-    private static final String ROUND_KEY = "ROUND_KEY";
+    private static final String RACE_KEY = "RACE_KEY";
     private static final String INDEX_KEY = "INDEX_KEY";
-    private static final String STATUS_KEY = "STATUS_KEY";
 
-    private Round round;
     private int index;
-    private String status;
+    private Race race;
     private RoundAdapter3 roundAdapter3;
 
     private OnRaceScheduleCardFragmentListener mListener;
@@ -50,12 +49,11 @@ public class RaceScheduleCardFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RaceScheduleCardFragment newInstance(Round round, int index, String status) {
+    public static RaceScheduleCardFragment newInstance(Race race, int index) {
         RaceScheduleCardFragment fragment = new RaceScheduleCardFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ROUND_KEY, round);
+        args.putParcelable(RACE_KEY, race);
         args.putInt(INDEX_KEY, index);
-        args.putString(STATUS_KEY, status);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,9 +62,8 @@ public class RaceScheduleCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            round = getArguments().getParcelable(ROUND_KEY);
+            race = getArguments().getParcelable(RACE_KEY);
             index = getArguments().getInt(INDEX_KEY);
-            status = getArguments().getString(STATUS_KEY);
         }
     }
 
@@ -76,24 +73,22 @@ public class RaceScheduleCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_race_schedule_card, container, false);
 
-        String[] current = status.split(" ");
-
         // For use with roundadapter3?
         // Figure out round title card color depending on state of race
         CardView cardView = (CardView) view.findViewById(R.id.race_schedule_round_card);
-        if (current[0].equals("NS")) {
+        if (race.getTargetTime() == 0 || race.getCurrentRound() == -1 || race.getCurrentHeat() == -1) {
             // Race not started yet, all are "pending"
             cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.blue900));
         }
-        else if (current[0].equals("F")) {
+        else if (race.getTargetTime() == -1) {
             // Race is over, all are "done"
             cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.bluegrey900));
         }
-        else if (index < Integer.parseInt(current[1])) {
+        else if (index < race.getCurrentRound()) {
             // This is an old round
             cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.bluegrey900));
         }
-        else if (index == Integer.parseInt(current[1])) {
+        else if (index == race.getCurrentRound()) {
             // This is the current round
             cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.greenA400));
         }
@@ -103,10 +98,10 @@ public class RaceScheduleCardFragment extends Fragment {
         }
 
         TextView roundText = (TextView) view.findViewById(R.id.race_schedule_round_title);
-        roundText.setText(String.format("ROUND %d", index + 1));
+        roundText.setText(String.format(Locale.US, "ROUND %d", index + 1));
 
         ListView listView = (ListView) view.findViewById(R.id.race_schedule_heat_listview);
-        roundAdapter3 = new RoundAdapter3(getActivity(), (ArrayList<Heat>) round.getHeats(), index, status, (RaceScheduleFragment) getParentFragment());
+        roundAdapter3 = new RoundAdapter3(getActivity(), (ArrayList<Heat>) race.getRounds().get(index).getHeats(), index, String.format(Locale.US, "%s %d %d", race.getCurrentState(), race.getCurrentRound(), race.getCurrentHeat()), (RaceScheduleFragment) getParentFragment());
         listView.setAdapter(roundAdapter3);
         //listView.setPadding(0, 100, 0, 20);
         listView.setClipToPadding(false);
@@ -141,15 +136,7 @@ public class RaceScheduleCardFragment extends Fragment {
         void onUpdateSlotOnServer(Race race, Slot slot, String tag);
     }
 
-    public Round getRound() {
-        return round;
-    }
-
     public int getIndex() {
         return index;
-    }
-
-    public String getStatus() {
-        return status;
     }
 }

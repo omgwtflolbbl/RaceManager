@@ -78,7 +78,6 @@ public class OkHttpHandler {
     public static void main(String [ ] args)
     {
         int i = 6%5+1;
-        System.out.println(Integer.toString(i));
     }
 }
 
